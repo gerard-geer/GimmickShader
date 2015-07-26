@@ -10,7 +10,7 @@
 // Returns a palette entry given an index.
 vec4 yumetarouPalette(int c)
 {
-    return ARR8(c,  RGBA(252.0, 252.0, 252.0, 1.000),  // The slightly not white white.
+    return ARR8(c,  RGBA(252.0, 252.0, 252.0, 255.0),  // The slightly not white white.
                 	RGBA(76.00, 220.0, 72.00, 255.0),  // Light green.
                 	RGBA(0.000, 60.00, 20.00, 255.0),  // Dark green.
                     RGBA(252.0, 152.0, 56.00, 255.0),  // Light gold.
@@ -63,11 +63,11 @@ int yumetarouEyesClosed(in int x, in int y)
                          ARR16(x, 5 ,5 ,5 ,5 ,2 ,2 ,1 ,1 ,1 ,1 ,2 ,2 ,5 ,5 ,5 ,5),
                          ARR16(x, 5 ,5 ,5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5 ,5 ,5),
                          ARR16(x, 5 ,5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5 ,5 ,5),
-			 ARR16(x, 5 ,5 ,2 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,0 ,2 ,5 ,5),
-			 ARR16(x, 5 ,2 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,5 ,5),
-			 ARR16(x, 5 ,2 ,1 ,1 ,1 ,0 ,2 ,2 ,2 ,2 ,0 ,2 ,2 ,2 ,5 ,5),
-			 ARR16(x, 2 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,2 ,5),
-			 ARR16(x, 2 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,0 ,1 ,2 ,5),
+						 ARR16(x, 5 ,5 ,2 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,0 ,2 ,5 ,5),
+						 ARR16(x, 5 ,2 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,5 ,5),
+						 ARR16(x, 5 ,2 ,1 ,1 ,1 ,0 ,2 ,2 ,2 ,2 ,0 ,2 ,2 ,2 ,5 ,5),
+						 ARR16(x, 2 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,2 ,5),
+						 ARR16(x, 2 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,0 ,1 ,2 ,5),
                          ARR16(x, 2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2),
                          ARR16(x, 2 ,1 ,1 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2),
                          ARR16(x, 5 ,2 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,2 ,2 ,1 ,1 ,1 ,2),
@@ -95,9 +95,23 @@ vec4 drawYumetarou(int x, int y, int atx, int aty)
         return yumetarouPalette(yumetarouEyesOpen(x,y));
 }
 
+// Draws all sprites and tiles.
+vec4 drawElements(in int x, in int y)
+{
+    return drawYumetarou(x, y, 15, 15);
+}
+
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     fragCoord.y = iResolution.y - fragCoord.y;
     fragCoord /= 2.;
-	fragColor = drawYumetarou(int(fragCoord.x), int(fragCoord.y), 15, 15);
+    
+    // Default the outgoing fragColor to the background color.
+    fragColor = RGBA(60.00, 188.0, 252.0, 255.0);
+    
+    // Determine and store the texel of the scene elements this pixel occupies.
+    vec4 imageElements = drawElements(int(fragCoord.x), int(fragCoord.y));
+    
+    // Mix this texel with the background.
+	fragColor = mix(fragColor, imageElements, imageElements.a);
 }
