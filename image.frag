@@ -8,7 +8,7 @@
 #define RGBA(r, g, b, a) vec4(r*.003922,g*.003922,b*.003922,a*.003922)
 
 // Returns a palette entry given an index.
-vec4 gimmickPalette(int c)
+vec4 yumetarouPalette(int c)
 {
     return ARR8(c,  RGBA(252.0, 252.0, 252.0, 1.000),  // The slightly not white white.
                 	RGBA(76.00, 220.0, 72.00, 255.0),  // Light green.
@@ -21,48 +21,83 @@ vec4 gimmickPalette(int c)
 }
 
 // Returns a palette index given the position of the pixel within the sprite.
-int gimmickSprite(in int x, in int y)
+int yumetarouEyesOpen(in int x, in int y)
 {
     x = int(mod(float(x),16.0));
     y = int(mod(float(y),19.0));
-    if(y==0)  return ARR16(x, 5 ,5 ,5 ,5 ,4 ,4 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5);
-    if(y==1)  return ARR16(x, 5 ,5 ,5 ,5 ,4 ,3 ,4 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5);
-    if(y==2)  return ARR16(x, 5 ,5 ,5 ,5 ,4 ,3 ,3 ,4 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5);
-    if(y==3)  return ARR16(x, 5 ,5 ,5 ,5 ,2 ,2 ,2 ,2 ,2 ,2 ,5 ,5 ,5 ,5 ,5 ,5);
-    if(y==4)  return ARR16(x, 5 ,5 ,5 ,5 ,2 ,2 ,1 ,1 ,1 ,1 ,2 ,2 ,5 ,5 ,5 ,5);
-    if(y==5)  return ARR16(x, 5 ,5 ,5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5 ,5 ,5);
-    if(y==6)  return ARR16(x, 5 ,5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5 ,5 ,5);
-    if(y==7)  return ARR16(x, 5 ,5 ,2 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,0 ,2 ,5 ,5);
-    if(y==8)  return ARR16(x, 5 ,2 ,1 ,1 ,1 ,0 ,0 ,2 ,2 ,2 ,0 ,0 ,2 ,2 ,5 ,5);
-    if(y==9)  return ARR16(x, 5 ,2 ,1 ,1 ,1 ,0 ,0 ,0 ,2 ,2 ,0 ,0 ,0 ,2 ,5 ,5);
-    if(y==10) return ARR16(x, 2 ,1 ,1 ,1 ,1 ,0 ,0 ,2 ,2 ,2 ,0 ,0 ,2 ,2 ,2 ,5);
-    if(y==11) return ARR16(x, 2 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,0 ,1 ,2 ,5);
-    if(y==12) return ARR16(x, 2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2);
-    if(y==13) return ARR16(x, 2 ,1 ,1 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2);
-    if(y==14) return ARR16(x, 5 ,2 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,2 ,2 ,1 ,1 ,1 ,2);
-    if(y==15) return ARR16(x, 5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2);
-    if(y==16) return ARR16(x, 5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5);
-    if(y==17) return ARR16(x, 5 ,5 ,2 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,2 ,5);
-    if(y==18) return ARR16(x, 1 ,0 ,0 ,0 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,0 ,0 ,0);
+    if(y<16)
+    {
+        return ARR16(y,  ARR16(x, 5 ,5 ,5 ,5 ,4 ,4 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,5 ,5 ,4 ,3 ,4 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,5 ,5 ,4 ,3 ,3 ,4 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,5 ,5 ,2 ,2 ,2 ,2 ,2 ,2 ,5 ,5 ,5 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,5 ,5 ,2 ,2 ,1 ,1 ,1 ,1 ,2 ,2 ,5 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,2 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,0 ,2 ,5 ,5),
+                         ARR16(x, 5 ,2 ,1 ,1 ,1 ,0 ,0 ,2 ,2 ,2 ,0 ,0 ,2 ,2 ,5 ,5),
+                         ARR16(x, 5 ,2 ,1 ,1 ,1 ,0 ,0 ,0 ,2 ,2 ,0 ,0 ,0 ,2 ,5 ,5),
+                         ARR16(x, 2 ,1 ,1 ,1 ,1 ,0 ,0 ,2 ,2 ,2 ,0 ,0 ,2 ,2 ,2 ,5),
+                         ARR16(x, 2 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,0 ,1 ,2 ,5),
+                         ARR16(x, 2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2),
+                         ARR16(x, 2 ,1 ,1 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2),
+                         ARR16(x, 5 ,2 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,2 ,2 ,1 ,1 ,1 ,2),
+                         ARR16(x, 5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2));
+    } 
+    if(y==16) return 	 ARR16(x, 5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5);
+    if(y==17) return 	 ARR16(x, 5 ,5 ,2 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,2 ,5);
+    if(y==18) return 	 ARR16(x, 1 ,0 ,0 ,0 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,0 ,0 ,0);
+   	return 5;
+}
+
+// Returns a palette index given the position of the pixel within the sprite.
+int yumetarouEyesClosed(in int x, in int y)
+{
+    x = int(mod(float(x),16.0));
+    y = int(mod(float(y),19.0));
+    if(y<16){
+        return ARR16(y,  ARR16(x, 5 ,5 ,5 ,5 ,4 ,4 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,5 ,5 ,4 ,3 ,4 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,5 ,5 ,4 ,3 ,3 ,4 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,5 ,5 ,2 ,2 ,2 ,2 ,2 ,2 ,5 ,5 ,5 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,5 ,5 ,2 ,2 ,1 ,1 ,1 ,1 ,2 ,2 ,5 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5 ,5 ,5),
+                         ARR16(x, 5 ,5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5 ,5 ,5),
+			 ARR16(x, 5 ,5 ,2 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,0 ,2 ,5 ,5),
+			 ARR16(x, 5 ,2 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,5 ,5),
+			 ARR16(x, 5 ,2 ,1 ,1 ,1 ,0 ,2 ,2 ,2 ,2 ,0 ,2 ,2 ,2 ,5 ,5),
+			 ARR16(x, 2 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,2 ,5),
+			 ARR16(x, 2 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,0 ,1 ,2 ,5),
+                         ARR16(x, 2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2),
+                         ARR16(x, 2 ,1 ,1 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2),
+                         ARR16(x, 5 ,2 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,2 ,2 ,1 ,1 ,1 ,2),
+                         ARR16(x, 5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2));
+    } 
+    if(y==16) return 	 ARR16(x, 5 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,5);
+    if(y==17) return 	 ARR16(x, 5 ,5 ,2 ,2 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,2 ,2 ,5);
+    if(y==18) return 	 ARR16(x, 1 ,0 ,0 ,0 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,2 ,0 ,0 ,0);
    	return 5;
 }
  
-// Returns a texel of Mr. Gimmick.
-vec4 drawGimmick(int x, int y, int atx, int aty)
+// Returns a texel of Yumetarou.
+vec4 drawYumetarou(int x, int y, int atx, int aty)
 {
     if(x < atx || x > atx + 15) return vec4(0.0);
     if(y < aty || y > aty + 18) return vec4(0.0);
     x -= atx;
     y -= aty;
-    return gimmickPalette(gimmickSprite(x,y));
+    
+    // Yummy yummy frame counting.
+    float t = mod(iGlobalTime, 3.67);
+    if( t < .066 || (t > .533 && t <.600) )
+        return yumetarouPalette(yumetarouEyesClosed(x,y));
+    else
+        return yumetarouPalette(yumetarouEyesOpen(x,y));
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     fragCoord.y = iResolution.y - fragCoord.y;
-    fragCoord /= 4.;
-	fragColor = drawGimmick(int(fragCoord.x), int(fragCoord.y), 90+int(sin(iGlobalTime)*40.0), 15)
-        	  + drawGimmick(int(fragCoord.x), int(fragCoord.y), 90+int(sin(iGlobalTime)*40.0), 45)
-        	  + drawGimmick(int(fragCoord.x), int(fragCoord.y), 90+int(sin(iGlobalTime)*40.0), 75)
-        	  + drawGimmick(int(fragCoord.x), int(fragCoord.y), 90+int(sin(iGlobalTime)*40.0), 100);
+    fragCoord /= 2.;
+	fragColor = drawYumetarou(int(fragCoord.x), int(fragCoord.y), 15, 15);
 }
