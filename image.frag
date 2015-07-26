@@ -103,8 +103,12 @@ vec4 drawElements(in int x, in int y)
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
-    fragCoord.y = iResolution.y - fragCoord.y;
-    fragCoord /= 2.;
+    // Normalize coordinates.
+    fragCoord = (fragCoord.xy / iResolution.xy);
+    // Invert the Y axis.
+    fragCoord.y = 1.0-fragCoord.y;
+    // Convert to NES screen resolution.
+    fragCoord *= vec2(256,240);
     
     // Default the outgoing fragColor to the background color.
     fragColor = RGBA(60.00, 188.0, 252.0, 255.0);
@@ -112,6 +116,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     // Determine and store the texel of the scene elements this pixel occupies.
     vec4 imageElements = drawElements(int(fragCoord.x), int(fragCoord.y));
     
-    // Mix this texel with the background.
+	// Mix this texel with the background.
 	fragColor = mix(fragColor, imageElements, imageElements.a);
 }
