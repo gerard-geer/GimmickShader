@@ -1,8 +1,9 @@
-// A 2,4,8 or 16 element array implemented as a binary search, #defined for type agnosticity.
+// A 2,4,8,16, or 32 element array implemented as a binary search, #defined for type agnosticity.
 #define ARR2(x, a,b) (x<1) ? a : b
 #define ARR4(x, a,b,c,d) (x<2) ? ARR2(x,a,b) : ARR2(x-2,c,d)
 #define ARR8(x, a,b,c,d, e,f,g,h) (x<4) ? ARR4(x, a,b,c,d) : ARR4(x-4, e,f,g,h)
 #define ARR16(x, a,b,c,d, e,f,g,h, i,j,k,l, m,n,o,p) (x<8) ? ARR8(x, a,b,c,d, e,f,g,h) : ARR8(x-8, i,j,k,l, m,n,o,p)
+#define ARR32(x_, a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p, q,r,s,t,u,v,w,x,y,z,aa,ab,ac,ad,ae,af) (x_<16) ? ARR16(x_, a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) : ARR16(x_-16,q,r,s,t,u,v,w,x,y,z,aa,ab,ac,ad,ae,af)
 
 // A simple conversion macro that  converts 255 range values to normal. These will be done ahead of time eventually.
 #define RGBA(r, g, b, a) vec4(r*.003922,g*.003922,b*.003922,a*.003922)
