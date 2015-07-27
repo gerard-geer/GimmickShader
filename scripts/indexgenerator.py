@@ -19,7 +19,9 @@ for t in colors:
 	palette[str(t[1])] = len(palette.keys())
 	
 # Print the color->index binding.
-print(palette)
+for key, value in palette.iteritems():
+	print str(value) + ': ' + key
+
 
 # Get a list of pixels.
 pixels = im.getdata()
@@ -33,4 +35,4 @@ for i in range(im.size[1]): # Outer loop loops over height.
 
 # Now we can print the output.
 for l in indices:
-	print(''.join(l))
+	print(' '.join(l))
