@@ -282,7 +282,7 @@ int farClouds(in int x, in int y)
 
 vec4 drawFarClouds(in int x, in int y, in int aty)
 {
-    if(y >= aty && y < aty + 5) return farCloudsPalette(farClouds(x,y));
+    if(y >= aty && y < aty + 5) return farCloudsPalette(farClouds(x,y-aty));
     if(y >= aty + 5) return RGBA(168.0, 228.0, 252.0, 255.0);
     return vec4(0.0);
 }
@@ -290,10 +290,10 @@ vec4 drawFarClouds(in int x, in int y, in int aty)
 // Draws all sprites and tiles.
 vec4 drawElements(in int x, in int y)
 {
-    vec4 farClouds = drawFarClouds(x,y,75);
-    vec4 bird = drawBird(x,y,64,15);
-    vec4 shore = drawShore(x,y,10,80);
-    vec4 yumetarou = drawYumetarou(x,y,15,15);
+    vec4 farClouds = drawFarClouds(x,y,128);
+    vec4 bird = drawBird(x,y,100,66);
+    vec4 shore = drawShore(x,y,0,136);
+    vec4 yumetarou = drawYumetarou(x,y,52,117);
     
     // Overriting blending using alpha, since every sprite returns a value for every pixe.
     vec4 result = mix(farClouds, bird, bird.a);
@@ -308,8 +308,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     fragCoord = (fragCoord.xy / iResolution.xy);
     // Invert the Y axis.
     fragCoord.y = 1.0-fragCoord.y;
-    // Convert to NES screen resolution.
-    fragCoord *= vec2(256,240);
+    // Convert to NES screen resolution. The Y is stunted because we are not doing the HUD.
+    fragCoord *= vec2(256,184);
     
     // Default the outgoing fragColor to the background color.
     fragColor = RGBA(60.00, 188.0, 252.0, 255.0);
