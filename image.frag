@@ -259,12 +259,47 @@ vec4 drawShore(int x, int y, int atx, int aty)
     return shorePalette(shoreExterior(x,y));
 }
 
+vec4 farCloudsPalette(int x)
+{
+    return ARR2(x, vec4(0.000, 0.000, 0.000, 0.000),
+                   RGBA(168.0, 228.0, 252.0, 255.0));
+}
+
+int farClouds(in int x, in int y)
+{
+    x = int(mod(float(x),32.0));
+    y = int(mod(float(y),5.0));
+    if(y < 4)
+    {
+        return ARR4(y, 
+        ARR32(x, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0),
+        ARR32(x, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0),
+        ARR32(x, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0),
+        ARR32(x, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0));
+    }
+    return ARR32(x, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+}
+
+vec4 drawFarClouds(in int x, in int y, in int aty)
+{
+    if(y >= aty && y < aty + 5) return farCloudsPalette(farClouds(x,y));
+    if(y >= aty + 5) return RGBA(168.0, 228.0, 252.0, 255.0);
+    return vec4(0.0);
+}
+
 // Draws all sprites and tiles.
 vec4 drawElements(in int x, in int y)
 {
-    return   drawYumetarou(x,y,15,15)
-        	+drawBird(x,y,64,15)
-        	+drawShore(x,y,10, 80);
+    vec4 farClouds = drawFarClouds(x,y,75);
+    vec4 bird = drawBird(x,y,64,15);
+    vec4 shore = drawShore(x,y,10,80);
+    vec4 yumetarou = drawYumetarou(x,y,15,15);
+    
+    // Overriting blending using alpha, since every sprite returns a value for every pixe.
+    vec4 result = mix(farClouds, bird, bird.a);
+    result = mix(result,shore,shore.a);
+    result = mix(result,yumetarou, yumetarou.a);
+    return result;
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
