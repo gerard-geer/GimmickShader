@@ -29,9 +29,8 @@ indices = []
 for i in range(im.size[1]): # Outer loop loops over height.
 	indices.append([])
 	for j in range(im.size[0]): # Inner? Width.
-		indices[i].append( str(palette[ str( pixels[i*im.size[0]+j] ) ])+' ' )
+		indices[i].append( str(palette[ str( pixels[i*im.size[0]+j] ) ]) )
 
 # Now we can print the output.
 for l in indices:
-	for s in l:
-		print(s)
+	print(''.join(l))
