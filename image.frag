@@ -139,9 +139,9 @@ int birdWingsDown(in int x, in int y)
     x = int(mod(float(x),8.0));
     y = int(mod(float(y),5.0));
     if(y<4){
-		return ARR4(y,	 ARR8(x, 3, 3, 3, 1, 0, 3, 3, 3),
+		return ARR4(y,	 ARR8(x, 3, 3, 3, 0, 1, 3, 3, 3),
 						 ARR8(x, 3, 3, 3, 0, 0, 0, 3, 3),
-						 ARR8(x, 3, 3, 3, 0, 1, 0, 1, 3),
+						 ARR8(x, 3, 3, 0, 1, 0, 1, 3, 3),
 						 ARR8(x, 3, 3, 0, 3, 3, 3, 0, 3));
     }
     if(y==4) return		 ARR8(x, 3, 3, 2, 3, 3, 3, 2, 3);
