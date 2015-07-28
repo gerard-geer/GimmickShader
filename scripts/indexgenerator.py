@@ -1,5 +1,5 @@
 from PIL import Image
-
+from sys import exit
 
 if __name__ == "__main__":
 
@@ -7,15 +7,23 @@ if __name__ == "__main__":
 	
 	while again:
 		# Get the image name.
-		filename = raw_input('Image name: ')
+		try:
+			filename = raw_input('\nImage name: ')
+		except KeyboardInterrupt:
+			print("\nKeyboard exit.")
+			exit()
 
 		# If there is no filename, we assume it's a .PNG.
 		if not filename.endswith(('.png', '.PNG', '.jpg', '.jpeg', '.dds', '.raw')):
 			filename += '.png'
 
 		# Load the image. 
-		im = Image.open(filename)
-
+		try:
+			im = Image.open(filename)
+		except IOError:
+			print('Invalid filename.')
+			continue
+			
 		# Get the colors used in the image.
 		colors = im.getcolors()
 
@@ -48,4 +56,8 @@ if __name__ == "__main__":
 			print(' '.join(l))
 			
 		# Do we want to do another?
-		again = raw_input('Again? (y/n)') == 'y'
+		try:
+			again = raw_input('\nAgain? (y/n) ') == 'y'
+		except KeyboardInterrupt:
+			print("\nKeyboard exit.")
+			exit()
