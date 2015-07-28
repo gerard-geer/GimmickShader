@@ -57,7 +57,7 @@ if __name__ == "__main__":
 			
 		# Do we want to do another?
 		try:
-			again = raw_input('\nAgain? (y/n) ') != 'n'
+			again = raw_input('\nAgain? (y/n) ') != 'n' 
 		except KeyboardInterrupt:
 			print("\nKeyboard exit.")
 			exit()
