@@ -14,7 +14,7 @@ if __name__ == "__main__":
 			exit()
 
 		# If there is no filename, we assume it's a .PNG.
-		if not filename.endswith(('.png', '.PNG', '.jpg', '.jpeg', '.dds', '.raw')):
+		if not filename.endswith(('.png', '.PNG', '.jpg', '.jpeg', '.dds', '.raw', '.eeuuughhh')):
 			filename += '.png'
 
 		# Load the image. 
