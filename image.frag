@@ -455,8 +455,17 @@ vec4 drawWaves(in int x, in int y, in int aty)
 {
     if(y >= aty && y < aty + 5)
     {
-        if(x > 79) return wavesSunnyPalette(wavesA(x,y-aty));
-        return wavesShadowPalette(wavesA(x,y-aty));
+        int t = int(mod(iGlobalTime*4.,4.));
+        if(x > 79) return ARR4(t,
+                               wavesSunnyPalette(wavesA(x,y-aty)),
+                               wavesSunnyPalette(wavesB(x,y-aty)),
+                               wavesSunnyPalette(wavesC(x,y-aty)),
+                               wavesSunnyPalette(wavesD(x,y-aty)));
+        return ARR4(t,
+                    wavesShadowPalette(wavesA(x,y-aty)),
+                    wavesShadowPalette(wavesB(x,y-aty)),
+                    wavesShadowPalette(wavesC(x,y-aty)),
+                    wavesShadowPalette(wavesD(x,y-aty)));
     }
     return vec4(0.0);
 }
@@ -470,7 +479,7 @@ vec4 drawElements(in int x, in int y)
     vec4 yumetarou = drawYumetarou(x,y,52,117);
     vec4 waves = drawWaves(x,y,168);
     
-    // Overriting blending using alpha, since every sprite returns a value for every pixe.
+    // Overriting blending using alpha, since every sprite returns a value for every pixel.
     vec4 result = mix(farClouds, bird, bird.a);
     result = mix(result,shore,shore.a);
     result = mix(result,waves,waves.a);
