@@ -21,14 +21,19 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 // Returns a palette entry given an index.
 vec4 yumetarouPalette(int c)
 {
-    return ARR8(c,  WHITE,  	// The slightly not white white.
-                	L_GREEN,	// Light green.
-                	D_GREEN,	// Dark green.
-                    L_GOLD, 	// Light gold.
-                	D_GOLD, 	// Dark gold.
-                	TRANS,  	// Transparency.
-                	TRANS,  	// Transparency.
-                	TRANS); 	// Transparency.
+    if(c < 4)
+    {
+        return ARR4(c,  WHITE,  	// The slightly not white white.
+                        L_GREEN,	// Light green.
+                        D_GREEN,	// Dark green.
+                        L_GOLD); 	// Light gold.
+    }
+    else
+    {
+        c-=4;
+        return ARR2(c, 	D_GOLD, 	// Dark gold.
+                		TRANS);  	// Transparency.
+    }
 }
 
 // Returns a palette index given the position of the pixel within the sprite.
