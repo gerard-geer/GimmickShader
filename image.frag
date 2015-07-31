@@ -19,7 +19,7 @@ const vec4 L_GOLD  = vec4(.988, .596, .219, 1.00);
 const vec4 TRANS   = vec4(.000, .000, .000, .000);
     
 // Returns a palette entry given an index.
-vec4 yumetarouPalette(int c)
+vec4 yumetarouPalette(in int c)
 {
     if(c < 4)
     {
@@ -96,7 +96,7 @@ int yumetarouEyesClosed(in int x, in int y)
 }
  
 // Returns a texel of Yumetarou.
-vec4 drawYumetarou(int x, int y, int atx, int aty)
+vec4 drawYumetarou(in int x, in int y, in int atx, in int aty)
 {
     if(x < atx || x > atx + 15) return vec4(0.0);
     if(y < aty || y > aty + 18) return vec4(0.0);
@@ -111,7 +111,7 @@ vec4 drawYumetarou(int x, int y, int atx, int aty)
         return yumetarouPalette(yumetarouEyesOpen(x,y));
 }
 
-vec4 birdPalette(int c)
+vec4 birdPalette(in int c)
 {
     return ARR4(c,  WHITE,  // The slightly not white white.
                 	GRAY,  // Gray
@@ -164,7 +164,7 @@ int birdWingsDown(in int x, in int y)
     else return 3;
 }
 
-vec4 drawBird(int x, int y, int atx, int aty)
+vec4 drawBird(in int x, in int y, in int atx, in int aty)
 {
     if(x < atx || x > atx + 7) return vec4(0.0);
     if(y < aty || y > aty + 4) return vec4(0.0);
@@ -263,7 +263,7 @@ int shoreExterior(in int x, in int y)
             ARR16(x, 2, 2, 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 0, 0, 2, 3));
 }
 
-vec4 drawShore(int x, int y, int atx, int aty)
+vec4 drawShore(in int x, in int y, in int atx, in int aty)
 {
     if(x < atx || x > atx + 79) return vec4(0.0);
     if(y < aty || y > aty + 31) return vec4(0.0);
@@ -274,7 +274,7 @@ vec4 drawShore(int x, int y, int atx, int aty)
     return shorePalette(shoreExterior(x,y));
 }
 
-vec4 farCloudsPalette(int x)
+vec4 farCloudsPalette(in int x)
 {
     return ARR2(x, TRANS,
                    L_BLUE);
@@ -326,7 +326,7 @@ vec4 wavesSunnyPalette(in int x)
     else return WHITE;
 }
 
-int wavesA( in int x, in int y)
+int wavesA(in int x, in int y)
 {
     x = int(mod(float(x),32.0));
     y = int(mod(float(y),8.0));
@@ -357,7 +357,7 @@ int wavesA( in int x, in int y)
     }
 }
 
-int wavesB( in int x, in int y)
+int wavesB(in int x, in int y)
 {
     x = int(mod(float(x),32.0));
     y = int(mod(float(y),8.0));
@@ -388,7 +388,7 @@ int wavesB( in int x, in int y)
     }
 }
 
-int wavesC( in int x, in int y)
+int wavesC(in int x, in int y)
 {
     x = int(mod(float(x),32.0));
     y = int(mod(float(y),8.0));
@@ -420,7 +420,7 @@ int wavesC( in int x, in int y)
     }
 }
 
-int wavesD( in int x, in int y)
+int wavesD(in int x, in int y)
 {
     x = int(mod(float(x),32.0));
     y = int(mod(float(y),8.0));
@@ -478,7 +478,7 @@ vec4 drawElements(in int x, in int y)
     return result;
 }
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     // Normalize coordinates.
     fragCoord = (fragCoord.xy / iResolution.xy);
