@@ -455,7 +455,7 @@ vec4 drawWaves(in int x, in int y, in int aty)
 {
     if(y >= aty && y < aty + 5)
     {
-        if(x > 80) return wavesSunnyPalette(wavesA(x,y-aty));
+        if(x > 79) return wavesSunnyPalette(wavesA(x,y-aty));
         return wavesShadowPalette(wavesA(x,y-aty));
     }
     return vec4(0.0);
