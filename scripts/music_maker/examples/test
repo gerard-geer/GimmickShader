@@ -1,19 +1,13 @@
 reset
 step 0.2
 amp 0.3
-duty 0.8
-wave 0
+duty 0.0
+wave 2
 B 3
 C 4
 E 4
 G 4
 B 4
-//
-// This is a comment
-reset
-
-
-
 
 B 4
 B 4

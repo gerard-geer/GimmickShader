@@ -242,33 +242,33 @@ void print_line(float freq, int octave)
 	{
 		return;
 	}
-	char instr[16];
-	memset(instr,0,sizeof(char) * 16);
+	float start = step_prog;
+	float end = step_prog + step_size;
+	freq = freq * (1 << octave);
+//	printf("\t((t>%f)?((t<%f)?{WAVE_FUNC}:0.0):0.0)\n + ",
+//		start,end,freq*(1<<octave),duty,amp);
+
+	char func_str[512];
+	memset(func_str,0,sizeof(char) * 512);
 	switch(wave_sel)
 	{
 		default:
 		case pulse:
-			strcpy(instr, "pulse");
+			sprintf(func_str,"step (%f, sin(time * %f * 0.5) ) * %f",duty, freq, amp);
 			break;
 		case saw:
-			 strcpy(instr, "saw");
+			sprintf(func_str,"((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f",freq,amp);
 			break;
 		case tri:
-			strcpy(instr, "tri");
+			sprintf(func_str,"%f * (((floor(abs(((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f) * 16. )*0.0625)*2.0)-1.0)",amp,freq,amp);
 			break;
 		case sine:
-			strcpy(instr, "sine");
 			break;
 		case noise:
-			strcpy(instr, "noise");
 			break;
 	}
 
-	float start = step_prog;
-	float end = step_prog + step_size;
-	printf("\tplayNote(t, %f, %f, %f, %s, %f, %f)\n + ",
-		freq * (1 << octave),duty,amp,
-		instr,start,end);
+	printf("\t( (time > %f) ? ( (time < %f) ? (%s) : 0.0) : 0.0)\n + ",start,end,func_str);
 }
 
 void read_loop(void)
@@ -278,7 +278,7 @@ void read_loop(void)
 		fprintf(stderr,"Error: File is not open, nothing to read!\n");
 		return;
 	}
-	printf("return ");
+	printf("return vec2(");
 	char *line_buffer = (char *)malloc(sizeof(char) * LINE_BUFFER_SIZE + 1);
 	memset(line_buffer,0,sizeof(char) * LINE_BUFFER_SIZE + 1);
 	while (fgets(line_buffer, LINE_BUFFER_SIZE, track_file))
@@ -286,7 +286,7 @@ void read_loop(void)
 		handle_line(line_buffer);
 	}
 	fclose(track_file);
-	printf("0.0;\n");
+	printf("0.0);\n");
 	free (line_buffer);
 
 }
