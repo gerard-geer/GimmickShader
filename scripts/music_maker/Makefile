@@ -1,12 +1,12 @@
-CC := cc
-CFLAGS := -O2 -Wall
+CC := clang
+CFLAGS := -O2 -G -Wall -Iinc
 
 LDFLAGS :=
 LIBRARIES :=
 
-SOURCES := $(wildcard *.c)
+SOURCES := $(wildcard src/*.c)
 OBJECTS := $(SOURCES:.c=.o)
-EXEC_NAME := mconv
+EXEC_NAME := tracker
 
 .PHONY: all clean
 

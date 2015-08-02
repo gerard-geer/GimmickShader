@@ -1,0 +1,38 @@
+reset
+step 0.2
+amp 0.3
+duty 0.8
+wave 0
+B 3
+C 4
+E 4
+G 4
+B 4
+B 4
+B 4
+B 4
+-
+-
+C 5
+B 4
+-
+G 4
+E 4
+C 4
+B 3
+C 4
+E 4
+G 4
+B 4
+C 5
+B 4
+B 4
+B 4
+B 4 
+B 4 
+B 4 
+-
+-
+-
+-
+

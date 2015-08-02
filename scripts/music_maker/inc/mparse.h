@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <string.h>
 
 // Command list for tracker:
 // 
@@ -49,28 +49,29 @@
 #define NOTE_AS 183.062174721
 #define NOTE_B 193.947479106
 
-enum wavetype
-{
-	pulse = 0,
-	saw = 1,
-	tri = 2,
-	sine = 3,
-	noise = 4
-}
 
 extern FILE *track_file;
 
 // Track progress state vars
-extern int amp;
+extern float amp;
 extern float duty;
 extern float step_size;
-extern wavetype wave_sel;
 
 extern float step_prog;
 
 int parse_init(const char *fname);
 char *get_arg_to(const char *comp, char *line);
 void handle_line(char *line);
+void print_line(float freq, int octave);
 void read_loop(void);
+typedef enum
+{
+	pulse = 0,
+	saw = 1,
+	tri = 2,
+	sine = 3,
+	noise = 4
+} wavetype;
 
+extern wavetype wave_sel;
 #endif
