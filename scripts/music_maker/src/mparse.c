@@ -92,35 +92,40 @@ void handle_line(char *line)
 	if (check)
 	{
 		step_prog = 0;
-		goto handle_line_finished;
+		free(check);
+		return;
 	}
 
 	check = get_arg_to("step ",line);
 	if (check)
 	{
 		step_size = (float)strtof(check,0);
-		goto handle_line_finished;
+		free(check);
+		return;
 	}
 
 	check = get_arg_to("amp ",line);
 	if (check)
 	{
 		amp = (float)strtof(check,0);
-		goto handle_line_finished;
+		free(check);
+		return;
 	}
 
 	check = get_arg_to("duty ",line);
 	if (check)
 	{
 		duty = (float)strtof(check,0);
-		goto handle_line_finished;
+		free(check);
+		return;
 	}
 
 	check = get_arg_to("wave ",line);
 	if (check)
 	{
 		wave_sel = (int)strtoul(check,NULL,0);
-		goto handle_line_finished;
+		free(check);
+		return;
 	}
 
 // Notes
@@ -216,11 +221,16 @@ void handle_line(char *line)
 		goto handle_line_finished;
 	}
 
+// Unrecognized token, or a comment, etc
+	free(check);
+	return;
+
 handle_line_finished:
 	if (check)
 	{
 		free(check);
 		print_line(freq, octave);
+		step_prog += step_size;
 	}
 	return;
 	
@@ -273,7 +283,6 @@ void read_loop(void)
 	memset(line_buffer,0,sizeof(char) * LINE_BUFFER_SIZE + 1);
 	while (fgets(line_buffer, LINE_BUFFER_SIZE, track_file))
 	{
-		step_prog += step_size;
 		handle_line(line_buffer);
 	}
 	fclose(track_file);
