@@ -305,6 +305,10 @@ void read_loop(void)
 		fprintf(stderr,"Error: File is not open, nothing to read!\n");
 		return;
 	}
+	printf("// ShaderTracker: Ridiculous shader additive sound engine\n");
+	printf("// Engine / Function Builder by Michael Moffitt (https://github.com/mikejmoffitt)\n");
+	printf("// Sound Generation Functions by Gerard Geer (https://github.com/gerard-geer)\n");
+	printf("vec2 mainSound(float time)\n{\t");
 	printf("return vec2(");
 	char *line_buffer = (char *)malloc(sizeof(char) * LINE_BUFFER_SIZE + 1);
 	memset(line_buffer,0,sizeof(char) * LINE_BUFFER_SIZE + 1);
@@ -313,7 +317,7 @@ void read_loop(void)
 		handle_line(line_buffer);
 	}
 	fclose(track_file);
-	printf("0.0);\n");
+	printf("0.0);\n}\n");
 	free (line_buffer);
 
 }
