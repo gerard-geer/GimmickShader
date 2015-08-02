@@ -56,7 +56,8 @@ extern FILE *track_file;
 extern float amp;
 extern float duty;
 extern float step_size;
-
+extern float decay_len;
+extern float note_len;
 extern float step_prog;
 
 int parse_init(const char *fname);

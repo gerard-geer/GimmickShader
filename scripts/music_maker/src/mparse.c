@@ -6,12 +6,16 @@ float amp;
 float duty;
 float step_prog;
 float step_size;
+float decay_len;
+float note_len;
 wavetype wave_sel;
 
 #define AMP_DEFAULT 0.15
 #define DUTY_DEFAULT 0.5
-#define STEP_SIZE_DEFAULT 0.0
+#define STEP_SIZE_DEFAULT 0.2
 #define WAVE_SEL_DEFAULT pulse
+#define DECAY_LEN_DEFAULT 0.2
+#define NOTE_LEN_DEFAULT 0.2
 
 #define LINE_BUFFER_SIZE 64
 
@@ -32,6 +36,7 @@ int parse_init(const char *fname)
 	duty = DUTY_DEFAULT;
 	step_size = STEP_SIZE_DEFAULT; 
 	wave_sel = WAVE_SEL_DEFAULT;
+	decay_len = DECAY_LEN_DEFAULT;
 	step_prog = 0;
 	return 1;
 }
@@ -124,6 +129,22 @@ void handle_line(char *line)
 	if (check)
 	{
 		wave_sel = (int)strtoul(check,NULL,0);
+		free(check);
+		return;
+	}
+
+	check = get_arg_to("decay ",line);
+	if (check)
+	{
+		decay_len = (float)strtof(check,0);
+		free(check);
+		return;
+	}
+
+	check = get_arg_to("len ",line);
+	if (check)
+	{
+		note_len = (float)strtof(check,0);
 		free(check);
 		return;
 	}
@@ -243,10 +264,14 @@ void print_line(float freq, int octave)
 		return;
 	}
 	float start = step_prog;
-	float end = step_prog + step_size;
+	float end = step_prog + note_len;
 	freq = freq * (1 << octave);
 //	printf("\t((t>%f)?((t<%f)?{WAVE_FUNC}:0.0):0.0)\n + ",
 //		start,end,freq*(1<<octave),duty,amp);
+
+	char decay_str[64];
+	memset(decay_str,0,sizeof(char) * 64);
+	sprintf(decay_str,"max(1.0 - ((time - %f)/%f), 0.0)",step_prog,decay_len);
 
 	char func_str[512];
 	memset(func_str,0,sizeof(char) * 512);
@@ -254,17 +279,19 @@ void print_line(float freq, int octave)
 	{
 		default:
 		case pulse:
-			sprintf(func_str,"step (%f, sin(time * %f * 0.5) ) * %f",duty, freq, amp);
+			sprintf(func_str,"%s * step (%f, sin(time * %f * 0.5) ) * %f",decay_str,duty, freq, amp);
 			break;
 		case saw:
-			sprintf(func_str,"((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f",freq,amp);
+			sprintf(func_str,"%s * ((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f",decay_str,freq,amp);
 			break;
 		case tri:
-			sprintf(func_str,"%f * (((floor(abs(((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f) * 16. )*0.0625)*2.0)-1.0)",amp,freq,amp);
+			sprintf(func_str,"%s * %f * (((floor(abs(((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f) * 16. )*0.0625)*2.0)-1.0)",decay_str,amp,freq,amp);
 			break;
 		case sine:
+			sprintf(func_str,"%s * sin(time * %f) * %f",decay_str,freq,amp);
 			break;
 		case noise:
+			sprintf(func_str,"%s * ((fract(sin(dot(vec2(time,%f),vec2(12.9898,78.233)))*43758.5453)*2.0)-1.0)*%f",decay_str,freq/4.0,amp);
 			break;
 	}
 
