@@ -5,20 +5,35 @@
 #define ARR16(x, a,b,c,d, e,f,g,h, i,j,k,l, m,n,o,p) (x<8) ? ARR8(x, a,b,c,d, e,f,g,h) : ARR8(x-8, i,j,k,l, m,n,o,p)
 #define ARR32(x_, a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p, q,r,s,t,u,v,w,x,y,z,aa,ab,ac,ad,ae,af) (x_<16) ? ARR16(x_, a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) : ARR16(x_-16,q,r,s,t,u,v,w,x,y,z,aa,ab,ac,ad,ae,af)
 
-// A simple conversion macro that  converts 255 range values to normal. These will be done ahead of time eventually.
-#define RGBA(r, g, b, a) vec4(r*.003922,g*.003922,b*.003922,a*.003922)
-
+// Constant color vectors so palette functions don't continually have to initialize new stuff.
+const vec4 D_BLUE  = vec4(.235, .737, .988, 1.00);
+const vec4 L_BLUE  = vec4(.659, .894, .988, 1.00);
+const vec4 WHITE   = vec4(.988, .988, .988, 1.00);
+const vec4 BLACK   = vec4(.000, .000, .000, 1.00);
+const vec4 GRAY    = vec4(.455, .455, .455, 1.00);
+const vec4 GRASS   = vec4(.502, .816, .063, 1.00);
+const vec4 D_GREEN = vec4(.000, .235, .078, 1.00);
+const vec4 L_GREEN = vec4(.298, .863, .282, 1.00);
+const vec4 D_GOLD  = vec4(.486, .031, .000, 1.00);
+const vec4 L_GOLD  = vec4(.988, .596, .219, 1.00);
+const vec4 TRANS   = vec4(.000, .000, .000, .000);
+    
 // Returns a palette entry given an index.
-vec4 yumetarouPalette(int c)
+vec4 yumetarouPalette(in int c)
 {
-    return ARR8(c,  RGBA(252.0, 252.0, 252.0, 255.0),  // The slightly not white white.
-                	RGBA(76.00, 220.0, 72.00, 255.0),  // Light green.
-                	RGBA(0.000, 60.00, 20.00, 255.0),  // Dark green.
-                    RGBA(252.0, 152.0, 56.00, 255.0),  // Light gold.
-                	RGBA(124.0, 8.000, 0.000, 255.0),  // Dark gold.
-                	vec4(0.000, 0.000, 0.000, 0.000),  // Transparency.
-                	vec4(0.000, 0.000, 0.000, 0.000),  // Transparency.
-                	vec4(0.000, 0.000, 0.000, 0.000)); // Transparency.
+    if(c < 4)
+    {
+        return ARR4(c,  WHITE,  	// The slightly not white white.
+                        L_GREEN,	// Light green.
+                        D_GREEN,	// Dark green.
+                        L_GOLD); 	// Light gold.
+    }
+    else
+    {
+        c-=4;
+        return ARR2(c, 	D_GOLD, 	// Dark gold.
+                		TRANS);  	// Transparency.
+    }
 }
 
 // Returns a palette index given the position of the pixel within the sprite.
@@ -81,7 +96,7 @@ int yumetarouEyesClosed(in int x, in int y)
 }
  
 // Returns a texel of Yumetarou.
-vec4 drawYumetarou(int x, int y, int atx, int aty)
+vec4 drawYumetarou(in int x, in int y, in int atx, in int aty)
 {
     if(x < atx || x > atx + 15) return vec4(0.0);
     if(y < aty || y > aty + 18) return vec4(0.0);
@@ -96,12 +111,12 @@ vec4 drawYumetarou(int x, int y, int atx, int aty)
         return yumetarouPalette(yumetarouEyesOpen(x,y));
 }
 
-vec4 birdPalette(int c)
+vec4 birdPalette(in int c)
 {
-    return ARR4(c,  RGBA(252.0, 252.0, 252.0, 255.0),  // The slightly not white white.
-                	RGBA(116.0, 116.0, 116.0, 255.0),  // Gray
-                	RGBA(0.000, 0.000, 0.000, 255.0),  // Black
-                    vec4(0.000, 0.000, 0.000, 0.000)); // Transparency.
+    return ARR4(c,  WHITE,  // The slightly not white white.
+                	GRAY,  // Gray
+                	BLACK,  // Black
+                    TRANS); // Transparency.
 }
 
 int birdWingsLevel(in int x, in int y)
@@ -149,7 +164,7 @@ int birdWingsDown(in int x, in int y)
     else return 3;
 }
 
-vec4 drawBird(int x, int y, int atx, int aty)
+vec4 drawBird(in int x, in int y, in int atx, in int aty)
 {
     if(x < atx || x > atx + 7) return vec4(0.0);
     if(y < aty || y > aty + 4) return vec4(0.0);
@@ -164,10 +179,10 @@ vec4 drawBird(int x, int y, int atx, int aty)
 
 vec4 shorePalette(in int x)
 {
-    return ARR4(x, RGBA(252.0, 252.0, 252.0, 255.0),
-                   RGBA(128.0, 208.0, 16.00, 255.0),
-                   RGBA(116.0, 116.0, 116.0, 255.0),
-                   vec4(0.000, 0.000, 0.000, 1.0));
+    return ARR4(x, WHITE,
+                   GRASS,
+                   GRAY,
+                   BLACK);
 }
 
 int shoreInterior(in int x, in int y)
@@ -175,14 +190,14 @@ int shoreInterior(in int x, in int y)
     x = int(mod(float(x),32.0));
     y = int(mod(float(y),32.0));
     return ARR32(y, 
-             ARR32(x, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
-			 ARR32(x, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-			 ARR32(x, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-			 ARR32(x, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-			 ARR32(x, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-			 ARR32(x, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-			 ARR32(x, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-			 ARR32(x, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+             3,
+			 0,
+			 1,
+			 1,
+			 1,
+			 1,
+			 1,
+			 1,
 			 ARR32(x, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 			 ARR32(x, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1),
 			 ARR32(x, 1, 1, 1, 1, 1, 2, 2, 3, 2, 1, 2, 3, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 3, 2, 1, 1, 1, 1),
@@ -248,7 +263,7 @@ int shoreExterior(in int x, in int y)
             ARR16(x, 2, 2, 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 0, 0, 2, 3));
 }
 
-vec4 drawShore(int x, int y, int atx, int aty)
+vec4 drawShore(in int x, in int y, in int atx, in int aty)
 {
     if(x < atx || x > atx + 79) return vec4(0.0);
     if(y < aty || y > aty + 31) return vec4(0.0);
@@ -259,10 +274,10 @@ vec4 drawShore(int x, int y, int atx, int aty)
     return shorePalette(shoreExterior(x,y));
 }
 
-vec4 farCloudsPalette(int x)
+vec4 farCloudsPalette(in int x)
 {
-    return ARR2(x, vec4(0.000, 0.000, 0.000, 0.000),
-                   RGBA(168.0, 228.0, 252.0, 255.0));
+    return ARR2(x, TRANS,
+                   L_BLUE);
 }
 
 int farClouds(in int x, in int y)
@@ -283,7 +298,175 @@ int farClouds(in int x, in int y)
 vec4 drawFarClouds(in int x, in int y, in int aty)
 {
     if(y >= aty && y < aty + 5) return farCloudsPalette(farClouds(x,y-aty));
-    if(y >= aty + 5) return RGBA(168.0, 228.0, 252.0, 255.0);
+    if(y >= aty + 5) return L_BLUE;
+    return vec4(0.0);
+}
+
+vec4 wavesShadowPalette(in int x)
+{
+    if(x<4)
+    {
+        return ARR4(x,  D_BLUE,
+			   			D_BLUE,
+			   			L_BLUE,
+			   			L_BLUE);
+    }
+    else return WHITE;
+}
+
+vec4 wavesSunnyPalette(in int x)
+{
+    if(x<4)
+    {
+        return ARR4(x, L_BLUE,
+					   WHITE,
+					   L_BLUE,
+					   WHITE);
+    }
+    else return WHITE;
+}
+
+int wavesA(in int x, in int y)
+{
+    x = int(mod(float(x),32.0));
+    y = int(mod(float(y),8.0));
+    if(x < 32) // ARR64 would be a really long line.
+    {
+        return ARR8(y,
+       	ARR32(x, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 4, 4, 4),
+		ARR32(x, 4, 4, 4, 2, 2, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 3, 3, 2, 2, 2, 0, 0, 0, 0, 0, 0),
+		ARR32(x, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 4, 4, 4, 2, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2),
+		ARR32(x, 0, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3),
+		ARR32(x, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3),
+		ARR32(x, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+		2,
+        2);
+    }
+    else
+    {
+        x -= 32;
+        return ARR8(y,
+		ARR32(x, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4),
+        ARR32(x, 0, 0, 0, 0, 2, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4),
+        ARR32(x, 2, 2, 3, 4, 4, 4, 2, 2, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 4, 4),
+        ARR32(x, 4, 4, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 4, 4, 4, 4, 4, 4, 2, 2, 2, 4, 4, 4, 4, 2, 0),
+        ARR32(x, 3, 3, 3, 3, 3, 3, 2, 0, 0, 0, 0, 3, 3, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2, 4, 4, 4, 4, 2, 0, 0, 0, 2),
+        ARR32(x, 0, 0, 0, 0, 0, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2),
+        2,
+        2);
+    }
+}
+
+int wavesB(in int x, in int y)
+{
+    x = int(mod(float(x),32.0));
+    y = int(mod(float(y),8.0));
+    if(x < 32) // ARR64 would be a really long line.
+    {
+        return ARR8(y,
+		ARR32(x, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 2, 0, 0, 0, 0, 0),
+        ARR32(x, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 3, 3, 2, 2, 2, 0),
+        ARR32(x, 0, 0, 0, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2),
+        ARR32(x, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),
+        ARR32(x, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2, 4, 4, 4, 2, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0),
+        ARR32(x, 4, 4, 4, 2, 2, 2, 4, 4, 4, 4, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
+        2,
+        2);
+    }
+    else
+    {
+        x -= 32;
+        return ARR8(y,
+        ARR32(x, 0, 0, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+        ARR32(x, 0, 0, 0, 0, 0, 0, 0, 2, 2, 4, 4, 3, 3, 3, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2),
+        ARR32(x, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 4, 4, 4, 4, 2, 4, 2, 0, 0, 0, 0),
+        ARR32(x, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2),
+        ARR32(x, 0, 0, 0, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 4, 4, 4),
+        ARR32(x, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
+        ARR32(x, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2),
+        2);
+    }
+}
+
+int wavesC(in int x, in int y)
+{
+    x = int(mod(float(x),32.0));
+    y = int(mod(float(y),8.0));
+    if(x < 32) // ARR64 would be a really long line.
+    {
+        return ARR8(y,
+        ARR32(x, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 0, 0, 0, 0, 2, 4, 4, 4, 2, 0, 0, 0, 0, 0, 0, 0),
+        ARR32(x, 2, 0, 0, 0, 3, 4, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 4, 4, 4, 2, 2, 2, 4, 2, 2, 0, 0, 4, 4, 4),
+        ARR32(x, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 4, 4, 4, 4, 4, 3, 0, 0, 0, 0, 0, 0, 3, 3, 4, 4, 4, 4),
+        ARR32(x, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 3, 3, 3, 4, 4, 4, 3, 4, 1),
+        ARR32(x, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 3, 3, 4, 4, 1, 0),
+        ARR32(x, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 1, 0, 0, 0, 0),
+        ARR32(x, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 2, 2, 2),
+        2);
+
+    }
+    else
+    {
+        x -= 32;
+        return ARR8(y,
+		ARR32(x, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 3, 3, 4, 4, 4, 4, 4),
+		ARR32(x, 4, 4, 4, 4, 3, 2, 2, 2, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4),
+		ARR32(x, 4, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 2, 0, 0),
+		ARR32(x, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3, 4, 3, 2, 2, 2, 3, 4, 4, 4, 4, 1, 0, 0, 0, 2, 2),
+		ARR32(x, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 3, 4, 4, 3, 3, 0, 0, 0, 2, 2, 2, 2, 2, 2),
+		ARR32(x, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
+		2,
+		2);
+    }
+}
+
+int wavesD(in int x, in int y)
+{
+    x = int(mod(float(x),32.0));
+    y = int(mod(float(y),8.0));
+    if(x < 32) // ARR64 would be a really long line.
+    {
+        return ARR8(y,
+		ARR32(x, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 4, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2),
+		ARR32(x, 2, 2, 2, 2, 2, 4, 4, 4, 4, 3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 3, 4, 4, 4, 4),
+		ARR32(x, 4, 4, 4, 4, 4, 3, 0, 0, 0, 0, 0, 3, 3, 2, 2, 2, 2, 0, 0, 0, 0, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4),
+		ARR32(x, 3, 3, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 3, 0),
+		ARR32(x, 0, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 3, 0, 0, 0, 0, 0),
+		ARR32(x, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2),
+		ARR32(x, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
+		2);
+    }
+    else
+    {
+        x -= 32;
+        return ARR8(y,
+		ARR32(x, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0),
+		ARR32(x, 4, 4, 4, 3, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
+		ARR32(x, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3),
+		ARR32(x, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 3),
+		ARR32(x, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+		ARR32(x, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0),
+		2,
+		2);
+    }
+}
+
+vec4 drawWaves(in int x, in int y, in int aty)
+{
+    if(y >= aty && y < aty + 5)
+    {
+        int t = int(mod(iGlobalTime*4.,4.));
+        if(x > 79) return ARR4(t,
+                               wavesSunnyPalette(wavesA(x,y-aty)),
+                               wavesSunnyPalette(wavesB(x,y-aty)),
+                               wavesSunnyPalette(wavesC(x,y-aty)),
+                               wavesSunnyPalette(wavesD(x,y-aty)));
+        return ARR4(t,
+                    wavesShadowPalette(wavesA(x,y-aty)),
+                    wavesShadowPalette(wavesB(x,y-aty)),
+                    wavesShadowPalette(wavesC(x,y-aty)),
+                    wavesShadowPalette(wavesD(x,y-aty)));
+    }
     return vec4(0.0);
 }
 
@@ -294,15 +477,17 @@ vec4 drawElements(in int x, in int y)
     vec4 bird = drawBird(x,y,100,66);
     vec4 shore = drawShore(x,y,0,136);
     vec4 yumetarou = drawYumetarou(x,y,52,117);
+    vec4 waves = drawWaves(x,y,168);
     
-    // Overriting blending using alpha, since every sprite returns a value for every pixe.
+    // Overriting blending using alpha, since every sprite returns a value for every pixel.
     vec4 result = mix(farClouds, bird, bird.a);
     result = mix(result,shore,shore.a);
+    result = mix(result,waves,waves.a);
     result = mix(result,yumetarou, yumetarou.a);
     return result;
 }
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     // Normalize coordinates.
     fragCoord = (fragCoord.xy / iResolution.xy);
@@ -312,7 +497,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     fragCoord *= vec2(256,184);
     
     // Default the outgoing fragColor to the background color.
-    fragColor = RGBA(60.00, 188.0, 252.0, 255.0);
+    fragColor = D_BLUE;
     
     // Determine and store the texel of the scene elements this pixel occupies.
     vec4 imageElements = drawElements(int(fragCoord.x), int(fragCoord.y));
