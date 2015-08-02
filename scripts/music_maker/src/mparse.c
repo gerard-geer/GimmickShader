@@ -93,7 +93,7 @@ void handle_line(char *line)
 	float freq = 0.0;
 	int octave = -1;
 	char *check = NULL;
-	check = get_arg_to("reset",line);
+	check = get_arg_to("#reset",line);
 	if (check)
 	{
 		step_prog = 0;
@@ -101,7 +101,7 @@ void handle_line(char *line)
 		return;
 	}
 
-	check = get_arg_to("step ",line);
+	check = get_arg_to("#step ",line);
 	if (check)
 	{
 		step_size = (float)strtof(check,0);
@@ -109,7 +109,7 @@ void handle_line(char *line)
 		return;
 	}
 
-	check = get_arg_to("amp ",line);
+	check = get_arg_to("#amp ",line);
 	if (check)
 	{
 		amp = (float)strtof(check,0);
@@ -117,7 +117,7 @@ void handle_line(char *line)
 		return;
 	}
 
-	check = get_arg_to("duty ",line);
+	check = get_arg_to("#duty ",line);
 	if (check)
 	{
 		duty = (float)strtof(check,0);
@@ -125,7 +125,7 @@ void handle_line(char *line)
 		return;
 	}
 
-	check = get_arg_to("wave ",line);
+	check = get_arg_to("#wave ",line);
 	if (check)
 	{
 		wave_sel = (int)strtoul(check,NULL,0);
@@ -133,7 +133,7 @@ void handle_line(char *line)
 		return;
 	}
 
-	check = get_arg_to("decay ",line);
+	check = get_arg_to("#decay ",line);
 	if (check)
 	{
 		decay_len = (float)strtof(check,0);
@@ -141,7 +141,7 @@ void handle_line(char *line)
 		return;
 	}
 
-	check = get_arg_to("len ",line);
+	check = get_arg_to("#len ",line);
 	if (check)
 	{
 		note_len = (float)strtof(check,0);
@@ -150,84 +150,84 @@ void handle_line(char *line)
 	}
 
 // Notes
-	check = get_arg_to("C ",line);
-	if (check)
-	{
-		freq = NOTE_C;
-		octave = (int)strtoul(check,NULL,0);
-		goto handle_line_finished;
-	}
-	check = get_arg_to("C# ",line);
+	check = get_arg_to("C#",line);
 	if (check)
 	{
 		freq = NOTE_CS;
 		octave = (int)strtoul(check,NULL,0);
 		goto handle_line_finished;
 	}
-	check = get_arg_to("D ",line);
+	check = get_arg_to("C",line);
 	if (check)
 	{
-		freq = NOTE_D;
+		freq = NOTE_C;
 		octave = (int)strtoul(check,NULL,0);
 		goto handle_line_finished;
 	}
-	check = get_arg_to("D# ",line);
+	check = get_arg_to("D#",line);
 	if (check)
 	{
 		freq = NOTE_DS;
 		octave = (int)strtoul(check,NULL,0);
 		goto handle_line_finished;
 	}
-	check = get_arg_to("E ",line);
+	check = get_arg_to("D",line);
+	if (check)
+	{
+		freq = NOTE_D;
+		octave = (int)strtoul(check,NULL,0);
+		goto handle_line_finished;
+	}
+	check = get_arg_to("E",line);
 	if (check)
 	{
 		freq = NOTE_E;
 		octave = (int)strtoul(check,NULL,0);
 		goto handle_line_finished;
 	}
-	check = get_arg_to("F ",line);
-	if (check)
-	{
-		freq = NOTE_F;
-		octave = (int)strtoul(check,NULL,0);
-		goto handle_line_finished;
-	}
-	check = get_arg_to("F# ",line);
+	check = get_arg_to("F#",line);
 	if (check)
 	{
 		freq = NOTE_FS;
 		octave = (int)strtoul(check,NULL,0);
 		goto handle_line_finished;
 	}
-	check = get_arg_to("G ",line);
+	check = get_arg_to("F",line);
 	if (check)
 	{
-		freq = NOTE_G;
+		freq = NOTE_F;
 		octave = (int)strtoul(check,NULL,0);
 		goto handle_line_finished;
 	}
-	check = get_arg_to("G# ",line);
+	check = get_arg_to("G#",line);
 	if (check)
 	{
 		freq = NOTE_GS;
 		octave = (int)strtoul(check,NULL,0);
 		goto handle_line_finished;
 	}
-	check = get_arg_to("A ",line);
+	check = get_arg_to("G",line);
 	if (check)
 	{
-		freq = NOTE_A;
+		freq = NOTE_G;
 		octave = (int)strtoul(check,NULL,0);
 		goto handle_line_finished;
 	}
-	check = get_arg_to("A# ",line);
+	check = get_arg_to("A#",line);
 	if (check)
 	{
 		freq = NOTE_AS;
 		octave = (int)strtoul(check,NULL,0);
 		goto handle_line_finished;
 	}
-	check = get_arg_to("B ",line);
+	check = get_arg_to("A",line);
+	if (check)
+	{
+		freq = NOTE_A;
+		octave = (int)strtoul(check,NULL,0);
+		goto handle_line_finished;
+	}
+	check = get_arg_to("B",line);
 	if (check)
 	{
 		freq = NOTE_B;
