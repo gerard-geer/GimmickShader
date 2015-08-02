@@ -1,0 +1,76 @@
+#ifndef MPARSE_H
+#define MPARSE_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+// Command list for tracker:
+// 
+// reset: set step counter to 0
+// step f: set step size to f
+// amp f: set amplitude
+// duty f: set duty cycle width
+// wave n: set wave
+//
+// Note entry example for the ever-familiar Super Mario Bros intro:
+// reset
+// step 0.2
+// amp 0.15
+// duty 0.5
+// wave 0
+// E 4 
+// E 4
+// - 
+// E 4
+// - 
+// C 4
+// E 4
+// -
+// G 4
+// -
+// -
+// -
+// G 3
+// -
+// -
+// -
+
+#define NOTE_C 102.740133
+#define NOTE_CS 108.849273943
+#define NOTE_D 115.321897287
+#define NOTE_DS 122.179365731
+#define NOTE_E 129.444298743
+#define NOTE_F 137.141514904
+#define NOTE_FS 145.296461114
+#define NOTE_G 153.93615507
+#define NOTE_GS 163.089813585
+#define NOTE_A 172.787595947
+#define NOTE_AS 183.062174721
+#define NOTE_B 193.947479106
+
+enum wavetype
+{
+	pulse = 0,
+	saw = 1,
+	tri = 2,
+	sine = 3,
+	noise = 4
+}
+
+extern FILE *track_file;
+
+// Track progress state vars
+extern int amp;
+extern float duty;
+extern float step_size;
+extern wavetype wave_sel;
+
+extern float step_prog;
+
+int parse_init(const char *fname);
+char *get_arg_to(const char *comp, char *line);
+void handle_line(char *line);
+void read_loop(void);
+
+#endif
