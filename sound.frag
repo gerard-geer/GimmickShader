@@ -35,6 +35,11 @@ float sine(float t, float f, float unusedButNeedFour, float a)
     return sin(t*f)*a; 
 }
 
+float l_decay(float t, float l)
+{
+    return max(1.0-(t/l), 0.0);
+}
+
 float noise(float t, float f, float unusedButNeedFour, float a)
 {
     // The ol' regurgitated noise function.
