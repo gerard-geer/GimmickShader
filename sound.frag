@@ -55,7 +55,7 @@ float sine(float t, float f, float unusedButNeedFour, float a)
 */
 float l_decay(float t, float s, float l)
 {
-    return max(1.0-((t-s)/l), 0.0);
+    return clamp(1.0-((t-s)/l), 0.0, 1.0);
 }
 
 /*
