@@ -1,11 +1,11 @@
 #include "mparse.h"
 
-#define SAW_FUNC "saw(time, %f, %f)"
-#define TRI_FUNC "tri(time, %f, %f)"
-#define SIN_FUNC "sine(time, %f, %f)"
-#define SQR_FUNC "sqr(time, %f, %f, %f)"
-#define NOI_FUNC "noise(time, %f, %f)"
-#define DECAY_FUNC "l_decay(time, %f, %f)"
+#define SAW_FUNC "saw(t, %f, %f)"
+#define TRI_FUNC "tri(t, %f, %f)"
+#define SIN_FUNC "sine(t, %f, %f)"
+#define SQR_FUNC "sqr(t, %f, %f, %f)"
+#define NOI_FUNC "noise(t, %f, %f)"
+#define DECAY_FUNC "l_decay(t, %f, %f)"
 
 FILE *track_file;
 
@@ -278,7 +278,7 @@ void print_line(float freq, int octave)
 
 	char decay_str[64];
 	memset(decay_str,0,sizeof(char) * 64);
-	sprintf(decay_str,"max(1.0 - ((time - %f)/%f), 0.0)",step_prog,decay_len);
+	sprintf(decay_str,DECAY_FUNC, step_prog, decay_len);
 
 	char func_str[512];
 	memset(func_str,0,sizeof(char) * 512);
@@ -287,27 +287,26 @@ void print_line(float freq, int octave)
 		default:
 		case pulse:
 			sprintf(func_str,SQR_FUNC,freq,duty,amp);
-			//sprintf(func_str,"%s * step (%f, sin(time * %f * 0.5) ) * %f",decay_str,duty, freq, amp);
+			//sprintf(func_str,"%s * step (%f, sin(t * %f * 0.5) ) * %f",decay_str,duty, freq, amp);
 			break;
 		case saw:
 			sprintf(func_str,SAW_FUNC,freq,amp);
-			//sprintf(func_str,"%s * ((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f",decay_str,freq,amp);
+			//sprintf(func_str,"%s * ((mod(t * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f",decay_str,freq,amp);
 			break;
 		case tri:
 			sprintf(func_str,TRI_FUNC,freq,amp);
-			//sprintf(func_str,"%s * %f * (((floor(abs(((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f) * 16. )*0.0625)*2.0)-1.0)",decay_str,amp,freq,amp);
+			//sprintf(func_str,"%s * %f * (((floor(abs(((mod(t * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f) * 16. )*0.0625)*2.0)-1.0)",decay_str,amp,freq,amp);
 			break;
 		case sine:
 			sprintf(func_str,SIN_FUNC,freq,amp);
-			//sprintf(func_str,"%s * sin(time * %f) * %f",decay_str,freq,amp);
+			//sprintf(func_str,"%s * sin(t * %f) * %f",decay_str,freq,amp);
 			break;
 		case noise:
 			sprintf(func_str,NOI_FUNC,freq,amp);
-			//sprintf(func_str,"%s * ((fract(sin(dot(vec2(time,%f),vec2(12.9898,78.233)))*43758.5453)*2.0)-1.0)*%f",decay_str,freq/4.0,amp);
+			//sprintf(func_str,"%s * ((fract(sin(dot(vec2(t,%f),vec2(12.9898,78.233)))*43758.5453)*2.0)-1.0)*%f",decay_str,freq/4.0,amp);
 			break;
 	}
-
-	printf("\tresult += ( (time > %f) ? ( (time < %f) ? (%s * (%s)) : 0.0) : 0.0);\n",start,end,decay_str,func_str);
+	printf("\tresult += ( (t>=%f) ? ( (t<%f) ? (%s * (%s)) : 0.0) : 0.0);\n",start,end,decay_str,func_str);
 }
 
 void print_head(void)
@@ -321,10 +320,10 @@ void print_head(void)
 	printf("{\n\treturn ((mod(t*0.5*f*0.31830989, 1.0)*2.0)-1.0)*a;\n}\n\n");
 
 	printf("float sqr(float t, float f, float duty, float a)\n");
-	printf("{\n\treturn step(duty, abs(saw(t,f,1.0)))*a;\n}\n\n");
+	printf("{\n\treturn step(duty, abs(saw(t,f * 0.5,1.0)))*a;\n}\n\n");
 
 	printf("float tri(float t, float f, float a)\n");
-	printf("{\n\treturn (((floor(abs(saw(t,f,a))*16.0)*0.0625)*2.0)-1.0)*a;\n}\n\n");
+	printf("{\n\treturn (((floor(abs(saw(t,f * 0.5,a))*16.0)*0.0625)*2.0)-1.0)*a;\n}\n\n");
 
 	printf("float sine(float t, float f, float a)\n");
 	printf("{\n\treturn sin(t*f)*a;\n}\n\n");
@@ -336,8 +335,12 @@ void print_head(void)
 	printf("{\n\treturn clamp(1.0-((t-s)/l), 0.0, 1.0);\n}\n\n");
 
 	printf("// Shadertoy's sound entry point.\n");
-	printf("vec2 mainSound(float time)\n{\n\t");
+	printf("vec2 mainSound(float t)\n{\n\t");
 	printf("float result = 0.0;\n");
+	printf("// For each line monstrosity:\n");
+	printf("// Current time is greater or equal to note start time, and less than the end time.");
+	printf("// This enables output of the wave function being called, with a coefficient from\n");
+	printf("// the l_decay function providing a minimalist envelope.\n");
 	
 }
 
