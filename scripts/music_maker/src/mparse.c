@@ -295,7 +295,7 @@ void print_line(float freq, int octave)
 			break;
 	}
 
-	printf("\t( (time > %f) ? ( (time < %f) ? (%s) : 0.0) : 0.0)\n + ",start,end,func_str);
+	printf("\tresult += ( (time > %f) ? ( (time < %f) ? (%s) : 0.0) : 0.0);\n",start,end,func_str);
 }
 
 void read_loop(void)
@@ -309,7 +309,7 @@ void read_loop(void)
 	printf("// Engine / Function Builder by Michael Moffitt (https://github.com/mikejmoffitt)\n");
 	printf("// Sound Generation Functions by Gerard Geer (https://github.com/gerard-geer)\n");
 	printf("vec2 mainSound(float time)\n{\t");
-	printf("return vec2(");
+	printf("\tfloat result = 0.0;\n");
 	char *line_buffer = (char *)malloc(sizeof(char) * LINE_BUFFER_SIZE + 1);
 	memset(line_buffer,0,sizeof(char) * LINE_BUFFER_SIZE + 1);
 	while (fgets(line_buffer, LINE_BUFFER_SIZE, track_file))
@@ -317,7 +317,7 @@ void read_loop(void)
 		handle_line(line_buffer);
 	}
 	fclose(track_file);
-	printf("0.0);\n}\n");
+	printf("\treturn vec2(result);\n}\n");
 	free (line_buffer);
 
 }
