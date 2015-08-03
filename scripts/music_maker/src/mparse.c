@@ -1,5 +1,12 @@
 #include "mparse.h"
 
+#define SAW_FUNC "saw(time, %f, %f)"
+#define TRI_FUNC "tri(time, %f, %f)"
+#define SIN_FUNC "sine(time, %f, %f)"
+#define SQR_FUNC "sqr(time, %f, %f, %f)"
+#define NOI_FUNC "noise(time, %f, %f)"
+#define DECAY_FUNC "l_decay(time, %f, %f)"
+
 FILE *track_file;
 
 float amp;
@@ -279,23 +286,59 @@ void print_line(float freq, int octave)
 	{
 		default:
 		case pulse:
-			sprintf(func_str,"%s * step (%f, sin(time * %f * 0.5) ) * %f",decay_str,duty, freq, amp);
+			sprintf(func_str,SQR_FUNC,freq,duty,amp);
+			//sprintf(func_str,"%s * step (%f, sin(time * %f * 0.5) ) * %f",decay_str,duty, freq, amp);
 			break;
 		case saw:
-			sprintf(func_str,"%s * ((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f",decay_str,freq,amp);
+			sprintf(func_str,SAW_FUNC,freq,amp);
+			//sprintf(func_str,"%s * ((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f",decay_str,freq,amp);
 			break;
 		case tri:
-			sprintf(func_str,"%s * %f * (((floor(abs(((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f) * 16. )*0.0625)*2.0)-1.0)",decay_str,amp,freq,amp);
+			sprintf(func_str,TRI_FUNC,freq,amp);
+			//sprintf(func_str,"%s * %f * (((floor(abs(((mod(time * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f) * 16. )*0.0625)*2.0)-1.0)",decay_str,amp,freq,amp);
 			break;
 		case sine:
-			sprintf(func_str,"%s * sin(time * %f) * %f",decay_str,freq,amp);
+			sprintf(func_str,SIN_FUNC,freq,amp);
+			//sprintf(func_str,"%s * sin(time * %f) * %f",decay_str,freq,amp);
 			break;
 		case noise:
-			sprintf(func_str,"%s * ((fract(sin(dot(vec2(time,%f),vec2(12.9898,78.233)))*43758.5453)*2.0)-1.0)*%f",decay_str,freq/4.0,amp);
+			sprintf(func_str,NOI_FUNC,freq,amp);
+			//sprintf(func_str,"%s * ((fract(sin(dot(vec2(time,%f),vec2(12.9898,78.233)))*43758.5453)*2.0)-1.0)*%f",decay_str,freq/4.0,amp);
 			break;
 	}
 
-	printf("\tresult += ( (time > %f) ? ( (time < %f) ? (%s) : 0.0) : 0.0);\n",start,end,func_str);
+	printf("\tresult += ( (time > %f) ? ( (time < %f) ? (%s * (%s)) : 0.0) : 0.0);\n",start,end,decay_str,func_str);
+}
+
+void print_head(void)
+{
+	printf("// ShaderTracker: Ridiculous shader summation sound engine\n");
+	printf("// Engine / Function Builder by Michael Moffitt (https://github.com/mikejmoffitt)\n");
+	printf("// Sound Generation Functions by Gerard Geer (https://github.com/gerard-geer)\n");
+	printf("// Waveform definitions\n\n");
+
+	printf("float saw(float t, float f, float a)\n");
+	printf("{\n\treturn ((mod(t*0.5*f*0.31830989, 1.0)*2.0)-1.0)*a;\n}\n\n");
+
+	printf("float sqr(float t, float f, float duty, float a)\n");
+	printf("{\n\treturn step(duty, abs(saw(t,f,1.0)))*a;\n}\n\n");
+
+	printf("float tri(float t, float f, float a)\n");
+	printf("{\n\treturn (((floor(abs(saw(t,f,a))*16.0)*0.0625)*2.0)-1.0)*a;\n}\n\n");
+
+	printf("float sine(float t, float f, float a)\n");
+	printf("{\n\treturn sin(t*f)*a;\n}\n\n");
+
+	printf("float noise(float t, float f, float a)\n");
+	printf("{\n\treturn ((fract(sin(dot(vec2(t,f),vec2(12.9898,78.233)))*43758.5453)*2.0)-1.0)*a;\n}\n\n");
+
+	printf("float l_decay(float t, float s, float l)\n");
+	printf("{\n\treturn clamp(1.0-((t-s)/l), 0.0, 1.0);\n}\n\n");
+
+	printf("// Shadertoy's sound entry point.\n");
+	printf("vec2 mainSound(float time)\n{\n\t");
+	printf("float result = 0.0;\n");
+	
 }
 
 void read_loop(void)
@@ -305,11 +348,7 @@ void read_loop(void)
 		fprintf(stderr,"Error: File is not open, nothing to read!\n");
 		return;
 	}
-	printf("// ShaderTracker: Ridiculous shader additive sound engine\n");
-	printf("// Engine / Function Builder by Michael Moffitt (https://github.com/mikejmoffitt)\n");
-	printf("// Sound Generation Functions by Gerard Geer (https://github.com/gerard-geer)\n");
-	printf("vec2 mainSound(float time)\n{\t");
-	printf("\tfloat result = 0.0;\n");
+	print_head();
 	char *line_buffer = (char *)malloc(sizeof(char) * LINE_BUFFER_SIZE + 1);
 	memset(line_buffer,0,sizeof(char) * LINE_BUFFER_SIZE + 1);
 	while (fgets(line_buffer, LINE_BUFFER_SIZE, track_file))

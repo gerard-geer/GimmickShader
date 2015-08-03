@@ -5,37 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Command list for tracker:
-// 
-// reset: set step counter to 0
-// step f: set step size to f
-// amp f: set amplitude
-// duty f: set duty cycle width
-// wave n: set wave
-//
-// Note entry example for the ever-familiar Super Mario Bros intro:
-// reset
-// step 0.2
-// amp 0.15
-// duty 0.5
-// wave 0
-// E 4 
-// E 4
-// - 
-// E 4
-// - 
-// C 4
-// E 4
-// -
-// G 4
-// -
-// -
-// -
-// G 3
-// -
-// -
-// -
-
 #define NOTE_C 102.740133
 #define NOTE_CS 108.849273943
 #define NOTE_D 115.321897287
@@ -48,6 +17,16 @@
 #define NOTE_A 172.787595947
 #define NOTE_AS 183.062174721
 #define NOTE_B 193.947479106
+
+// Sound generation function strings
+
+
+extern const char saw_func[];
+extern const char tri_func[];
+extern const char sin_func[];
+extern const char sqr_func[];
+extern const char noi_func[];
+extern const char decay_func[];
 
 
 extern FILE *track_file;
@@ -64,6 +43,7 @@ int parse_init(const char *fname);
 char *get_arg_to(const char *comp, char *line);
 void handle_line(char *line);
 void print_line(float freq, int octave);
+void print_head(void);
 void read_loop(void);
 typedef enum
 {
