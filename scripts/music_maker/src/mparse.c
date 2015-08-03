@@ -1,11 +1,11 @@
 #include "mparse.h"
 
-#define SAW_FUNC "saw(t, %f, %f)"
-#define TRI_FUNC "tri(t, %f, %f)"
-#define SIN_FUNC "sine(t, %f, %f)"
-#define SQR_FUNC "sqr(t, %f, %f, %f)"
-#define NOI_FUNC "noise(t, %f, %f)"
-#define DECAY_FUNC "l_decay(t, %f, %f)"
+#define SAW_FUNC "saw(t%d, %f, %f)"
+#define TRI_FUNC "tri(t%d, %f, %f)"
+#define SIN_FUNC "sine(t%d, %f, %f)"
+#define SQR_FUNC "sqr(t%d, %f, %f, %f)"
+#define NOI_FUNC "noise(t%d, %f, %f)"
+#define DECAY_FUNC "l_decay(t%d, %f, %f)"
 
 FILE *track_file;
 
@@ -15,6 +15,9 @@ float step_prog;
 float step_size;
 float decay_len;
 float note_len;
+float tmod;
+int tmod_cnt;
+
 wavetype wave_sel;
 
 #define AMP_DEFAULT 0.15
@@ -23,6 +26,7 @@ wavetype wave_sel;
 #define WAVE_SEL_DEFAULT pulse
 #define DECAY_LEN_DEFAULT 0.2
 #define NOTE_LEN_DEFAULT 0.2
+#define TMOD_LEN_DEFAULT -1
 
 #define LINE_BUFFER_SIZE 64
 
@@ -59,6 +63,9 @@ char *get_arg_to(const char *comp, char *line)
 	char *line_buffer = (char *)malloc(sizeof(char) * LINE_BUFFER_SIZE + 1);
 	memset(line_buffer, 0, sizeof(char) * LINE_BUFFER_SIZE + 1);
 	strncpy(line_buffer,line,LINE_BUFFER_SIZE);
+
+	wordlen = strlen(comp);
+	/*
 	for (int i = 0; i < LINE_BUFFER_SIZE; i++)
 	{
 		if (comp[i] == '\0' || comp[i] == '\n')
@@ -67,6 +74,7 @@ char *get_arg_to(const char *comp, char *line)
 			break;
 		}
 	}
+	*/
 
 	for (int i = 0; i < LINE_BUFFER_SIZE; i++)
 	{
@@ -152,6 +160,57 @@ void handle_line(char *line)
 	if (check)
 	{
 		note_len = (float)strtof(check,0);
+		free(check);
+		return;
+	}
+
+	check = get_arg_to("#tmod ",line);
+	if (check)
+	{
+		tmod_cnt++;
+		tmod = (float)strtof(check,0);
+		printf("\tfloat t%d = mod(t0,%f);\n",tmod_cnt,tmod);
+		free(check);
+		return;	
+	}
+
+	check = get_arg_to("#main",line);
+	if (check)
+	{	
+		printf("vec2 mainSound(float t0)\n{\n");
+		printf("\tfloat result = 0.0;\n");
+		free(check);
+		return;
+	}
+
+	check = get_arg_to("#endmain",line);
+	if (check)
+	{
+		printf("\n\treturn vec2(result);\n}\n\n");
+		free(check);
+		return;
+	}
+
+	check = get_arg_to("#func ",line);
+	if (check)
+	{
+		printf("float %s(float t%d)\n{\n\tfloat result = 0.0;\n",check,tmod_cnt);
+		free(check);
+		return;
+	}
+
+	check = get_arg_to("#endfunc",line);
+	if (check)
+	{
+		printf("\n\treturn result;\n}\n\n");
+		free(check);
+		return;
+	}
+
+	check = get_arg_to("#call ",line);
+	if (check)
+	{
+		printf("\tresult += %s(t%d);\n",check,tmod_cnt);
 		free(check);
 		return;
 	}
@@ -273,40 +332,35 @@ void print_line(float freq, int octave)
 	float start = step_prog;
 	float end = step_prog + note_len;
 	freq = freq * (1 << octave);
-//	printf("\t((t>%f)?((t<%f)?{WAVE_FUNC}:0.0):0.0)\n + ",
-//		start,end,freq*(1<<octave),duty,amp);
 
 	char decay_str[64];
 	memset(decay_str,0,sizeof(char) * 64);
-	sprintf(decay_str,DECAY_FUNC, step_prog, decay_len);
+	sprintf(decay_str,DECAY_FUNC, tmod_cnt, step_prog, decay_len);
 
 	char func_str[512];
 	memset(func_str,0,sizeof(char) * 512);
+
 	switch(wave_sel)
 	{
 		default:
 		case pulse:
-			sprintf(func_str,SQR_FUNC,freq,duty,amp);
-			//sprintf(func_str,"%s * step (%f, sin(t * %f * 0.5) ) * %f",decay_str,duty, freq, amp);
+			sprintf(func_str,SQR_FUNC,tmod_cnt,freq,duty,amp);
 			break;
 		case saw:
-			sprintf(func_str,SAW_FUNC,freq,amp);
-			//sprintf(func_str,"%s * ((mod(t * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f",decay_str,freq,amp);
+			sprintf(func_str,SAW_FUNC,tmod_cnt,freq,amp);
 			break;
 		case tri:
-			sprintf(func_str,TRI_FUNC,freq,amp);
-			//sprintf(func_str,"%s * %f * (((floor(abs(((mod(t * 0.5 * %f * 0.31830989, 1.0) * 2.0) - 1.0) * %f) * 16. )*0.0625)*2.0)-1.0)",decay_str,amp,freq,amp);
+			sprintf(func_str,TRI_FUNC,tmod_cnt,freq,amp);
 			break;
 		case sine:
-			sprintf(func_str,SIN_FUNC,freq,amp);
-			//sprintf(func_str,"%s * sin(t * %f) * %f",decay_str,freq,amp);
+			sprintf(func_str,SIN_FUNC,tmod_cnt,freq,amp);
 			break;
 		case noise:
-			sprintf(func_str,NOI_FUNC,freq,amp);
-			//sprintf(func_str,"%s * ((fract(sin(dot(vec2(t,%f),vec2(12.9898,78.233)))*43758.5453)*2.0)-1.0)*%f",decay_str,freq/4.0,amp);
+			sprintf(func_str,NOI_FUNC,tmod_cnt,freq,amp);
 			break;
 	}
-	printf("\tresult += ( (t>=%f) ? ( (t<%f) ? (%s * (%s)) : 0.0) : 0.0);\n",start,end,decay_str,func_str);
+	printf("\tresult += ( (t%d>=%f) ? ( (t%d<%f) ? (%s * (%s)) : 0.0) : 0.0);\n",tmod_cnt,start,tmod_cnt,end,decay_str,func_str);
+	
 }
 
 void print_head(void)
@@ -334,13 +388,8 @@ void print_head(void)
 	printf("float l_decay(float t, float s, float l)\n");
 	printf("{\n\treturn clamp(1.0-((t-s)/l), 0.0, 1.0);\n}\n\n");
 
-	printf("// Shadertoy's sound entry point.\n");
-	printf("vec2 mainSound(float t)\n{\n\t");
-	printf("float result = 0.0;\n");
-	printf("// For each line monstrosity:\n");
-	printf("// Current time is greater or equal to note start time, and less than the end time.");
-	printf("// This enables output of the wave function being called, with a coefficient from\n");
-	printf("// the l_decay function providing a minimalist envelope.\n");
+	//printf("vec2 mainSound(float t0)\n{\n\t");
+	//printf("float result = 0.0;\n");
 	
 }
 
@@ -359,7 +408,6 @@ void read_loop(void)
 		handle_line(line_buffer);
 	}
 	fclose(track_file);
-	printf("\treturn vec2(result);\n}\n");
 	free (line_buffer);
 
 }

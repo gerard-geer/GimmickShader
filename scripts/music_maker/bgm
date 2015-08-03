@@ -2,6 +2,7 @@
 #amp 0.25
 #step 0.15
 
+#func bass_line
 // -------------------------- Bassline  -------------------------------
 #reset
 #decay 0.3
@@ -386,7 +387,7 @@ A#1
 D2
 -
 G1
-// 00
+// 00 C2
 C2
 -
 -
@@ -459,11 +460,10 @@ G#1
 G1
 -
 // Song loops at this point. No more bass.
+#endfunc
 
 
-
-
-
+#func lead_1
 // ------------------------------- Lead 1 ----------------------------
 #reset
 #decay 0.25
@@ -689,4 +689,87 @@ C6
 -
 -
 -
+// 00 B2
+-
+-
+-
+-
+C6
+G5
+-
+G5
+-
+G5
+-
+G5
+C6
+G5
+D6
+G5
+// 01
+E6
+G5
+-
+G5
+-
+G5
+-
+G5
+F5
+G5
+A5
+A5
+-
+B5
+-
+G5
+// 02
+-
+-
+-
+-
+-
+-
+-
+-
+C6
+D6
+E6
+E6
+-
+E6
+D6
+C6
+// 03
+#duty 0.25
+#decay 0.7
+#len 0.45
+F5
+-
+-
+-
+E5
+-
+-
+-
+C5
+-
+-
+-
+D5
+-
+-
+#decay 0.15
+#len 0.15
+C5
 
+// 00 Part C
+
+
+#endfunc
+
+#main
+#tmod 57.60
+#call bass_line
+#call lead_1
+#endmain

@@ -28,7 +28,6 @@ extern const char sqr_func[];
 extern const char noi_func[];
 extern const char decay_func[];
 
-
 extern FILE *track_file;
 
 // Track progress state vars
@@ -38,6 +37,7 @@ extern float step_size;
 extern float decay_len;
 extern float note_len;
 extern float step_prog;
+extern float tmod;
 
 int parse_init(const char *fname);
 char *get_arg_to(const char *comp, char *line);

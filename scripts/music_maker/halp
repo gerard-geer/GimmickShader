@@ -1,0 +1,48 @@
+// ShaderTracker: Ridiculous shader summation sound engine
+// Engine / Function Builder by Michael Moffitt (https://github.com/mikejmoffitt)
+// Sound Generation Functions by Gerard Geer (https://github.com/gerard-geer)
+// Waveform definitions
+
+float saw(float t, float f, float a)
+{
+	return ((mod(t*0.5*f*0.31830989, 1.0)*2.0)-1.0)*a;
+}
+
+float sqr(float t, float f, float duty, float a)
+{
+	return step(duty, abs(saw(t,f * 0.5,1.0)))*a;
+}
+
+float tri(float t, float f, float a)
+{
+	return (((floor(abs(saw(t,f * 0.5,a))*16.0)*0.0625)*2.0)-1.0)*a;
+}
+
+float sine(float t, float f, float a)
+{
+	return sin(t*f)*a;
+}
+
+float noise(float t, float f, float a)
+{
+	return ((fract(sin(dot(vec2(t,f),vec2(12.9898,78.233)))*43758.5453)*2.0)-1.0)*a;
+}
+
+float l_decay(float t, float s, float l)
+{
+	return clamp(1.0-((t-s)/l), 0.0, 1.0);
+}
+
+// Shadertoy's sound entry point.
+vec2 mainSound(float t)
+{
+	float result = 0.0;
+// For each line monstrosity:
+// Current time is greater or equal to note start time, and less than the end time.// This enables output of the wave function being called, with a coefficient from
+// the l_decay function providing a minimalist envelope.
+	result += ( ((fmod(t,1.000000))>=0.000000) ? ( ((fmod(t,1.000000))<0.000000) ? (l_decay(t, 0.000000, 0.200000) * (sqr(t, 1643.842163, 0.500000, 0.150000))) : 0.0) : 0.0);
+	result += ( ((fmod(t,1.000000))>=0.250000) ? ( ((fmod(t,1.000000))<0.250000) ? (l_decay(t, 0.250000, 0.200000) * (sqr(t, 1845.150391, 0.500000, 0.150000))) : 0.0) : 0.0);
+	result += ( ((fmod(t,1.000000))>=0.500000) ? ( ((fmod(t,1.000000))<0.500000) ? (l_decay(t, 0.500000, 0.200000) * (sqr(t, 2071.108887, 0.500000, 0.150000))) : 0.0) : 0.0);
+	result += ( ((fmod(t,1.000000))>=0.750000) ? ( ((fmod(t,1.000000))<0.750000) ? (l_decay(t, 0.750000, 0.200000) * (sqr(t, 2462.978516, 0.500000, 0.150000))) : 0.0) : 0.0);
+	return vec2(result);
+}
