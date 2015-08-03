@@ -125,9 +125,13 @@ if __name__ == "__main__":
 			for j in range(im.size[0]): # Inner? Width.
 				rows[i].append( str(palette[ str( pixels[i*im.size[0]+j] ) ]) )
 
+		# Divvy up the rows to align them best in encapsulating ARRXX calls.
+		rowSets = divvy(rows)
+		
 		# Now we can print the output.
-		for l in rows:
-			print('ARR'+str(len(l))+'('+','.join(l)+')')
+		for set in rowSets:
+			for row in set:
+				print('ARR'+str(len(row))+'('+','.join(row)+')')
 			
 		# Do we want to do another?
 		try:
