@@ -108,7 +108,7 @@ if __name__ == "__main__":
 		# color, make it a string, use it as a key, then
 		# at that key store the palette index.
 		for t in colors:
-			c[str(t[1])] = len(palette.keys())
+			palette[str(t[1])] = len(palette.keys())
 			
 		# Print the color->index binding.
 		for key, value in palette.iteritems():
@@ -119,14 +119,14 @@ if __name__ == "__main__":
 		pixels = im.getdata()
 
 		# Create a place to store our converted data.
-		indices = []
+		rows = []
 		for i in range(im.size[1]): # Outer loop loops over height.
-			indices.append([])
+			rows.append([])
 			for j in range(im.size[0]): # Inner? Width.
-				indices[i].append( str(palette[ str( pixels[i*im.size[0]+j] ) ]) )
+				rows[i].append( str(palette[ str( pixels[i*im.size[0]+j] ) ]) )
 
 		# Now we can print the output.
-		for l in indices:
+		for l in rows:
 			print('ARR'+str(len(l))+'('+','.join(l)+')')
 			
 		# Do we want to do another?
