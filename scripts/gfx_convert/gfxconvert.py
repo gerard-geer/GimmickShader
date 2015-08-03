@@ -92,7 +92,7 @@ if __name__ == "__main__":
 			filename += '.png'
 
 		# Load the image. 
-		try:
+		try: 
 			im = Image.open(filename)
 		except IOError:
 			print('Invalid filename.')
