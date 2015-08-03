@@ -126,7 +126,7 @@ if __name__ == "__main__":
 				rows[i].append( str(palette[ str( pixels[i*im.size[0]+j] ) ]) )
 
 		# Divvy up the rows to align them best in encapsulating ARRXX calls.
-		rowSets = divvy(rows)
+		rowSets = divvy(rows) 
 		
 		# Now we can print the output.
 		for set in rowSets:
