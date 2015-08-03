@@ -1,6 +1,80 @@
 from PIL import Image
 from sys import exit
 
+
+def homogeneous(l):
+	"""
+	Returns whether a list contains all of the same value.
+	
+	Parameters:
+		l (List): The list to examine.
+		
+	Returns:
+		Whether or not the list contains all of the same value.
+	
+	Preconditions:
+		List isn't empty.
+		
+	Postconditions:
+		None.
+	"""
+	x = l[0]
+	for i in l[1:]:
+		if i != x:
+			return False
+	return True
+
+def is_power2(num):
+	"""
+	states if a number is a power of two.
+	Author: A.Polino
+	
+	Parameters:
+		num (integer): The number to test.
+	
+	Returns:
+		Whether or not the number is a power of two.
+
+	Preconditions:
+		None.
+		
+	Postconditions:
+		None.
+	"""
+		
+	return num != 0 and ((num & (num - 1)) == 0)
+
+	
+def divvy(l):
+	"""
+	Divides a list into subsections balanced for binary search.
+	
+	Parameters:
+		l (list): The list to divide.
+		
+	Returns:
+		A list of the divided parts of the original list.
+		
+	Preconditions:
+		None.
+		
+	Postconditions:
+		None.
+	"""
+	if len(list) == 0 or is_power2(len(list)):
+		return list
+		
+	else:
+		# Get the next lowest and power of 2.
+		nextLowest = 2**floor(log(len(list), 2))
+		
+		# If the length of the list is less than half way between the next lower
+		# and higher powers of 2, then that means the top half of the binary
+		# searching of this list will always be ignored as far as ARRXX works.
+		# Therefore we split it.
+		if len(list)-nextLowest < nextLowest/2.0:
+			return []+divvy(list[:nextLowest])+divvy(list[nextLowest:])
+		
 if __name__ == "__main__":
 
 	again = True
@@ -28,13 +102,13 @@ if __name__ == "__main__":
 		colors = im.getcolors()
 
 		# Create a dictionary to link colors to palette indices.
-		palette = {}
+		colorData = {}
 
 		# For each tuple returned by getcolors(), we take the
 		# color, make it a string, use it as a key, then
 		# at that key store the palette index.
 		for t in colors:
-			palette[str(t[1])] = len(palette.keys())
+			c[str(t[1])] = len(palette.keys())
 			
 		# Print the color->index binding.
 		for key, value in palette.iteritems():
