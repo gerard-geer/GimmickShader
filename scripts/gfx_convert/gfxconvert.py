@@ -102,7 +102,7 @@ if __name__ == "__main__":
 		colors = im.getcolors()
 
 		# Create a dictionary to link colors to palette indices.
-		colorData = {}
+		palette = {}
 
 		# For each tuple returned by getcolors(), we take the
 		# color, make it a string, use it as a key, then
