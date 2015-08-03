@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
 		# Now we can print the output.
 		for l in indices:
-			print(' '.join(l))
+			print('ARR'+str(len(l))+'('+','.join(l)+')')
 			
 		# Do we want to do another?
 		try:
