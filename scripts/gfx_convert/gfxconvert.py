@@ -61,19 +61,152 @@ def divvy(l):
 	Postconditions:
 		None.
 	"""
-	if len(list) == 0 or is_power2(len(list)):
-		return list
+	result = []
+	if len(l) == 0 or is_power2(len(l)):
+		result.append(l)
+		return result
 		
 	else:
 		# Get the next lowest and power of 2.
-		nextLowest = 2**floor(log(len(list), 2))
+		nextLowest = 2**floor(log(len(l), 2))
 		
 		# If the length of the list is less than half way between the next lower
 		# and higher powers of 2, then that means the top half of the binary
 		# searching of this list will always be ignored as far as ARRXX works.
 		# Therefore we split it.
-		if len(list)-nextLowest < nextLowest/2.0:
-			return []+divvy(list[:nextLowest])+divvy(list[nextLowest:])
+		if len(l)-nextLowest < nextLowest/2.0:
+			result.append(divvy(l[:nextLowest]))
+			result.append(divvy(l[nextLowest:]))
+			return result
+		# Otherwise we generate extra rows of just 9s.
+		else:
+			while not(is_power2(len(l))):
+				l.append([9]*len(l[0]))
+
+def generateARRXXCall(row):
+	"""
+	Generates an X-axis call to ARRXX.
+	
+	Parameters:
+		row(list): The list of palette indices to wrap into an ARRXX call.
+		
+	Returns:
+		A String containing the call.
+		
+	Preconditions:
+		None.
+	
+	Postconditions:	
+		None.
+	"""
+	return "ARR"+str(len(row))+"(x,"+",".join(row)+")"
+
+def generateARRYYCall(rowSet):
+	"""
+	Generates a Y-axis call to ARRXX.
+	
+	Parameters:
+		rowSet (List): The list of rows to wrap into a multi-line ARRXX call.
+		
+	Returns:
+		A list of lines containing the call.
+		
+	Preconditions:
+		None.
+		
+	Postconditions:
+		None.
+	"""
+	# Create a place to store the result.
+	result = []
+	
+	# Convert all the rows into their own X axis calls.
+	calls = []
+	for row in rows:
+		if homogeneous(row):
+			calls.append(row[0])
+		else:
+			calls.append(generateARRXXCall(row))
+	
+	# If there is only one call, then we don't need to make a big fuss
+	# over having a Y axis ARRXX call at all.
+	if len(calls) == 1:
+		return result.append("".join(calls))
+		
+	# If there is more though, we need to make the multiple lines of the call.
+	else:
+		result.append( "ARR"+str(int(len(rowSet)))+"(y," )
+		for call in calls[:-1]:
+			result.append( "  "+call+"," )
+		result.append( "  "+calls[-1] )
+		result.append( ");" )
+		
+	return result
+			
+def generateClause(rows, startIndex, endIndex):
+	"""
+	Generates an if clause for non-power-of-two Y axis ARRXX calls.
+	
+	Parameters:
+		rows(List of rows): The list of rows this clause shall contain.
+		startIndex(integer): The y-value at which this clause starts.
+		endIndex(integer): The y-value at which this clause ends.
+		
+	Returns:
+		An array of strings representing the lines of the clause.
+		
+	Preconditions:
+		None.
+		
+	Postconditions:
+		None.
+	"""
+	# Create a place to store the lines of the result.
+	result = []
+	
+	# Get the internal ARRYY call and indent it.
+	calls = generateARRYYCall(rows)
+	for i in range(len(calls)):
+		calls[i] = "\t"+calls[i]
+	
+	result.append("")
+	result.append("if(y<"+str(endIndex)+")")
+	result.append("{")
+	result.append("\ty-="+str(startIndex)+";")
+	result.append("\treturn")
+	result.extend(calls)
+	result.append("}")
+	return result
+	
+def generateBody(rowSets):
+	"""
+	Generates the body of a sprite/tile function.
+	
+	Parameters:
+		rowSets(list of lists): The balanced set of rows.
+		
+	Returns:
+		A list of strings representing the output.
+		
+	Preconditions:
+		The rows of the image have been divvy'd up.
+		
+	Postconditions:
+		None.
+	"""
+	# A place to store all the clauses together.
+	result = []
+	# The current starting and finishing index of the clause.
+	curStart = 0
+	curFinish = 0
+	for set in rowSets:
+		curFinish += len(set)
+		clause = generateClause(set, curStart, curFinish)
+		curStart = curFinish
+		result.extend(clause)
+	return result
+		
+	
 		
 if __name__ == "__main__":
 
@@ -101,7 +234,7 @@ if __name__ == "__main__":
 		# Get the colors used in the image.
 		colors = im.getcolors()
 
-		# Create a dictionary to link colors to palette indices.
+		# Generate a dictionary to link colors to palette indices.
 		palette = {}
 
 		# For each tuple returned by getcolors(), we take the
@@ -118,7 +251,7 @@ if __name__ == "__main__":
 		# Get a list of pixels.
 		pixels = im.getdata()
 
-		# Create a place to store our converted data.
+		# Generate a place to store our converted data.
 		rows = []
 		for i in range(im.size[1]): # Outer loop loops over height.
 			rows.append([])
@@ -126,12 +259,10 @@ if __name__ == "__main__":
 				rows[i].append( str(palette[ str( pixels[i*im.size[0]+j] ) ]) )
 
 		# Divvy up the rows to align them best in encapsulating ARRXX calls.
-		rowSets = divvy(rows) 
+		rowSets = divvy(rows)
 		
-		# Now we can print the output.
-		for set in rowSets:
-			for row in set:
-				print('ARR'+str(len(row))+'('+','.join(row)+')')
+		# Print for current functionality.
+		print "\n".join(generateBody(rowSets))
 			
 		# Do we want to do another?
 		try:
