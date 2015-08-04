@@ -1,3 +1,7 @@
+// Nah we don't need that.
+precision lowp int;
+precision lowp float;
+
 // A recreation of the extra little shoreline scene from stage 2 of 
 // Gimmick! (Or in PAL regions, Mr. Gimmick).
 //     
@@ -28,6 +32,21 @@ const vec4 L_GREEN = vec4(.298, .863, .282, 1.00);
 const vec4 D_GOLD  = vec4(.486, .031, .000, 1.00);
 const vec4 L_GOLD  = vec4(.988, .596, .219, 1.00);
 const vec4 TRANS   = vec4(.000, .000, .000, .000);
+
+// Define out stuff so we don't have to pass the values as parameters.
+#define YUMETAROU_X 52
+#define YUMETAROU_Y 117
+#define SHORE_Y 136
+#define SHORE_END 79
+#define CLOUD_Y 128
+#define WAVES_Y 168
+#define BIRD_A_Y 20
+#define BIRD_B_Y 32
+#define BIRD_C_Y 45
+#define BIRD_D_Y 53
+#define BIRD_E_Y 62
+#define BIRD_F_Y 69
+#define BIRD_G_Y 72
     
 /*
 *	Yumetarou's palette.
@@ -114,12 +133,12 @@ int yumetarouEyesClosed(in int x, in int y)
 }
  
 // Returns a texel of Yumetarou.
-vec4 drawYumetarou(in int x, in int y, in int atx, in int aty)
+vec4 drawYumetarou(in int x, in int y)
 {
-    if(x < atx || x > atx + 15) return vec4(0.0);
-    if(y < aty || y > aty + 18) return vec4(0.0);
-    x -= atx;
-    y -= aty;
+    if(x < YUMETAROU_X || x > YUMETAROU_X + 15) return vec4(0.0);
+    if(y < YUMETAROU_Y || y > YUMETAROU_Y + 18) return vec4(0.0);
+    x -= YUMETAROU_X;
+    y -= YUMETAROU_Y;
     
     // Yummy yummy frame counting.
     float t = mod(iGlobalTime, 3.67);
@@ -182,12 +201,15 @@ int birdWingsDown(in int x, in int y)
     else return 3;
 }
 
-vec4 drawBird(in int x, in int y, in int atx, in int aty)
+vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
 {
     if(x < atx || x > atx + 7) return vec4(0.0);
     if(y < aty || y > aty + 4) return vec4(0.0);
     x -= atx;
     y -= aty;
+    
+    if(flip) x = 7-x;
+    
     float t = mod(iGlobalTime, .533);
     if(t < .133)	return birdPalette(birdWingsLevel(x,y));
     if(t < .266)	return birdPalette(birdWingsUp(x,y));
@@ -200,13 +222,13 @@ vec4 drawBirds(in int x, in int y)
     // Since birds never cross we can use additive blending.
     // And as we've learned from the sound let's divvy up addition.
     vec4 result = vec4(0.0);
-    result += drawBird(x,y, 120, 20);
-    result += drawBird(x,y, 152, 32);
-    result += drawBird(x,y, 110, 45);
-    result += drawBird(x,y, 208, 53);
-    result += drawBird(x,y, 164, 62);
-    result += drawBird(x,y, 100, 69);
-    result += drawBird(x,y, 185, 72);
+    result += drawBird(x,y, 120, BIRD_A_Y, true);
+    result += drawBird(x,y, 152, BIRD_B_Y, true);
+    result += drawBird(x,y, 110, BIRD_C_Y, true);
+    result += drawBird(x,y, 208, BIRD_D_Y, true);
+    result += drawBird(x,y, 164, BIRD_E_Y, false);
+    result += drawBird(x,y, 100, BIRD_F_Y, false);
+    result += drawBird(x,y, 185, BIRD_G_Y, false);
     return result;
     
 }
@@ -297,12 +319,12 @@ int shoreExterior(in int x, in int y)
             ARR16(x, 2, 2, 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 0, 0, 2, 3));
 }
 
-vec4 drawShore(in int x, in int y, in int atx, in int aty)
+vec4 drawShore(in int x, in int y)
 {
-    if(x < atx || x > atx + 79) return vec4(0.0);
-    if(y < aty || y > aty + 31) return vec4(0.0);
-    x -= atx;
-    y -= aty;
+    if(x > SHORE_END) return vec4(0.0);
+    if(y < SHORE_Y || y > SHORE_Y + 31) return vec4(0.0);
+    
+    y -= SHORE_Y;
     
     if(x < 64) return shorePalette(shoreInterior(x,y));
     return shorePalette(shoreExterior(x,y));
@@ -329,10 +351,10 @@ int farClouds(in int x, in int y)
     return ARR32(x, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 }
 
-vec4 drawFarClouds(in int x, in int y, in int aty)
+vec4 drawFarClouds(in int x, in int y)
 {
-    if(y >= aty && y < aty + 5) return farCloudsPalette(farClouds(x,y-aty));
-    if(y >= aty + 5) return L_BLUE;
+    if(y >= SHORE_Y && y < SHORE_Y + 5) return farCloudsPalette(farClouds(x,y-SHORE_Y));
+    if(y >= SHORE_Y + 5) return L_BLUE;
     return vec4(0.0);
 }
 
@@ -485,21 +507,21 @@ int wavesD(in int x, in int y)
     }
 }
 
-vec4 drawWaves(in int x, in int y, in int aty)
+vec4 drawWaves(in int x, in int y)
 {
-    if(y >= aty && y < aty + 5)
+    if(y >= WAVES_Y && y < WAVES_Y + 5)
     {
         int t = int(mod(iGlobalTime*4.,4.));
-        if(x > 79) return ARR4(t,
-                               wavesSunnyPalette(wavesA(x,y-aty)),
-                               wavesSunnyPalette(wavesB(x,y-aty)),
-                               wavesSunnyPalette(wavesC(x,y-aty)),
-                               wavesSunnyPalette(wavesD(x,y-aty)));
+        if(x > SHORE_END) return ARR4(t,
+                               wavesSunnyPalette(wavesA(x,y-WAVES_Y)),
+                               wavesSunnyPalette(wavesB(x,y-WAVES_Y)),
+                               wavesSunnyPalette(wavesC(x,y-WAVES_Y)),
+                               wavesSunnyPalette(wavesD(x,y-WAVES_Y)));
         return ARR4(t,
-                    wavesShadowPalette(wavesA(x,y-aty)),
-                    wavesShadowPalette(wavesB(x,y-aty)),
-                    wavesShadowPalette(wavesC(x,y-aty)),
-                    wavesShadowPalette(wavesD(x,y-aty)));
+                    wavesShadowPalette(wavesA(x,y-WAVES_Y)),
+                    wavesShadowPalette(wavesB(x,y-WAVES_Y)),
+                    wavesShadowPalette(wavesC(x,y-WAVES_Y)),
+                    wavesShadowPalette(wavesD(x,y-WAVES_Y)));
     }
     return vec4(0.0);
 }
@@ -507,15 +529,15 @@ vec4 drawWaves(in int x, in int y, in int aty)
 // Draws all sprites and tiles.
 vec4 drawElements(in int x, in int y)
 {
-    vec4 farClouds = drawFarClouds(x,y,128);
+    vec4 farClouds = drawFarClouds(x,y);
     vec4 bird = drawBirds(x,y);
-    vec4 shore = drawShore(x,y,0,136);
-    vec4 yumetarou = drawYumetarou(x,y,52,117);
-    vec4 waves = drawWaves(x,y,168);
+   // vec4 shore = drawShore(x,y);
+    vec4 yumetarou = drawYumetarou(x,y);
+    vec4 waves = drawWaves(x,y);
     
     // Overriting blending using alpha, since every sprite returns a value for every pixel.
     vec4 result = mix(farClouds, bird, bird.a);
-    result = mix(result,shore,shore.a);
+    //result = mix(result,shore,shore.a);
     result = mix(result,waves,waves.a);
     result = mix(result,yumetarou, yumetarou.a);
     return result;
@@ -538,7 +560,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     
     // Default the outgoing fragColor to the background color.
     fragColor = D_BLUE;
-    
+    ivec2(fragCoord);
     // Determine and store the texel of the scene elements this pixel occupies.
     vec4 imageElements = drawElements(int(fragCoord.x), int(fragCoord.y));
     
