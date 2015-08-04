@@ -528,13 +528,13 @@ vec4 drawElements(in int x, in int y)
 {
     vec4 farClouds = drawFarClouds(x,y);
     vec4 bird = drawBirds(x,y);
-   // vec4 shore = drawShore(x,y);
+    vec4 shore = drawShore(x,y);
     vec4 yumetarou = drawYumetarou(x,y);
     vec4 waves = drawWaves(x,y);
     
     // Overriting blending using alpha, since every sprite returns a value for every pixel.
     vec4 result = mix(farClouds, bird, bird.a);
-    //result = mix(result,shore,shore.a);
+    result = mix(result,shore,shore.a);
     result = mix(result,waves,waves.a);
     result = mix(result,yumetarou, yumetarou.a);
     return result;
