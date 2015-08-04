@@ -1,3 +1,14 @@
+// A recreation of the extra little shoreline scene from stage 2 of 
+// Gimmick! (Or in PAL regions, Mr. Gimmick).
+//     
+// Original game by Sunsoft: https://en.wikipedia.org/wiki/Gimmick!
+// 
+// Original graphics design: Hiroyuki Kagoya
+// Shader image: Gerard Geer (https://github.com/gerard-geer)
+// Music composition: Masashi Kageyama
+// Shader sound: Michael Moffitt (https://github.com/mikejmoffitt)
+// This shader on github: https://github.com/gerard-geer/GimmickShader/
+
 // A 2,4,8,16, or 32 element array implemented as a binary search, #defined for type agnosticity.
 #define ARR2(x, a,b) (x<1) ? a : b
 #define ARR4(x, a,b,c,d) (x<2) ? ARR2(x,a,b) : ARR2(x-2,c,d)
@@ -18,7 +29,15 @@ const vec4 D_GOLD  = vec4(.486, .031, .000, 1.00);
 const vec4 L_GOLD  = vec4(.988, .596, .219, 1.00);
 const vec4 TRANS   = vec4(.000, .000, .000, .000);
     
-// Returns a palette entry given an index.
+/*
+*	Yumetarou's palette.
+*   
+*	Returns a color given a palette index.
+*
+*	c: The color index to look up.
+*
+*	Returns: The corresponding color.
+*/
 vec4 yumetarouPalette(in int c)
 {
     if(c < 4)
@@ -36,7 +55,6 @@ vec4 yumetarouPalette(in int c)
     }
 }
 
-// Returns a palette index given the position of the pixel within the sprite.
 int yumetarouEyesOpen(in int x, in int y)
 {
     x = int(mod(float(x),16.0));
@@ -175,6 +193,22 @@ vec4 drawBird(in int x, in int y, in int atx, in int aty)
     if(t < .266)	return birdPalette(birdWingsUp(x,y));
     if(t < .400)	return birdPalette(birdWingsLevel(x,y));
     return birdPalette(birdWingsDown(x,y));
+}
+
+vec4 drawBirds(in int x, in int y)
+{
+    // Since birds never cross we can use additive blending.
+    // And as we've learned from the sound let's divvy up addition.
+    vec4 result = vec4(0.0);
+    result += drawBird(x,y, 120, 20);
+    result += drawBird(x,y, 152, 32);
+    result += drawBird(x,y, 110, 45);
+    result += drawBird(x,y, 208, 53);
+    result += drawBird(x,y, 164, 62);
+    result += drawBird(x,y, 100, 69);
+    result += drawBird(x,y, 185, 72);
+    return result;
+    
 }
 
 vec4 shorePalette(in int x)
@@ -474,7 +508,7 @@ vec4 drawWaves(in int x, in int y, in int aty)
 vec4 drawElements(in int x, in int y)
 {
     vec4 farClouds = drawFarClouds(x,y,128);
-    vec4 bird = drawBird(x,y,100,66);
+    vec4 bird = drawBirds(x,y);
     vec4 shore = drawShore(x,y,0,136);
     vec4 yumetarou = drawYumetarou(x,y,52,117);
     vec4 waves = drawWaves(x,y,168);
@@ -491,10 +525,16 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     // Normalize coordinates.
     fragCoord = (fragCoord.xy / iResolution.xy);
+    
     // Invert the Y axis.
     fragCoord.y = 1.0-fragCoord.y;
-    // Convert to NES screen resolution. The Y is stunted because we are not doing the HUD.
-    fragCoord *= vec2(256,184);
+    
+    // Account for aspect ratio.
+    fragCoord.x *= iResolution.x/iResolution.y;
+    
+    // Let's get NES sized pixels. This is the Y-resolution of Gimmick's screen sans-HUD.
+    // We also have to account for the fact that the NES didn't have square pixels.
+    fragCoord *= vec2(184.0*0.85736,184.0);
     
     // Default the outgoing fragColor to the background color.
     fragColor = D_BLUE;
