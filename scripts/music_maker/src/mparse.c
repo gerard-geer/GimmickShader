@@ -194,6 +194,7 @@ void handle_line(char *line)
 	check = get_arg_to("#func ",line);
 	if (check)
 	{
+		tmod_cnt = 0;
 		printf("float %s(float t%d)\n{\n\tfloat result = 0.0;\n",check,tmod_cnt);
 		free(check);
 		return;

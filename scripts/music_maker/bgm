@@ -2,6 +2,43 @@
 #amp 0.25
 #step 0.15
 
+
+#func drums
+// ---------------------------- Drums ------------------------------
+#reset
+#amp 0.25
+#decay 0.1
+#len 0.1
+#wave 4
+#tmod 2.4
+C4
+-
+#amp 0.1
+C1
+#amp 0.15
+D1
+#amp 0.25
+C3
+-
+#decay 0.3
+#len 0.3
+C1
+-
+#decay 0.1
+#len 0.1
+C4
+-
+#amp 0.1
+C1
+#amp 0.15
+D1
+#amp 0.25
+C2
+D2
+C3
+-
+#endfunc
+
 #func bass_line
 // -------------------------- Bassline  -------------------------------
 #reset
@@ -765,7 +802,7 @@ C5
 
 // 00 Part C
 #duty 0.125
-#decay 0.4
+#decay 0.25
 #len 0.15
 -
 -
@@ -792,12 +829,12 @@ G6
 E6
 C6
 G5
-A#6
-A#6
-A6
-A#6
+A#5
+A#5
+A5
+A#5
 -
-A#6
+A#5
 -
 C6
 // 02
@@ -844,4 +881,5 @@ G6
 #tmod 57.60
 #call bass_line
 #call lead_1
+#call drums
 #endmain

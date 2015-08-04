@@ -1,0 +1,41 @@
+#reset
+
+#tmod 1.5
+#func line_a
+#reset
+#step 0.5
+#len 0.5
+#decay 0.75
+#wave 0
+#duty 0.5
+C3
+C#3
+E3
+F3
+G3
+G#3
+
+#endfunc
+
+#tmod 1.8
+#func line_b
+#reset
+#step 0.45
+#len 0.45
+#decay 0.3
+#wave 1
+B6
+G6
+F6
+E6
+F6
+G6
+B6
+F6
+#endfunc
+
+#tmod 64
+#main
+#call line_a
+#call line_b
+#endmain
