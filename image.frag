@@ -377,8 +377,6 @@ vec4 wavesSunnyPalette(in int x)
 
 int wavesA(in int x, in int y)
 {
-    x = int(mod(float(x),32.0));
-    y = int(mod(float(y),8.0));
     if(x < 32) // ARR64 would be a really long line.
     {
         return ARR8(y,
@@ -408,8 +406,6 @@ int wavesA(in int x, in int y)
 
 int wavesB(in int x, in int y)
 {
-    x = int(mod(float(x),32.0));
-    y = int(mod(float(y),8.0));
     if(x < 32) // ARR64 would be a really long line.
     {
         return ARR8(y,
@@ -439,8 +435,6 @@ int wavesB(in int x, in int y)
 
 int wavesC(in int x, in int y)
 {
-    x = int(mod(float(x),32.0));
-    y = int(mod(float(y),8.0));
     if(x < 32) // ARR64 would be a really long line.
     {
         return ARR8(y,
@@ -471,8 +465,6 @@ int wavesC(in int x, in int y)
 
 int wavesD(in int x, in int y)
 {
-    x = int(mod(float(x),32.0));
-    y = int(mod(float(y),8.0));
     if(x < 32) // ARR64 would be a really long line.
     {
         return ARR8(y,
@@ -505,16 +497,28 @@ vec4 drawWaves(in int x, in int y)
     if(y >= WAVES_Y && y < WAVES_Y + 5)
     {
         int t = int(mod(iGlobalTime*4.,4.));
-        if(x > SHORE_END) return ARR4(t,
-                               wavesSunnyPalette(wavesA(x,y-WAVES_Y)),
-                               wavesSunnyPalette(wavesB(x,y-WAVES_Y)),
-                               wavesSunnyPalette(wavesC(x,y-WAVES_Y)),
-                               wavesSunnyPalette(wavesD(x,y-WAVES_Y)));
-        return ARR4(t,
-                    wavesShadowPalette(wavesA(x,y-WAVES_Y)),
-                    wavesShadowPalette(wavesB(x,y-WAVES_Y)),
-                    wavesShadowPalette(wavesC(x,y-WAVES_Y)),
-                    wavesShadowPalette(wavesD(x,y-WAVES_Y)));
+        y -= WAVES_Y;
+        
+        if(x > SHORE_END)
+        {            
+            x = int(mod(float(x),32.0));
+            y = int(mod(float(y),8.0));
+            return ARR4(t,
+                        wavesSunnyPalette(wavesA(x,y)),
+                        wavesSunnyPalette(wavesB(x,y)),
+                        wavesSunnyPalette(wavesC(x,y)),
+                        wavesSunnyPalette(wavesD(x,y)));
+        }
+        else
+        {
+            x = int(mod(float(x),32.0));
+            y = int(mod(float(y),8.0));
+            return ARR4(t,
+                        wavesShadowPalette(wavesA(x,y)),
+                        wavesShadowPalette(wavesB(x,y)),
+                        wavesShadowPalette(wavesC(x,y)),
+                        wavesShadowPalette(wavesD(x,y)));
+        }
     }
     return vec4(0.0);
 }
