@@ -844,7 +844,7 @@ vec4 drawWaves(in int x, in int y)
 *
 *	Returns: The corresponding color.
 */
-vec4 cloudPalette(in int x)
+vec4 nearCloudsPalette(in int x)
 {
 	return ARR2(x, TRANS, WHITE);
 }
@@ -1147,6 +1147,26 @@ int cloudN(in int x, in int y)
 	  1,
 	  1
 	);
+}
+
+vec4 drawNearClouds(in int x, in int y)
+{
+	result = vec4(0.0);
+	result += nearCloudsPalette(cloudA(x,y));
+	result += nearCloudsPalette(cloudB(x,y));
+	result += nearCloudsPalette(cloudC(x,y));
+	result += nearCloudsPalette(cloudD(x,y));
+	result += nearCloudsPalette(cloudE(x,y));
+	result += nearCloudsPalette(cloudF(x,y));
+	result += nearCloudsPalette(cloudG(x,y));
+	result += nearCloudsPalette(cloudH(x,y));
+	result += nearCloudsPalette(cloudI(x,y));
+	result += nearCloudsPalette(cloudJ(x,y));
+	result += nearCloudsPalette(cloudK(x,y));
+	result += nearCloudsPalette(cloudL(x,y));
+	result += nearCloudsPalette(cloudM(x,y));
+	result += nearCloudsPalette(cloudN(x,y));
+	return result;
 }
 
 // Draws all sprites and tiles.
