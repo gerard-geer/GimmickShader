@@ -1173,13 +1173,15 @@ vec4 drawNearClouds(in int x, in int y)
 vec4 drawElements(in int x, in int y)
 {
     vec4 farClouds = drawFarClouds(x,y);
-    vec4 bird = drawBirds(x,y);
+	vec4 nearClouds = drawNearClouds(x,y);
+    vec4 birds = drawBirds(x,y);
     vec4 shore = drawShore(x,y);
     vec4 yumetarou = drawYumetarou(x,y);
     vec4 waves = drawWaves(x,y);
     
     // Overriting blending using alpha, since every sprite returns a value for every pixel.
-    vec4 result = mix(farClouds, bird, bird.a);
+    vec4 result = mix(farClouds, nearClouds, nearClouds.a);
+    result = mix(result,birds,birds.a);
     result = mix(result,shore,shore.a);
     result = mix(result,waves,waves.a);
     result = mix(result,yumetarou, yumetarou.a);
