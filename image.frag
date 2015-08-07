@@ -802,35 +802,31 @@ int wavesD(in int x, in int y)
 */
 vec4 drawWaves(in int x, in int y)
 {
-    if(y >= WAVES_Y && y < WAVES_Y + 5)
-    {
-        int t = int(mod(iGlobalTime*4.,4.));
-        y -= WAVES_Y;
-        
-        if(x > SHORE_END)
-        {            
-            x = int(mod(float(x),32.0));
-            return ARR4(t,
-                        wavesSunnyPalette(wavesA(x,y)),
-                        wavesSunnyPalette(wavesB(x,y)),
-                        wavesSunnyPalette(wavesC(x,y)),
-                        wavesSunnyPalette(wavesD(x,y)));
-        }
-        else
-        {
-            x = int(mod(float(x),32.0));
-            return ARR4(t,
-                        wavesShadowPalette(wavesA(x,y)),
-                        wavesShadowPalette(wavesB(x,y)),
-                        wavesShadowPalette(wavesC(x,y)),
-                        wavesShadowPalette(wavesD(x,y)));
-        }
+    if(y < WAVES_Y) return TRANS;
+    if(y > WAVES_Y+7) return L_BLUE;
+    
+    int t = int(mod(iGlobalTime*4.,4.));
+    
+    y -= WAVES_Y;
+    
+    if(x > SHORE_END)
+    {            
+        x = int(mod(float(x),32.0));
+        return ARR4(t,
+                    wavesSunnyPalette(wavesA(x,y)),
+                    wavesSunnyPalette(wavesB(x,y)),
+                    wavesSunnyPalette(wavesC(x,y)),
+                    wavesSunnyPalette(wavesD(x,y)));
     }
-    if(y > WAVES_Y + 4)
+    else
     {
-        return L_BLUE;
+        x = int(mod(float(x),32.0));
+        return ARR4(t,
+                    wavesShadowPalette(wavesA(x,y)),
+                    wavesShadowPalette(wavesB(x,y)),
+                    wavesShadowPalette(wavesC(x,y)),
+                    wavesShadowPalette(wavesD(x,y)));
     }
-    return TRANS;
 }
 
 /*
