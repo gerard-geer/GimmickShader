@@ -851,18 +851,39 @@ vec4 nearCloudsPalette(in int x)
 	return ARR2(x, TRANS, WHITE);
 }
 
+/*
+*	Cloud tile functions.
+*	
+*	What follows are the tile functions for the large white cloud.
+*	Only the topmost sections with actual features are encoded.
+*	The solid white interior is assumed.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int cloudA(in int x, in int y)
 {
+    // Do some bounds checking.
+    // To the left or right? TRANSPARENT FOR YOU!
 	if(x < CLOUD_A_X || x >= CLOUD_B_X) return 0;
+    // Above this cloud tile? TRANSPARENT YOU AS WELL!
 	if(y < CLOUD_A_Y) return 0;
+    // Below the tile? OH YOU ARE MORE CLOUD HAVE CLOUD COLOR.
 	if(y > CLOUD_A_Y+7) return 1;
 	
+    // Transform the coordinates to cloud space.
     x -= CLOUD_A_X;
     y -= CLOUD_A_Y;
     
+    // Mod it for safety.
 	x = int(mod(float(x),8.0));
 	y = int(mod(float(y),8.0));
 	
+    // Finally do the 2D binary lookup to get the actual color.
 	return
 	ARR8(y,
 	  0,
@@ -875,7 +896,7 @@ int cloudA(in int x, in int y)
 	  ARR8(x,0,1,1,1,1,1,1,1)
 	);
 }
-
+// Cloud tile B.
 int cloudB(in int x, in int y)
 {
 	if(x < CLOUD_B_X || x >= CLOUD_C_X) return 0;
@@ -900,7 +921,7 @@ int cloudB(in int x, in int y)
 	  ARR8(x,1,0,0,0,1,1,1,1)
 	);
 }
-
+// Cloud tile C.
 int cloudC(in int x, in int y)
 {
 	if(x < CLOUD_C_X || x >= CLOUD_D_X) return 0;
@@ -921,7 +942,7 @@ int cloudC(in int x, in int y)
 	  1
 	);
 }
-
+// Cloud tile D.
 int cloudD(in int x, in int y)
 {
 	if(x < CLOUD_D_X || x >= CLOUD_E_X) return 0;
@@ -946,7 +967,7 @@ int cloudD(in int x, in int y)
 	  ARR8(x,0,1,1,1,1,1,1,1)
 	);
 }
-
+// Cloud tile E.
 int cloudE(in int x, in int y)
 {
 	if(x < CLOUD_E_X || x >= CLOUD_F_X) return 0;
@@ -971,7 +992,7 @@ int cloudE(in int x, in int y)
 	  ARR8(x,1,0,0,0,1,1,1,1)
 	);
 }
-
+// Cloud tile F.
 int cloudF(in int x, in int y)
 {
 	if(x < CLOUD_F_X || x >= CLOUD_G_X) return 0;
@@ -1004,7 +1025,7 @@ int cloudF(in int x, in int y)
 	  ARR16(x,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1)
 	);
 }
-
+// Cloud tile G.
 int cloudG(in int x, in int y)
 {
 	if(x < CLOUD_G_X || x >= CLOUD_H_X) return 0;
@@ -1029,7 +1050,7 @@ int cloudG(in int x, in int y)
 	  1
 	);
 }
-
+// Cloud tile H.
 int cloudH(in int x, in int y)
 {
 	if(x < CLOUD_H_X || x >= CLOUD_I_X) return 0;
@@ -1054,7 +1075,7 @@ int cloudH(in int x, in int y)
 	  1
 	);
 }
-
+// Cloud tile I.
 int cloudI(in int x, in int y)
 {
 	if(x < CLOUD_I_X || x >= CLOUD_J_X) return 0;
@@ -1079,7 +1100,7 @@ int cloudI(in int x, in int y)
 	  1
 	);
 }
-
+// Cloud tile J.
 int cloudJ(in int x, in int y)
 {
 	if(x < CLOUD_J_X || x >= CLOUD_K_X) return 0;
@@ -1104,7 +1125,7 @@ int cloudJ(in int x, in int y)
 	  ARR8(x,1,1,1,1,1,0,0,0)
 	);
 }
-
+// Cloud tile K.
 int cloudK(in int x, in int y)
 {
 	if(x < CLOUD_K_X || x >= CLOUD_L_X) return 0;
@@ -1125,7 +1146,7 @@ int cloudK(in int x, in int y)
 	  1
 	);
 }
-
+// Cloud tile L.
 int cloudL(in int x, in int y)
 {
 	if(x < CLOUD_L_X || x >= CLOUD_M_X) return 0;
@@ -1146,7 +1167,7 @@ int cloudL(in int x, in int y)
 	  1
 	);
 }
-
+// CLoud tile M.
 int cloudM(in int x, in int y)
 {
 	if(x < CLOUD_M_X || x >= CLOUD_N_X) return 0;
@@ -1171,7 +1192,7 @@ int cloudM(in int x, in int y)
 	  1
 	);
 }
-
+// Cloud tile N.
 int cloudN(in int x, in int y)
 {
 	if(x < CLOUD_N_X) return 0;
