@@ -1302,8 +1302,8 @@ int smallCloudA(in int x, in int y, in int atx, in int aty)
 */
 int smallCloudB(in int x, in int y)
 {
-	if(x < S_CLOUD_B_X || x > S_CLOUD_B_X+16) return 0;
-	if(y < S_CLOUD_B_Y || y > S_CLOUD_B_Y+8) return 0;
+	if(x < S_CLOUD_B_X || x > S_CLOUD_B_X+15) return 0;
+	if(y < S_CLOUD_B_Y || y > S_CLOUD_B_Y+7) return 0;
 	
 	x -= S_CLOUD_B_X;
 	y -= S_CLOUD_B_Y;
@@ -1349,6 +1349,7 @@ vec4 drawElements(in int x, in int y)
 {
     vec4 farClouds = drawFarClouds(x,y);
 	vec4 nearClouds = drawNearClouds(x,y);
+    vec4 smallCloud = drawSmallCloud(x,y);
     vec4 birds = drawBirds(x,y);
     vec4 shore = drawShore(x,y);
     vec4 yumetarou = drawYumetarou(x,y);
@@ -1356,6 +1357,7 @@ vec4 drawElements(in int x, in int y)
     
     // Overriting blending using alpha, since every sprite returns a value for every pixel.
     vec4 result = mix(farClouds, nearClouds, nearClouds.a);
+    result = mix(result,smallCloud,smallCloud.a);
     result = mix(result,birds,birds.a);
     result = mix(result,shore,shore.a);
     result = mix(result,waves,waves.a);
