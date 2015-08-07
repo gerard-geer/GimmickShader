@@ -74,6 +74,16 @@ vec4 yumetarouPalette(in int c)
     }
 }
 
+/*
+*	Yumetarou's eyes-open sprite frame.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int yumetarouEyesOpen(in int x, in int y)
 {
     x = int(mod(float(x),16.0));
@@ -103,7 +113,16 @@ int yumetarouEyesOpen(in int x, in int y)
    	return 5;
 }
 
-// Returns a palette index given the position of the pixel within the sprite.
+/*
+*	Yumetarou's eyes-closed sprite frame.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int yumetarouEyesClosed(in int x, in int y)
 {
     x = int(mod(float(x),16.0));
@@ -131,8 +150,17 @@ int yumetarouEyesClosed(in int x, in int y)
     if(y==18) return 	 ARR16(x,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0);
    	return 5; // Transparency.
 }
- 
-// Returns a texel of Yumetarou.
+
+/*
+*	Yumetarou's draw function.
+*   
+*	Draws Yumetarou to the screen.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The color of Yumetarou from under the current texel.
+*/
 vec4 drawYumetarou(in int x, in int y)
 {
     if(x < YUMETAROU_X || x > YUMETAROU_X + 15) return vec4(0.0);
@@ -148,14 +176,33 @@ vec4 drawYumetarou(in int x, in int y)
         return yumetarouPalette(yumetarouEyesOpen(x,y));
 }
 
+/*
+*	The birds' palette.
+*   
+*	Returns a color given a palette index.
+*
+*	c: The color index to look up.
+*
+*	Returns: The corresponding color.
+*/
 vec4 birdPalette(in int c)
 {
     return ARR4(c,  WHITE,  // The slightly not white white.
-                	GRAY,  // Gray
+                	GRAY,  	// Gray
                 	BLACK,  // Black
                     TRANS); // Transparency.
 }
 
+/*
+*	A bird's wing-level tile frame.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int birdWingsLevel(in int x,in int y)
 {
     if(y<4){
@@ -167,6 +214,16 @@ int birdWingsLevel(in int x,in int y)
     else return 3;
 }
 
+/*
+*	The frame of the bird with its wings up.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int birdWingsUp(in int x,in int y)
 {
     if(y<4){
@@ -179,6 +236,16 @@ int birdWingsUp(in int x,in int y)
     else return 3;
 }
 
+/*
+*	The frame of the bird with its wings down.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int birdWingsDown(in int x,in int y)
 {
     if(y<4){
@@ -191,6 +258,19 @@ int birdWingsDown(in int x,in int y)
     else return 3;
 }
 
+/*
+*	The bird draw function.
+*   
+*	Draws a single bird to the screen.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*	atx: The x position at which to draw the bird.
+*	aty: The y position at which to draw the bird.
+*	flip: Whether or not to flip the bird. (along the x axis.)
+*
+*	Returns: The color of the bird from under the current texel.
+*/
 vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
 {
     if(x < atx || x > atx + 7) return vec4(0.0);
@@ -201,8 +281,11 @@ vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
     x = int(mod(float(x),8.0));
     y = int(mod(float(y),5.0));
     
+    // Flip the bird if necessary.
     if(flip) x = 7-x;
     
+    // This animation is less framecounting and more dividing an amount
+    // of time by four.
     float t = mod(iGlobalTime, .533);
     if(t < .133)	return birdPalette(birdWingsLevel(x,y));
     if(t < .266)	return birdPalette(birdWingsUp(x,y));
@@ -212,18 +295,27 @@ vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
 
 
 
-/* A triangle wave, used for faithfully animating the birds.
- * This is the same abs'd saw wave from ShaderTracker, but
- * with the saw wave inlined, and without the 4-bit aliasing.
- *
- */
+/*
+*	The birds' animation function.
+*   
+*	Returns a modulated value by adding a triangle wave to the
+*	starting value s.
+*		
+*	s: The starting position.
+*	t: The current time within the function.
+*	f: The frequency of the triangle wave.	
+*	a: The amplitude of the triangle wave.
+*	d: The boolean first derivative of the triangle function.
+*
+*	Returns: The modulated position.
+*/
 int anim(in int s, in float t, in float f, in float a, out bool d)
 {
     // Triangle wave = |saw wave|
     float tri = abs( (mod(t*f, 1.0)*2.0)-1.0 );
     // Oh hey triangle waves are kind of sinosodal, let's rotate
     // it by PI/2 for d1
-    float d1 = abs( (mod((t+.5)*f, 1.0)*2.0)-1.0 );
+    float d1 = abs( (mod((t+1.0)*f, 1.0)*2.0)-1.0 );
     // Let's go ahead and transform this to (-1..1)
     d1 = (d1*2.0)-1.0;
     // Set the direction to the sign of the derivative.
@@ -232,6 +324,16 @@ int anim(in int s, in float t, in float f, in float a, out bool d)
 	return s + int(tri*a);
 }
 
+/*
+*	The whole flock's draw function.
+*
+*	Draws all the birds to the screen, animated.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*	
+*	Returns: The color of the birds from under the current fragment.
+*/
 vec4 drawBirds(in int x, in int y)
 {
     // Since birds never cross we can use additive blending.
@@ -256,6 +358,15 @@ vec4 drawBirds(in int x, in int y)
     
 }
 
+/*
+*	The rocky shoreline's palette.
+*   
+*	Returns a color given a palette index.
+*
+*	c: The color index to look up.
+*
+*	Returns: The corresponding color.
+*/
 vec4 shorePalette(in int x)
 {
     return ARR4(x, WHITE,
@@ -264,6 +375,16 @@ vec4 shorePalette(in int x)
                    BLACK);
 }
 
+/*
+*	The repeated interior portion of the shore.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int shoreInterior(in int x, in int y)
 {
     x = int(mod(float(x),32.0));
@@ -303,6 +424,16 @@ int shoreInterior(in int x, in int y)
 			 ARR32(x,2,2,2,2,2,2,3,3,3,2,2,2,2,2,2,2,2,0,0,0,0,0,2,0,0,0,0,2,2,3,3,2));
 }
 
+/*
+*	The non-repeated exterior portion of the shore.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int shoreExterior(in int x, in int y)
 {
     x = int(mod(float(x),16.0));
@@ -342,6 +473,16 @@ int shoreExterior(in int x, in int y)
             ARR16(x,2,2,2,2,2,2,3,3,3,2,2,2,0,0,2,3));
 }
 
+/*
+*	The shoreline's draw function.
+*
+*	Draws the two interior segments of the shore, then the endcap.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*	
+*	Returns: The color of the shore from under the current fragment.
+*/
 vec4 drawShore(in int x, in int y)
 {
     if(x > SHORE_END) return vec4(0.0);
@@ -353,12 +494,31 @@ vec4 drawShore(in int x, in int y)
     return shorePalette(shoreExterior(x,y));
 }
 
+/*
+*	The palette of those distant clouds.
+*   
+*	Returns a color given a palette index.
+*
+*	c: The color index to look up.
+*
+*	Returns: The corresponding color.
+*/
 vec4 farCloudsPalette(in int x)
 {
     return ARR2(x, TRANS,
                    L_BLUE);
 }
 
+/*
+*	The tile function of those clouds in the distance.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int farClouds(in int x, in int y)
 {
     x = int(mod(float(x),32.0));
@@ -374,6 +534,16 @@ int farClouds(in int x, in int y)
     return ARR32(x,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
 }
 
+/*
+*	The non-repeated exterior portion of the shore.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 vec4 drawFarClouds(in int x, in int y)
 {
     if(y >= SHORE_Y && y < SHORE_Y + 5) return farCloudsPalette(farClouds(x,y-SHORE_Y));
@@ -381,6 +551,15 @@ vec4 drawFarClouds(in int x, in int y)
     return vec4(0.0);
 }
 
+/*
+*	The palette of the waves when under the shoreline.
+*   
+*	Returns a color given a palette index.
+*
+*	c: The color index to look up.
+*
+*	Returns: The corresponding color.
+*/
 vec4 wavesShadowPalette(in int x)
 {
     if(x<4)
@@ -393,6 +572,15 @@ vec4 wavesShadowPalette(in int x)
     else return WHITE;
 }
 
+/*
+*	The palette of the waves in the sun.
+*   
+*	Returns a color given a palette index.
+*
+*	c: The color index to look up.
+*
+*	Returns: The corresponding color.
+*/
 vec4 wavesSunnyPalette(in int x)
 {
     if(x<4)
@@ -405,6 +593,18 @@ vec4 wavesSunnyPalette(in int x)
     else return WHITE;
 }
 
+/*
+*	One frame of the waves.
+*	Note: The palette of the sunny and shadowed waves are
+*	consolidated into a single map with a larger palette.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int wavesA(in int x, in int y)
 {
     if(x < 32) // ARR64 would be a really long line.
@@ -434,6 +634,18 @@ int wavesA(in int x, in int y)
     }
 }
 
+/*
+*	Another frame of the waves.
+*	Note: The palette of the sunny and shadowed waves are
+*	consolidated into a single map with a larger palette.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int wavesB(in int x, in int y)
 {
     if(x < 32) // ARR64 would be a really long line.
@@ -463,6 +675,18 @@ int wavesB(in int x, in int y)
     }
 }
 
+/*
+*	A third frame of sweet wave action.
+*	Note: The palette of the sunny and shadowed waves are
+*	consolidated into a single map with a larger palette.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int wavesC(in int x, in int y)
 {
     if(x < 32) // ARR64 would be a really long line.
@@ -493,6 +717,18 @@ int wavesC(in int x, in int y)
     }
 }
 
+/*
+*	The forth frame of waves.
+*	Note: The palette of the sunny and shadowed waves are
+*	consolidated into a single map with a larger palette.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
 int wavesD(in int x, in int y)
 {
     if(x < 32) // ARR64 would be a really long line.
@@ -522,6 +758,17 @@ int wavesD(in int x, in int y)
     }
 }
 
+/*
+*	The wave draw function.
+*   
+*	Draws the waves using the appropriate palette given the position.
+*	This also animates the waves.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The color of the waves at the given position.
+*/
 vec4 drawWaves(in int x, in int y)
 {
     if(y >= WAVES_Y && y < WAVES_Y + 5)
