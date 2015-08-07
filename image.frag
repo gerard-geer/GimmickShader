@@ -1339,7 +1339,7 @@ vec4 drawSmallCloud(in int x, in int y)
 {
 	vec4 result = vec4(0.0);
 	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_A_X,S_CLOUD_A_Y));
-	result += smallCloudPalette(smallCloudB(x,y,S_CLOUD_B_X,S_CLOUD_B_Y));
+	result += smallCloudPalette(smallCloudB(x,y));
 	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_C_X,S_CLOUD_C_Y));
 	return result;
 }
