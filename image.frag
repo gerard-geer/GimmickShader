@@ -1234,6 +1234,20 @@ vec4 drawNearClouds(in int x, in int y)
 	return result;
 }
 
+/*
+*	The palette of the smaller clouds floating above.
+*   
+*	Returns a color given a palette index.
+*
+*	c: The color index to look up.
+*
+*	Returns: The corresponding color.
+*/
+vec4 smallCloudPalette(in int x)
+{
+	return ARR4(x, TRANS, WHITE, L_BLUE, TRANS);
+}
+
 // Draws all sprites and tiles.
 vec4 drawElements(in int x, in int y)
 {
