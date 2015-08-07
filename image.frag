@@ -127,8 +127,6 @@ vec4 yumetarouPalette(in int c)
 */
 int yumetarouEyesOpen(in int x, in int y)
 {
-    x = int(mod(float(x),16.0));
-    y = int(mod(float(y),19.0));
     if(y<16)
     {
         return ARR16(y,  ARR16(x,5,5,5,5,4,4,5,5,5,5,5,5,5,5,5,5),
@@ -166,8 +164,6 @@ int yumetarouEyesOpen(in int x, in int y)
 */
 int yumetarouEyesClosed(in int x, in int y)
 {
-    x = int(mod(float(x),16.0));
-    y = int(mod(float(y),19.0));
     if(y<16){
         return ARR16(y,  ARR16(x,5,5,5,5,4,4,5,5,5,5,5,5,5,5,5,5),
                          ARR16(x,5,5,5,5,4,3,4,5,5,5,5,5,5,5,5,5),
@@ -319,9 +315,6 @@ vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
     x -= atx;
     y -= aty;
     
-    x = int(mod(float(x),8.0));
-    y = int(mod(float(y),5.0));
-    
     // Flip the bird if necessary.
     if(flip) x = 7-x;
     
@@ -429,7 +422,6 @@ vec4 shorePalette(in int x)
 int shoreInterior(in int x, in int y)
 {
     x = int(mod(float(x),32.0));
-    y = int(mod(float(y),32.0));
     return ARR32(y, 
              3,
 			 0,
@@ -477,8 +469,6 @@ int shoreInterior(in int x, in int y)
 */
 int shoreExterior(in int x, in int y)
 {
-    x = int(mod(float(x),16.0));
-    y = int(mod(float(y),32.0));
     return ARR32(y,
             ARR16(x,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2),
             ARR16(x,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3),
@@ -532,6 +522,7 @@ vec4 drawShore(in int x, in int y)
     y -= SHORE_Y;
     
     if(x < 64) return shorePalette(shoreInterior(x,y));
+    x -= 64;
     return shorePalette(shoreExterior(x,y));
 }
 
@@ -563,7 +554,6 @@ vec4 farCloudsPalette(in int x)
 int farClouds(in int x, in int y)
 {
     x = int(mod(float(x),32.0));
-    y = int(mod(float(y),5.0));
     if(y < 4)
     {
         return ARR4(y, 
@@ -587,8 +577,9 @@ int farClouds(in int x, in int y)
 */
 vec4 drawFarClouds(in int x, in int y)
 {
-    if(y >= SHORE_Y && y < SHORE_Y + 5) return farCloudsPalette(farClouds(x,y-SHORE_Y));
-    if(y >= SHORE_Y + 5) return L_BLUE;
+    if(y < SHORE_Y) return TRANS;
+    if(y > SHORE_Y + 4) return L_BLUE;
+    return farCloudsPalette(farClouds(x,y-SHORE_Y));
     return vec4(0.0);
 }
 
@@ -812,37 +803,31 @@ int wavesD(in int x, in int y)
 */
 vec4 drawWaves(in int x, in int y)
 {
-    if(y >= WAVES_Y && y < WAVES_Y + 5)
-    {
-        int t = int(mod(iGlobalTime*4.,4.));
-        y -= WAVES_Y;
-        
-        if(x > SHORE_END)
-        {            
-            x = int(mod(float(x),32.0));
-            y = int(mod(float(y),8.0));
-            return ARR4(t,
-                        wavesSunnyPalette(wavesA(x,y)),
-                        wavesSunnyPalette(wavesB(x,y)),
-                        wavesSunnyPalette(wavesC(x,y)),
-                        wavesSunnyPalette(wavesD(x,y)));
-        }
-        else
-        {
-            x = int(mod(float(x),32.0));
-            y = int(mod(float(y),8.0));
-            return ARR4(t,
-                        wavesShadowPalette(wavesA(x,y)),
-                        wavesShadowPalette(wavesB(x,y)),
-                        wavesShadowPalette(wavesC(x,y)),
-                        wavesShadowPalette(wavesD(x,y)));
-        }
+    if(y < WAVES_Y) return TRANS;
+    if(y > WAVES_Y+7) return L_BLUE;
+    
+    int t = int(mod(iGlobalTime*4.,4.));
+    
+    y -= WAVES_Y;
+    
+    if(x > SHORE_END)
+    {            
+        x = int(mod(float(x),32.0));
+        return ARR4(t,
+                    wavesSunnyPalette(wavesA(x,y)),
+                    wavesSunnyPalette(wavesB(x,y)),
+                    wavesSunnyPalette(wavesC(x,y)),
+                    wavesSunnyPalette(wavesD(x,y)));
     }
-    if(y > WAVES_Y + 4)
+    else
     {
-        return L_BLUE;
+        x = int(mod(float(x),32.0));
+        return ARR4(t,
+                    wavesShadowPalette(wavesA(x,y)),
+                    wavesShadowPalette(wavesB(x,y)),
+                    wavesShadowPalette(wavesC(x,y)),
+                    wavesShadowPalette(wavesD(x,y)));
     }
-    return TRANS;
 }
 
 /*
@@ -886,10 +871,6 @@ int cloudA(in int x, in int y)
     // Transform the coordinates to cloud space.
     x -= CLOUD_A_X;
     y -= CLOUD_A_Y;
-    
-    // Mod it for safety.
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),8.0));
 	
     // Finally do the 2D binary lookup to get the actual color.
 	return
@@ -914,9 +895,6 @@ int cloudB(in int x, in int y)
     x -= CLOUD_B_X;
     y -= CLOUD_B_Y;
 	
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),8.0));
-	
 	return
 	ARR8(y,
 	  0,
@@ -939,9 +917,6 @@ int cloudC(in int x, in int y)
     x -= CLOUD_C_X;
     y -= CLOUD_C_Y;
 	
-	x = int(mod(float(x),16.0));
-	y = int(mod(float(y),4.0));
-	
 	return
 	ARR4(y,
 	  0,
@@ -959,9 +934,6 @@ int cloudD(in int x, in int y)
 	
     x -= CLOUD_D_X;
     y -= CLOUD_D_Y;
-	
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),8.0));
 	
 	return
 	ARR8(y,
@@ -985,9 +957,6 @@ int cloudE(in int x, in int y)
     x -= CLOUD_E_X;
     y -= CLOUD_E_Y;
 	
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),8.0));
-	
 	return
 	ARR8(y,
 	  0,
@@ -1009,9 +978,6 @@ int cloudF(in int x, in int y)
 	
     x -= CLOUD_F_X;
     y -= CLOUD_F_Y;
-	
-	x = int(mod(float(x),16.0));
-	y = int(mod(float(y),16.0));
 	
 	return
 	ARR16(y,
@@ -1043,9 +1009,6 @@ int cloudG(in int x, in int y)
     x -= CLOUD_G_X;
     y -= CLOUD_G_Y;
 	
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),8.0));
-	
 	return
 	ARR8(y,
 	  ARR8(x,0,0,0,0,0,0,1,1),
@@ -1067,9 +1030,6 @@ int cloudH(in int x, in int y)
 	
     x -= CLOUD_H_X;
     y -= CLOUD_H_Y;
-	
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),8.0));
 	
 	return
 	ARR8(y,
@@ -1093,9 +1053,6 @@ int cloudI(in int x, in int y)
     x -= CLOUD_I_X;
     y -= CLOUD_I_Y;
 	
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),8.0));
-	
 	return
 	ARR8(y,
 	  ARR8(x,1,1,0,0,0,0,0,0),
@@ -1118,9 +1075,6 @@ int cloudJ(in int x, in int y)
     x -= CLOUD_J_X;
     y -= CLOUD_J_Y;
 	
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),8.0));
-	
 	return
 	ARR8(y,
 	  ARR8(x,1,1,0,0,1,1,0,0),
@@ -1142,9 +1096,6 @@ int cloudK(in int x, in int y)
 	
     x -= CLOUD_K_X;
     y -= CLOUD_K_Y;
-	
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),4.0));
 	
 	return
 	ARR4(y,
@@ -1184,9 +1135,6 @@ int cloudM(in int x, in int y)
 	
     x -= CLOUD_M_X;
     y -= CLOUD_M_Y;
-	
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),8.0));
 	
 	return
 	ARR8(y,
