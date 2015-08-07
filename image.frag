@@ -577,8 +577,9 @@ int farClouds(in int x, in int y)
 */
 vec4 drawFarClouds(in int x, in int y)
 {
-    if(y >= SHORE_Y && y < SHORE_Y + 5) return farCloudsPalette(farClouds(x,y-SHORE_Y));
-    if(y >= SHORE_Y + 5) return L_BLUE;
+    if(y < SHORE_Y) return TRANS;
+    if(y > SHORE_Y + 4) return L_BLUE;
+    return farCloudsPalette(farClouds(x,y-SHORE_Y));
     return vec4(0.0);
 }
 
