@@ -1,0 +1,162 @@
+amp 0.3
+
+// "Main lead"
+reset
+step 0.15
+duty 0.0
+decay 0.6
+len 0.6
+wave 0
+B 4
+C 5
+E 5
+G 5
+B 5
+-
+-
+-
+-
+-
+C 6
+B 5
+-
+G 5
+E 5
+C 5
+B 4
+C 5
+E 5
+G 5
+B 5
+C 6
+B 5
+-
+-
+-
+-
+-
+-
+-
+-
+-
+//
+E 5
+F 5
+A 5
+C 6
+E 6
+-
+-
+-
+-
+-
+F 6
+E 6
+-
+C 6
+A 5
+F 5
+E 5
+F 5
+A 5
+C 6
+E 6
+F 6
+E 6
+-
+-
+-
+-
+-
+-
+-
+-
+-
+
+
+// "Basslines"
+reset
+decay 1.6
+step 1.2
+len 1.2
+wave 1
+C 2
+G 2
+C 2
+G 2
+F 2
+C 3
+F 2
+F 2
+
+
+// "Drums"
+reset
+step 0.15
+decay 0.15
+len 0.15
+wave 4
+C 9
+-
+A 1
+-
+E 4
+-
+A 1
+A 3
+C 9
+-
+A 1
+-
+E 4
+-
+A 1
+A 1
+C 9
+-
+A 1
+-
+E 4
+-
+A 1
+-
+C 9
+-
+A 1
+-
+E 4
+-
+A 1
+-
+C 9
+-
+A 1
+-
+E 4
+-
+A 1
+A 3
+C 9
+-
+A 1
+-
+E 4
+-
+A 1
+A 1
+C 9
+-
+A 1
+-
+E 4
+-
+A 1
+-
+C 9
+-
+A 1
+-
+E 4
+-
+A 1
+-
