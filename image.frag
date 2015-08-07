@@ -47,6 +47,41 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 #define BIRD_E_Y 62
 #define BIRD_F_Y 69
 #define BIRD_G_Y 72
+
+// The big cloud takes a lot of orchestration. These are the coordinates
+// of the individual tiles.
+// The cloud tiles represent only the detailed upper portions of it.
+// Anything below them is drawn in as white.
+#define CLOUD_A_X 97
+#define CLOUD_A_Y 160
+#define CLOUD_B_X 105
+#define CLOUD_B_Y 152
+#define CLOUD_C_X 113
+#define CLOUD_C_Y 152
+#define CLOUD_D_X 129
+#define CLOUD_D_Y 144
+#define CLOUD_E_X 137
+#define CLOUD_E_Y 136
+#define CLOUD_F_X 145
+#define CLOUD_F_Y 128
+#define CLOUD_G_X 161
+#define CLOUD_G_Y 128
+#define CLOUD_H_X 169
+#define CLOUD_H_Y 128
+#define CLOUD_I_X 177
+#define CLOUD_I_Y 136
+#define CLOUD_J_X 185
+#define CLOUD_J_Y 144
+#define CLOUD_K_X 193
+#define CLOUD_K_Y 152
+#define CLOUD_L_1_X 201
+#define CLOUD_L_1_Y 152
+#define CLOUD_L_2_X 209
+#define CLOUD_L_2_Y 152
+#define CLOUD_M_X 217
+#define CLOUD_M_Y 152
+#define CLOUD_N_X 225
+#define CLOUD_N_Y 152
     
 /*
 *	Yumetarou's palette.
@@ -812,6 +847,306 @@ vec4 drawWaves(in int x, in int y)
 vec4 cloudPalette(in int x)
 {
 	return ARR2(x, TRANS, WHITE);
+}
+
+int cloudA(in int x, in int y)
+{
+	if(x < CLOUD_A_X || X > CLOUD_A_X+8) return 0;
+	if(y < CLOUD_A_Y) return 0;
+	if(y > CLOUD_A_Y+8) return 1;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  0,
+	  ARR8(x,0,0,0,0,0,0,1,1),
+	  ARR8(x,0,0,0,0,1,1,1,1),
+	  ARR8(x,0,0,0,1,1,1,1,1),
+	  ARR8(x,0,0,1,1,1,1,1,1),
+	  ARR8(x,0,0,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1)
+	);
+}
+
+int cloudB(in int x, in int y)
+{
+	if(x < CLOUD_B_X || X > CLOUD_B_X+8) return 0;
+	if(y < CLOUD_B_Y) return 0;
+	if(y > CLOUD_B_Y+8) return 1;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  0,
+	  0,
+	  ARR8(x,0,0,0,0,0,1,1,1),
+	  ARR8(x,0,1,1,1,1,0,1,0),
+	  ARR8(x,1,1,1,1,0,0,1,1),
+	  ARR8(x,1,1,1,0,0,1,1,1),
+	  ARR8(x,0,1,1,0,1,1,1,1),
+	  ARR8(x,1,0,0,0,1,1,1,1)
+	);
+}
+
+int cloudC(in int x, in int y)
+{
+	if(x < CLOUD_C_X || X > CLOUD_C_X+16) return 0;
+	if(y < CLOUD_C_Y) return 0;
+	if(y > CLOUD_C_Y+4) return 1;
+	
+	x = int(mod(float(x),16.0));
+	y = int(mod(float(y),4.0));
+	
+	return
+	ARR4(y,
+	  0,
+	  ARR16(x,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0),
+	  ARR16(x,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0),
+	  1
+	);
+}
+
+int cloudD(in int x, in int y)
+{
+	if(x < CLOUD_D_X || X > CLOUD_D_X+8) return 0;
+	if(y < CLOUD_D_Y) return 0;
+	if(y > CLOUD_D_Y+8) return 1;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  0,
+	  ARR8(x,0,0,0,0,0,0,1,1),
+	  ARR8(x,0,0,0,0,1,1,1,1),
+	  ARR8(x,0,0,0,1,1,1,1,1),
+	  ARR8(x,0,0,1,1,1,1,1,1),
+	  ARR8(x,0,0,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1)
+	);
+}
+
+int cloudE(in int x, in int y)
+{
+	if(x < CLOUD_E_X || X > CLOUD_E_X+8) return 0;
+	if(y < CLOUD_E_Y) return 0;
+	if(y > CLOUD_E_Y+8) return 1;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  0,
+	  0,
+	  ARR8(x,0,0,0,0,0,1,1,1),
+	  ARR8(x,0,1,1,1,1,0,1,0),
+	  ARR8(x,1,1,1,1,0,0,1,1),
+	  ARR8(x,1,1,1,0,0,1,1,1),
+	  ARR8(x,0,1,1,0,1,1,1,1),
+	  ARR8(x,1,0,0,0,1,1,1,1)
+	);
+}
+
+int cloudF(in int x, in int y)
+{
+	if(x < CLOUD_F_X || X > CLOUD_F_X+16) return 0;
+	if(y < CLOUD_F_Y) return 0;
+	if(y > CLOUD_F_Y+16) return 1;
+	
+	x = int(mod(float(x),16.0));
+	y = int(mod(float(y),16.0));
+	
+	return
+	ARR16(y,
+	  ARR16(x,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0),
+	  ARR16(x,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0),
+	  ARR16(x,1,1,0,1,1,0,1,1,1,1,0,1,1,0,1,0),
+	  ARR16(x,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0),
+	  0,
+	  ARR16(x,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0),
+	  ARR16(x,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0),
+	  0,
+	  ARR16(x,0,0,0,0,1,1,1,1,0,0,0,0,0,0,1,1),
+	  ARR16(x,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1),
+	  ARR16(x,0,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1),
+	  ARR16(x,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1),
+	  ARR16(x,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1),
+	  ARR16(x,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1),
+	  1,
+	  ARR16(x,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1)
+	);
+}
+
+int cloudG(in int x, in int y)
+{
+	if(x < CLOUD_G_X || X > CLOUD_G_X+8) return 0;
+	if(y < CLOUD_G_Y) return 0;
+	if(y > CLOUD_G_Y+8) return 1;
+	
+	x = int(mod(float(x),G.0));
+	y = int(mod(float(y),G.0));
+	
+	return
+	ARR8(y,
+	  ARR8(x,0,0,0,0,0,0,1,1),
+	  ARR8(x,0,0,0,0,1,1,1,1),
+	  ARR8(x,1,1,0,1,1,1,1,1),
+	  ARR8(x,1,0,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1),
+	  1,
+	  1
+	);
+}
+
+int cloudH(in int x, in int y)
+{
+	if(x < CLOUD_H_X || X > CLOUD_H_X+8) return 0;
+	if(y < CLOUD_H_Y) return 0;
+	if(y > CLOUD_H_Y+8) return 1;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  ARR8(x,1,1,1,0,0,0,0,0),
+	  ARR8(x,1,1,1,1,1,0,0,0),
+	  ARR8(x,1,1,1,1,1,1,0,0),
+	  ARR8(x,1,1,1,1,1,1,1,0),
+	  ARR8(x,1,1,1,1,1,1,1,0),
+	  1,
+	  ARR8(x,1,1,1,1,1,0,1,0),
+	  1
+	);
+}
+
+int cloudI(in int x, in int y)
+{
+	if(x < CLOUD_I_X || X > CLOUD_I_X+8) return 0;
+	if(y < CLOUD_I_Y) return 0;
+	if(y > CLOUD_I_Y+8) return 1;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  ARR8(x,1,1,0,0,0,0,0,0),
+	  ARR8(x,1,1,1,0,0,1,1,0),
+	  ARR8(x,1,1,1,0,0,0,1,0),
+	  ARR8(x,1,1,1,1,0,0,0,0),
+	  ARR8(x,1,1,1,1,0,0,0,0),
+	  ARR8(x,1,1,1,1,0,0,0,0),
+	  ARR8(x,1,1,1,0,1,0,0,0),
+	  1
+	);
+}
+
+int cloudJ(in int x, in int y)
+{
+	if(x < CLOUD_A_X || X > CLOUD_A_X+8) return 0;
+	if(y < CLOUD_A_Y) return 0;
+	if(y > CLOUD_A_Y+8) return 1;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  ARR8(x,1,1,0,0,1,1,0,0),
+	  ARR8(x,1,1,1,0,1,1,0,0),
+	  ARR8(x,1,1,1,1,0,0,0,0),
+	  ARR8(x,1,1,1,1,0,1,0,0),
+	  ARR8(x,1,1,1,1,0,0,0,0),
+	  ARR8(x,1,1,1,1,1,0,0,0),
+	  ARR8(x,1,1,1,1,1,0,0,0),
+	  ARR8(x,1,1,1,1,1,0,0,0)
+	);
+}
+
+int cloudK(in int x, in int y)
+{
+	if(x < CLOUD_A_X || X > CLOUD_A_X+8) return 0;
+	if(y < CLOUD_A_Y) return 0;
+	if(y > CLOUD_A_Y+8) return 1;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR4(y,
+	  0,
+	  ARR8(x,0,0,1,0,0,0,1,1),
+	  ARR8(x,1,1,1,1,0,1,1,1),
+	  1
+	);
+}
+
+int cloudL(in int x, in int y)
+{
+	if(x < CLOUD_A_X || X > CLOUD_A_X+8) return 0;
+	if(y < CLOUD_A_Y) return 0;
+	if(y > CLOUD_A_Y+8) return 1;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR4(y,
+	  0,
+	  ARR8(x,1,1,0,0,0,0,0,0),
+	  ARR8(x,1,1,1,0,0,1,1,0),
+	  1
+	);
+}
+
+int cloudM(in int x, in int y)
+{
+	if(x < CLOUD_M_X || X > CLOUD_M_X+8) return 0;
+	if(y < CLOUD_M_Y) return 0;
+	if(y > CLOUD_M_Y+8) return 1;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  0,
+	  0,
+	  ARR8(x,0,0,0,1,1,0,0,0),
+	  ARR8(x,0,1,0,1,1,0,0,0),
+	  ARR8(x,0,0,0,0,0,0,0,1),
+	  ARR8(x,1,1,1,1,0,0,1,1),
+	  1,
+	  1
+	);
+}
+
+int cloudN(in int x, in int y)
+{
+	if(x < CLOUD_M_X || X > CLOUD_M_X+32) return 0;
+	if(y < CLOUD_M_Y) return 0;
+	if(y > CLOUD_M_Y+4) return 1;
+	
+	x = int(mod(float(x),32.0));
+	y = int(mod(float(y),4.0));
+	
+	return
+	ARR4(y,
+	  ARR32(x,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0),
+	  ARR32(x,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0),
+	  1,
+	  1
+	);
 }
 
 // Draws all sprites and tiles.
