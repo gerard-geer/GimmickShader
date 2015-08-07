@@ -1,4 +1,4 @@
-// Nah we don't need that.
+// Nah we don't need precision
 precision lowp int;
 precision lowp float;
 
@@ -210,18 +210,48 @@ vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
     return birdPalette(birdWingsDown(x,y));
 }
 
+
+
+/* A triangle wave, used for faithfully animating the birds.
+ * This is the same abs'd saw wave from ShaderTracker, but
+ * with the saw wave inlined, and without the 4-bit aliasing.
+ *
+ */
+int anim(in int s, in float t, in float f, in float a, out bool d)
+{
+    // Triangle wave = |saw wave|
+    float tri = abs( (mod(t*f, 1.0)*2.0)-1.0 );
+    // Oh hey triangle waves are kind of sinosodal, let's rotate
+    // it by PI/2 for d1
+    float d1 = abs( (mod((t+.5)*f, 1.0)*2.0)-1.0 );
+    // Let's go ahead and transform this to (-1..1)
+    d1 = (d1*2.0)-1.0;
+    // Set the direction to the sign of the derivative.
+    d = d1<0.0;
+    // Finally we return the animated position.
+	return s + int(tri*a);
+}
+
 vec4 drawBirds(in int x, in int y)
 {
     // Since birds never cross we can use additive blending.
     // And as we've learned from the sound let's divvy up addition.
     vec4 result = vec4(0.0);
-    result += drawBird(x,y, 120, BIRD_A_Y, true);
-    result += drawBird(x,y, 152, BIRD_B_Y, true);
-    result += drawBird(x,y, 110, BIRD_C_Y, true);
-    result += drawBird(x,y, 208, BIRD_D_Y, true);
-    result += drawBird(x,y, 164, BIRD_E_Y, false);
-    result += drawBird(x,y, 100, BIRD_F_Y, false);
-    result += drawBird(x,y, 185, BIRD_G_Y, false);
+    bool f;
+    int a = anim(120,iGlobalTime+16.0,0.2,50.0,f);
+    result += drawBird(x,y,a,BIRD_A_Y,f);
+    a = anim(152,iGlobalTime+14.0,0.2,30.0,f);
+    result += drawBird(x,y,a,BIRD_B_Y,f);
+    a = anim(110,iGlobalTime+12.0,0.2,40.0,f);
+    result += drawBird(x,y,a,BIRD_C_Y,f);
+    a = anim(208,iGlobalTime+10.0,0.2,20.0,f);
+    result += drawBird(x,y,a,BIRD_D_Y,f);
+    a = anim(164,iGlobalTime+8.0, 0.2,50.0,f);
+    result += drawBird(x,y,a,BIRD_E_Y,f);
+    a = anim(100,iGlobalTime+6.0, 0.2,60.0,f);
+    result += drawBird(x,y,a,BIRD_F_Y,f);
+    a = anim(185,iGlobalTime+4.0, 0.2,50.0,f);
+    result += drawBird(x,y,a,BIRD_G_Y,f);
     return result;
     
 }
