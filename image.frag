@@ -800,6 +800,20 @@ vec4 drawWaves(in int x, in int y)
     return vec4(0.0);
 }
 
+/*
+*	The palette of the white clouds.
+*   
+*	Returns a color given a palette index.
+*
+*	c: The color index to look up.
+*
+*	Returns: The corresponding color.
+*/
+vec4 cloudPalette(in int x)
+{
+	return ARR2(x, TRANS, WHITE);
+}
+
 // Draws all sprites and tiles.
 vec4 drawElements(in int x, in int y)
 {
