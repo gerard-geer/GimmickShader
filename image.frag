@@ -1300,7 +1300,7 @@ int smallCloudA(in int x, in int y, in int atx, in int aty)
 *
 *	Returns: The corresponding palette index.
 */
-int smallCloudB(in int x, in int y);
+int smallCloudB(in int x, in int y)
 {
 	if(x < S_CLOUD_B_X || x > S_CLOUD_B_X+16) return 0;
 	if(y < S_CLOUD_B_Y || y > S_CLOUD_B_Y+8) return 0;
@@ -1323,6 +1323,25 @@ int smallCloudB(in int x, in int y);
 	  0,
 	  0
 	);
+}
+
+/*
+*	The small cloud's draw function.
+*
+*	Draws the smaller cloud to the screen.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The color of the cloud from under the current texel.
+*/
+vec4 drawSmallCloud(in int x, in int y)
+{
+	vec4 result = vec4(0.0);
+	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_A_X,S_CLOUD_A_Y));
+	result += smallCloudPalette(smallCloudB(x,y,S_CLOUD_B_X,S_CLOUD_B_Y));
+	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_C_X,S_CLOUD_C_Y));
+	return result;
 }
 
 // Draws all sprites and tiles.
