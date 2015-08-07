@@ -52,34 +52,34 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 // of the individual tiles.
 // The cloud tiles represent only the detailed upper portions of it.
 // Anything below them is drawn in as white.
-#define CLOUD_A_X 0
-#define CLOUD_A_Y 32
-#define CLOUD_B_X 8
-#define CLOUD_B_Y 24
-#define CLOUD_C_X 16
-#define CLOUD_C_Y 24
-#define CLOUD_D_X 32
-#define CLOUD_D_Y 16
-#define CLOUD_E_X 40
-#define CLOUD_E_Y 8
-#define CLOUD_F_X 48
-#define CLOUD_F_Y 0
-#define CLOUD_G_X 64
-#define CLOUD_G_Y 0
-#define CLOUD_H_X 72
-#define CLOUD_H_Y 0
-#define CLOUD_I_X 80
-#define CLOUD_I_Y 8
-#define CLOUD_J_X 88
-#define CLOUD_J_Y 16
-#define CLOUD_K_X 96
-#define CLOUD_K_Y 24
-#define CLOUD_L_X 104
-#define CLOUD_L_Y 24
-#define CLOUD_M_X 120
-#define CLOUD_M_Y 24
-#define CLOUD_N_X 128
-#define CLOUD_N_Y 24
+#define CLOUD_A_X 97
+#define CLOUD_A_Y 160
+#define CLOUD_B_X 105
+#define CLOUD_B_Y 152
+#define CLOUD_C_X 113
+#define CLOUD_C_Y 152
+#define CLOUD_D_X 129
+#define CLOUD_D_Y 144
+#define CLOUD_E_X 137
+#define CLOUD_E_Y 136
+#define CLOUD_F_X 145
+#define CLOUD_F_Y 128
+#define CLOUD_G_X 161
+#define CLOUD_G_Y 128
+#define CLOUD_H_X 169
+#define CLOUD_H_Y 128
+#define CLOUD_I_X 177
+#define CLOUD_I_Y 136
+#define CLOUD_J_X 185
+#define CLOUD_J_Y 144
+#define CLOUD_K_X 193
+#define CLOUD_K_Y 152
+#define CLOUD_L_X 201
+#define CLOUD_L_Y 152
+#define CLOUD_M_X 217
+#define CLOUD_M_Y 152
+#define CLOUD_N_X 225
+#define CLOUD_N_Y 152
     
 /*
 *	Yumetarou's palette.
