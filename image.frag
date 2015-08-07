@@ -47,6 +47,47 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 #define BIRD_E_Y 62
 #define BIRD_F_Y 69
 #define BIRD_G_Y 72
+
+// The big cloud takes a lot of orchestration. These are the coordinates
+// of the individual tiles.
+// The cloud tiles represent only the detailed upper portions of it.
+// Anything below them is drawn in as white.
+#define CLOUD_A_X 97
+#define CLOUD_A_Y 160
+#define CLOUD_B_X 105
+#define CLOUD_B_Y 152
+#define CLOUD_C_X 113
+#define CLOUD_C_Y 152
+#define CLOUD_D_X 129
+#define CLOUD_D_Y 144
+#define CLOUD_E_X 137
+#define CLOUD_E_Y 136
+#define CLOUD_F_X 145
+#define CLOUD_F_Y 128
+#define CLOUD_G_X 161
+#define CLOUD_G_Y 128
+#define CLOUD_H_X 169
+#define CLOUD_H_Y 128
+#define CLOUD_I_X 177
+#define CLOUD_I_Y 136
+#define CLOUD_J_X 185
+#define CLOUD_J_Y 144
+#define CLOUD_K_X 193
+#define CLOUD_K_Y 152
+#define CLOUD_L_X 201
+#define CLOUD_L_Y 152
+#define CLOUD_M_X 217
+#define CLOUD_M_Y 152
+#define CLOUD_N_X 225
+#define CLOUD_N_Y 152
+
+// The positioning of the smaller cloud.
+#define S_CLOUD_A_X 184
+#define S_CLOUD_A_Y 115
+#define S_CLOUD_B_X 192
+#define S_CLOUD_B_Y 112
+#define S_CLOUD_C_X 216
+#define S_CLOUD_C_Y 115
     
 /*
 *	Yumetarou's palette.
@@ -797,20 +838,527 @@ vec4 drawWaves(in int x, in int y)
                         wavesShadowPalette(wavesD(x,y)));
         }
     }
-    return vec4(0.0);
+    if(y > WAVES_Y + 4)
+    {
+        return L_BLUE;
+    }
+    return TRANS;
+}
+
+/*
+*	The palette of the white clouds.
+*   
+*	Returns a color given a palette index.
+*
+*	c: The color index to look up.
+*
+*	Returns: The corresponding color.
+*/
+vec4 nearCloudsPalette(in int x)
+{
+	return ARR2(x, TRANS, WHITE);
+}
+
+/*
+*	Cloud tile functions.
+*	
+*	What follows are the tile functions for the large white cloud.
+*	Only the topmost sections with actual features are encoded.
+*	The solid white interior is assumed.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
+int cloudA(in int x, in int y)
+{
+    // Do some bounds checking.
+    // To the left or right? TRANSPARENT FOR YOU!
+	if(x < CLOUD_A_X || x >= CLOUD_B_X) return 0;
+    // Above this cloud tile? TRANSPARENT YOU AS WELL!
+	if(y < CLOUD_A_Y) return 0;
+    // Below the tile? OH YOU ARE MORE CLOUD HAVE CLOUD COLOR.
+	if(y > CLOUD_A_Y+7) return 1;
+	
+    // Transform the coordinates to cloud space.
+    x -= CLOUD_A_X;
+    y -= CLOUD_A_Y;
+    
+    // Mod it for safety.
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+    // Finally do the 2D binary lookup to get the actual color.
+	return
+	ARR8(y,
+	  0,
+	  ARR8(x,0,0,0,0,0,0,1,1),
+	  ARR8(x,0,0,0,0,1,1,1,1),
+	  ARR8(x,0,0,0,1,1,1,1,1),
+	  ARR8(x,0,0,1,1,1,1,1,1),
+	  ARR8(x,0,0,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1)
+	);
+}
+// Cloud tile B.
+int cloudB(in int x, in int y)
+{
+	if(x < CLOUD_B_X || x >= CLOUD_C_X) return 0;
+	if(y < CLOUD_B_Y) return 0;
+	if(y > CLOUD_B_Y+7) return 1;
+	
+    x -= CLOUD_B_X;
+    y -= CLOUD_B_Y;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  0,
+	  0,
+	  ARR8(x,0,0,0,0,0,1,1,1),
+	  ARR8(x,0,1,1,1,1,0,1,0),
+	  ARR8(x,1,1,1,1,0,0,1,1),
+	  ARR8(x,1,1,1,0,0,1,1,1),
+	  ARR8(x,0,1,1,0,1,1,1,1),
+	  ARR8(x,1,0,0,0,1,1,1,1)
+	);
+}
+// Cloud tile C.
+int cloudC(in int x, in int y)
+{
+	if(x < CLOUD_C_X || x >= CLOUD_D_X) return 0;
+	if(y < CLOUD_C_Y) return 0;
+	if(y > CLOUD_C_Y+3) return 1;
+	
+    x -= CLOUD_C_X;
+    y -= CLOUD_C_Y;
+	
+	x = int(mod(float(x),16.0));
+	y = int(mod(float(y),4.0));
+	
+	return
+	ARR4(y,
+	  0,
+	  ARR16(x,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0),
+	  ARR16(x,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0),
+	  1
+	);
+}
+// Cloud tile D.
+int cloudD(in int x, in int y)
+{
+	if(x < CLOUD_D_X || x >= CLOUD_E_X) return 0;
+	if(y < CLOUD_D_Y) return 0;
+	if(y > CLOUD_D_Y+7) return 1;
+	
+    x -= CLOUD_D_X;
+    y -= CLOUD_D_Y;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  0,
+	  ARR8(x,0,0,0,0,0,0,1,1),
+	  ARR8(x,0,0,0,0,1,1,1,1),
+	  ARR8(x,0,0,0,1,1,1,1,1),
+	  ARR8(x,0,0,1,1,1,1,1,1),
+	  ARR8(x,0,0,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1)
+	);
+}
+// Cloud tile E.
+int cloudE(in int x, in int y)
+{
+	if(x < CLOUD_E_X || x >= CLOUD_F_X) return 0;
+	if(y < CLOUD_E_Y) return 0;
+	if(y > CLOUD_E_Y+7) return 1;
+	
+    x -= CLOUD_E_X;
+    y -= CLOUD_E_Y;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  0,
+	  0,
+	  ARR8(x,0,0,0,0,0,1,1,1),
+	  ARR8(x,0,1,1,1,1,0,1,0),
+	  ARR8(x,1,1,1,1,0,0,1,1),
+	  ARR8(x,1,1,1,0,0,1,1,1),
+	  ARR8(x,0,1,1,0,1,1,1,1),
+	  ARR8(x,1,0,0,0,1,1,1,1)
+	);
+}
+// Cloud tile F.
+int cloudF(in int x, in int y)
+{
+	if(x < CLOUD_F_X || x >= CLOUD_G_X) return 0;
+	if(y < CLOUD_F_Y) return 0;
+	if(y > CLOUD_F_Y+15) return 1;
+	
+    x -= CLOUD_F_X;
+    y -= CLOUD_F_Y;
+	
+	x = int(mod(float(x),16.0));
+	y = int(mod(float(y),16.0));
+	
+	return
+	ARR16(y,
+	  ARR16(x,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0),
+	  ARR16(x,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0),
+	  ARR16(x,1,1,0,1,1,0,1,1,1,1,0,1,1,0,1,0),
+	  ARR16(x,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0),
+	  0,
+	  ARR16(x,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0),
+	  ARR16(x,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0),
+	  0,
+	  ARR16(x,0,0,0,0,1,1,1,1,0,0,0,0,0,0,1,1),
+	  ARR16(x,0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1),
+	  ARR16(x,0,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1),
+	  ARR16(x,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1),
+	  ARR16(x,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1),
+	  ARR16(x,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1),
+	  1,
+	  ARR16(x,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1)
+	);
+}
+// Cloud tile G.
+int cloudG(in int x, in int y)
+{
+	if(x < CLOUD_G_X || x >= CLOUD_H_X) return 0;
+	if(y < CLOUD_G_Y) return 0;
+	if(y > CLOUD_G_Y+7) return 1;
+	
+    x -= CLOUD_G_X;
+    y -= CLOUD_G_Y;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  ARR8(x,0,0,0,0,0,0,1,1),
+	  ARR8(x,0,0,0,0,1,1,1,1),
+	  ARR8(x,1,1,0,1,1,1,1,1),
+	  ARR8(x,1,0,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1),
+	  ARR8(x,0,1,1,1,1,1,1,1),
+	  1,
+	  1
+	);
+}
+// Cloud tile H.
+int cloudH(in int x, in int y)
+{
+	if(x < CLOUD_H_X || x >= CLOUD_I_X) return 0;
+	if(y < CLOUD_H_Y) return 0;
+	if(y > CLOUD_H_Y+7) return 1;
+	
+    x -= CLOUD_H_X;
+    y -= CLOUD_H_Y;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  ARR8(x,1,1,1,0,0,0,0,0),
+	  ARR8(x,1,1,1,1,1,0,0,0),
+	  ARR8(x,1,1,1,1,1,1,0,0),
+	  ARR8(x,1,1,1,1,1,1,1,0),
+	  ARR8(x,1,1,1,1,1,1,1,0),
+	  1,
+	  ARR8(x,1,1,1,1,1,0,1,0),
+	  1
+	);
+}
+// Cloud tile I.
+int cloudI(in int x, in int y)
+{
+	if(x < CLOUD_I_X || x >= CLOUD_J_X) return 0;
+	if(y < CLOUD_I_Y) return 0;
+	if(y > CLOUD_I_Y+7) return 1;
+	
+    x -= CLOUD_I_X;
+    y -= CLOUD_I_Y;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  ARR8(x,1,1,0,0,0,0,0,0),
+	  ARR8(x,1,1,1,0,0,1,1,0),
+	  ARR8(x,1,1,1,0,0,0,1,0),
+	  ARR8(x,1,1,1,1,0,0,0,0),
+	  ARR8(x,1,1,1,1,0,0,0,0),
+	  ARR8(x,1,1,1,1,0,0,0,0),
+	  ARR8(x,1,1,1,0,1,0,0,0),
+	  1
+	);
+}
+// Cloud tile J.
+int cloudJ(in int x, in int y)
+{
+	if(x < CLOUD_J_X || x >= CLOUD_K_X) return 0;
+	if(y < CLOUD_J_Y) return 0;
+	if(y > CLOUD_J_Y+7) return 1;
+	
+    x -= CLOUD_J_X;
+    y -= CLOUD_J_Y;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  ARR8(x,1,1,0,0,1,1,0,0),
+	  ARR8(x,1,1,1,0,1,1,0,0),
+	  ARR8(x,1,1,1,1,0,0,0,0),
+	  ARR8(x,1,1,1,1,0,1,0,0),
+	  ARR8(x,1,1,1,1,0,0,0,0),
+	  ARR8(x,1,1,1,1,1,0,0,0),
+	  ARR8(x,1,1,1,1,1,0,0,0),
+	  ARR8(x,1,1,1,1,1,0,0,0)
+	);
+}
+// Cloud tile K.
+int cloudK(in int x, in int y)
+{
+	if(x < CLOUD_K_X || x >= CLOUD_L_X) return 0;
+	if(y < CLOUD_K_Y) return 0;
+	if(y > CLOUD_K_Y+3) return 1;
+	
+    x -= CLOUD_K_X;
+    y -= CLOUD_K_Y;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),4.0));
+	
+	return
+	ARR4(y,
+	  0,
+	  ARR8(x,0,0,1,0,0,0,1,1),
+	  ARR8(x,1,1,1,1,0,1,1,1),
+	  1
+	);
+}
+// Cloud tile L.
+int cloudL(in int x, in int y)
+{
+	if(x < CLOUD_L_X || x >= CLOUD_M_X) return 0;
+	if(y < CLOUD_L_Y) return 0;
+	if(y > CLOUD_L_Y+3) return 1;
+	
+    x -= CLOUD_L_X;
+    y -= CLOUD_L_Y;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),4.0));
+	
+	return
+	ARR4(y,
+	  0,
+	  ARR8(x,1,1,0,0,0,0,0,0),
+	  ARR8(x,1,1,1,0,0,1,1,0),
+	  1
+	);
+}
+// CLoud tile M.
+int cloudM(in int x, in int y)
+{
+	if(x < CLOUD_M_X || x >= CLOUD_N_X) return 0;
+	if(y < CLOUD_M_Y) return 0;
+	if(y > CLOUD_M_Y+7) return 1;
+	
+    x -= CLOUD_M_X;
+    y -= CLOUD_M_Y;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
+	
+	return
+	ARR8(y,
+	  0,
+	  0,
+	  ARR8(x,0,0,0,1,1,0,0,0),
+	  ARR8(x,0,1,0,1,1,0,0,0),
+	  ARR8(x,0,0,0,0,0,0,0,1),
+	  ARR8(x,1,1,1,1,0,0,1,1),
+	  1,
+	  1
+	);
+}
+// Cloud tile N.
+int cloudN(in int x, in int y)
+{
+	if(x < CLOUD_N_X) return 0;
+	if(y < CLOUD_N_Y) return 0;
+	if(y > CLOUD_N_Y+3) return 1;
+	
+    x -= CLOUD_N_X;
+    y -= CLOUD_N_Y;
+	
+	x = int(mod(float(x),32.0));
+	y = int(mod(float(y),4.0));
+	
+	return
+	ARR4(y,
+	  ARR32(x,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0),
+	  ARR32(x,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0),
+	  1,
+	  1
+	);
+}
+
+vec4 drawNearClouds(in int x, in int y)
+{
+	vec4 result = vec4(0.0);
+	result += nearCloudsPalette(cloudA(x,y));
+	result += nearCloudsPalette(cloudB(x,y));
+	result += nearCloudsPalette(cloudC(x,y));
+	result += nearCloudsPalette(cloudD(x,y));
+	result += nearCloudsPalette(cloudE(x,y));
+	result += nearCloudsPalette(cloudF(x,y));
+	result += nearCloudsPalette(cloudG(x,y));
+	result += nearCloudsPalette(cloudH(x,y));
+	result += nearCloudsPalette(cloudI(x,y));
+	result += nearCloudsPalette(cloudJ(x,y));
+	result += nearCloudsPalette(cloudK(x,y));
+	result += nearCloudsPalette(cloudL(x,y));
+	result += nearCloudsPalette(cloudM(x,y));
+	result += nearCloudsPalette(cloudN(x,y));
+	return result;
+}
+
+/*
+*	The palette of the smaller clouds floating above.
+*   
+*	Returns a color given a palette index.
+*
+*	c: The color index to look up.
+*
+*	Returns: The corresponding color.
+*/
+vec4 smallCloudPalette(in int x)
+{
+	return ARR4(x, TRANS, WHITE, L_BLUE, TRANS);
+}
+
+/*
+*	The tile function of the smaller part of the small clouds.
+*   
+*	Returns a palette index given a position.
+*	Since this tile is repeated within the cloud, we have to
+*	be able to specify where to draw it.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*	atx: The x position at which to draw the cloud.
+*	aty: The y position at which to draw the cloud.
+*
+*	Returns: The corresponding palette index.
+*/
+int smallCloudA(in int x, in int y, in int atx, in int aty)
+{
+	if(x < atx || x > atx+7) return 0;
+	if(y < aty || y > aty+3) return 0;
+	
+	x -= atx;
+	y -= aty;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),4.0));
+	
+	return
+	ARR4(y,
+	  ARR8(x,0,0,0,0,2,2,0,0),
+	  ARR8(x,0,0,2,1,1,0,2,0),
+	  ARR8(x,1,0,0,1,2,0,0,0),
+	  ARR8(x,2,0,0,2,0,0,0,0)
+	);
+}
+
+/*
+*	The tile representing the large part of the small cloud.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
+int smallCloudB(in int x, in int y)
+{
+	if(x < S_CLOUD_B_X || x > S_CLOUD_B_X+15) return 0;
+	if(y < S_CLOUD_B_Y || y > S_CLOUD_B_Y+7) return 0;
+	
+	x -= S_CLOUD_B_X;
+	y -= S_CLOUD_B_Y;
+	
+	x = int(mod(float(x),16.0));
+	y = int(mod(float(y),8.0));
+	
+	
+	return
+	ARR8(y,
+	  ARR16(x,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+	  ARR16(x,1,2,0,0,1,1,1,0,0,0,0,0,0,0,0,0),
+	  ARR16(x,0,0,0,1,1,1,1,2,0,1,1,0,0,0,0,0),
+	  ARR16(x,0,0,2,1,1,1,1,2,1,1,1,2,0,1,0,0),
+	  ARR16(x,0,0,2,1,1,1,2,2,2,0,2,1,0,0,0,1),
+	  ARR16(x,2,1,0,2,2,2,0,2,0,0,0,0,0,0,0,0),
+	  0,
+	  0
+	);
+}
+
+/*
+*	The small cloud's draw function.
+*
+*	Draws the smaller cloud to the screen.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The color of the cloud from under the current texel.
+*/
+vec4 drawSmallCloud(in int x, in int y)
+{
+	vec4 result = vec4(0.0);
+	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_A_X,S_CLOUD_A_Y));
+	result += smallCloudPalette(smallCloudB(x,y));
+	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_C_X,S_CLOUD_C_Y));
+	return result;
 }
 
 // Draws all sprites and tiles.
 vec4 drawElements(in int x, in int y)
 {
     vec4 farClouds = drawFarClouds(x,y);
-    vec4 bird = drawBirds(x,y);
+	vec4 nearClouds = drawNearClouds(x,y);
+    vec4 smallCloud = drawSmallCloud(x,y);
+    vec4 birds = drawBirds(x,y);
     vec4 shore = drawShore(x,y);
     vec4 yumetarou = drawYumetarou(x,y);
     vec4 waves = drawWaves(x,y);
     
     // Overriting blending using alpha, since every sprite returns a value for every pixel.
-    vec4 result = mix(farClouds, bird, bird.a);
+    vec4 result = mix(farClouds, nearClouds, nearClouds.a);
+    result = mix(result,smallCloud,smallCloud.a);
+    result = mix(result,birds,birds.a);
     result = mix(result,shore,shore.a);
     result = mix(result,waves,waves.a);
     result = mix(result,yumetarou, yumetarou.a);
