@@ -851,7 +851,7 @@ vec4 nearCloudsPalette(in int x)
 
 int cloudA(in int x, in int y)
 {
-	if(x < CLOUD_A_X || X > CLOUD_A_X+8) return 0;
+	if(x < CLOUD_A_X || x > CLOUD_A_X+8) return 0;
 	if(y < CLOUD_A_Y) return 0;
 	if(y > CLOUD_A_Y+8) return 1;
 	
@@ -873,7 +873,7 @@ int cloudA(in int x, in int y)
 
 int cloudB(in int x, in int y)
 {
-	if(x < CLOUD_B_X || X > CLOUD_B_X+8) return 0;
+	if(x < CLOUD_B_X || x > CLOUD_B_X+8) return 0;
 	if(y < CLOUD_B_Y) return 0;
 	if(y > CLOUD_B_Y+8) return 1;
 	
@@ -895,7 +895,7 @@ int cloudB(in int x, in int y)
 
 int cloudC(in int x, in int y)
 {
-	if(x < CLOUD_C_X || X > CLOUD_C_X+16) return 0;
+	if(x < CLOUD_C_X || x > CLOUD_C_X+16) return 0;
 	if(y < CLOUD_C_Y) return 0;
 	if(y > CLOUD_C_Y+4) return 1;
 	
@@ -913,7 +913,7 @@ int cloudC(in int x, in int y)
 
 int cloudD(in int x, in int y)
 {
-	if(x < CLOUD_D_X || X > CLOUD_D_X+8) return 0;
+	if(x < CLOUD_D_X || x > CLOUD_D_X+8) return 0;
 	if(y < CLOUD_D_Y) return 0;
 	if(y > CLOUD_D_Y+8) return 1;
 	
@@ -935,7 +935,7 @@ int cloudD(in int x, in int y)
 
 int cloudE(in int x, in int y)
 {
-	if(x < CLOUD_E_X || X > CLOUD_E_X+8) return 0;
+	if(x < CLOUD_E_X || x > CLOUD_E_X+8) return 0;
 	if(y < CLOUD_E_Y) return 0;
 	if(y > CLOUD_E_Y+8) return 1;
 	
@@ -957,7 +957,7 @@ int cloudE(in int x, in int y)
 
 int cloudF(in int x, in int y)
 {
-	if(x < CLOUD_F_X || X > CLOUD_F_X+16) return 0;
+	if(x < CLOUD_F_X || x > CLOUD_F_X+16) return 0;
 	if(y < CLOUD_F_Y) return 0;
 	if(y > CLOUD_F_Y+16) return 1;
 	
@@ -987,12 +987,12 @@ int cloudF(in int x, in int y)
 
 int cloudG(in int x, in int y)
 {
-	if(x < CLOUD_G_X || X > CLOUD_G_X+8) return 0;
+	if(x < CLOUD_G_X || x > CLOUD_G_X+8) return 0;
 	if(y < CLOUD_G_Y) return 0;
 	if(y > CLOUD_G_Y+8) return 1;
 	
-	x = int(mod(float(x),G.0));
-	y = int(mod(float(y),G.0));
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),8.0));
 	
 	return
 	ARR8(y,
@@ -1009,7 +1009,7 @@ int cloudG(in int x, in int y)
 
 int cloudH(in int x, in int y)
 {
-	if(x < CLOUD_H_X || X > CLOUD_H_X+8) return 0;
+	if(x < CLOUD_H_X || x > CLOUD_H_X+8) return 0;
 	if(y < CLOUD_H_Y) return 0;
 	if(y > CLOUD_H_Y+8) return 1;
 	
@@ -1031,7 +1031,7 @@ int cloudH(in int x, in int y)
 
 int cloudI(in int x, in int y)
 {
-	if(x < CLOUD_I_X || X > CLOUD_I_X+8) return 0;
+	if(x < CLOUD_I_X || x > CLOUD_I_X+8) return 0;
 	if(y < CLOUD_I_Y) return 0;
 	if(y > CLOUD_I_Y+8) return 1;
 	
@@ -1053,7 +1053,7 @@ int cloudI(in int x, in int y)
 
 int cloudJ(in int x, in int y)
 {
-	if(x < CLOUD_A_X || X > CLOUD_A_X+8) return 0;
+	if(x < CLOUD_A_X || x > CLOUD_A_X+8) return 0;
 	if(y < CLOUD_A_Y) return 0;
 	if(y > CLOUD_A_Y+8) return 1;
 	
@@ -1075,7 +1075,7 @@ int cloudJ(in int x, in int y)
 
 int cloudK(in int x, in int y)
 {
-	if(x < CLOUD_A_X || X > CLOUD_A_X+8) return 0;
+	if(x < CLOUD_A_X || x > CLOUD_A_X+8) return 0;
 	if(y < CLOUD_A_Y) return 0;
 	if(y > CLOUD_A_Y+8) return 1;
 	
@@ -1093,7 +1093,7 @@ int cloudK(in int x, in int y)
 
 int cloudL(in int x, in int y)
 {
-	if(x < CLOUD_A_X || X > CLOUD_A_X+8) return 0;
+	if(x < CLOUD_A_X || x > CLOUD_A_X+8) return 0;
 	if(y < CLOUD_A_Y) return 0;
 	if(y > CLOUD_A_Y+8) return 1;
 	
@@ -1111,7 +1111,7 @@ int cloudL(in int x, in int y)
 
 int cloudM(in int x, in int y)
 {
-	if(x < CLOUD_M_X || X > CLOUD_M_X+8) return 0;
+	if(x < CLOUD_M_X || x > CLOUD_M_X+8) return 0;
 	if(y < CLOUD_M_Y) return 0;
 	if(y > CLOUD_M_Y+8) return 1;
 	
@@ -1133,7 +1133,7 @@ int cloudM(in int x, in int y)
 
 int cloudN(in int x, in int y)
 {
-	if(x < CLOUD_M_X || X > CLOUD_M_X+32) return 0;
+	if(x < CLOUD_M_X || x > CLOUD_M_X+32) return 0;
 	if(y < CLOUD_M_Y) return 0;
 	if(y > CLOUD_M_Y+4) return 1;
 	
@@ -1151,7 +1151,7 @@ int cloudN(in int x, in int y)
 
 vec4 drawNearClouds(in int x, in int y)
 {
-	result = vec4(0.0);
+	vec4 result = vec4(0.0);
 	result += nearCloudsPalette(cloudA(x,y));
 	result += nearCloudsPalette(cloudB(x,y));
 	result += nearCloudsPalette(cloudC(x,y));
