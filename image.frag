@@ -80,6 +80,14 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 #define CLOUD_M_Y 152
 #define CLOUD_N_X 225
 #define CLOUD_N_Y 152
+
+// The positioning of the smaller cloud.
+#define S_CLOUD_A_X 184
+#define S_CLOUD_A_Y 115
+#define S_CLOUD_B_X 192
+#define S_CLOUD_B_Y 112
+#define S_CLOUD_C_X 216
+#define S_CLOUD_C_Y 115
     
 /*
 *	Yumetarou's palette.
@@ -1246,6 +1254,75 @@ vec4 drawNearClouds(in int x, in int y)
 vec4 smallCloudPalette(in int x)
 {
 	return ARR4(x, TRANS, WHITE, L_BLUE, TRANS);
+}
+
+/*
+*	The tile function of the smaller part of the small clouds.
+*   
+*	Returns a palette index given a position.
+*	Since this tile is repeated within the cloud, we have to
+*	be able to specify where to draw it.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*	atx: The x position at which to draw the cloud.
+*	aty: The y position at which to draw the cloud.
+*
+*	Returns: The corresponding palette index.
+*/
+int smallCloudA(in int x, in int y, in int atx, in int aty)
+{
+	if(x < atx || x > atx+7) return 0;
+	if(y < aty || y > aty+3) return 0;
+	
+	x -= atx;
+	y -= aty;
+	
+	x = int(mod(float(x),8.0));
+	y = int(mod(float(y),4.0));
+	
+	return
+	ARR4(y,
+	  ARR8(x,0,0,0,0,2,2,0,0),
+	  ARR8(x,0,0,2,1,1,0,2,0),
+	  ARR8(x,1,0,0,1,2,0,0,0),
+	  ARR8(x,2,0,0,2,0,0,0,0)
+	);
+}
+
+/*
+*	The tile representing the large part of the small cloud.
+*   
+*	Returns a palette index given a position.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The corresponding palette index.
+*/
+int smallCloudB(in int x, in int y);
+{
+	if(x < S_CLOUD_B_X || x > S_CLOUD_B_X+16) return 0;
+	if(y < S_CLOUD_B_Y || y > S_CLOUD_B_Y+8) return 0;
+	
+	x -= S_CLOUD_B_X;
+	y -= S_CLOUD_B_Y;
+	
+	x = int(mod(float(x),16.0));
+	y = int(mod(float(y),8.0));
+	
+	
+	return
+	ARR8(y,
+	  ARR16(x,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+	  ARR16(x,1,2,0,0,1,1,1,0,0,0,0,0,0,0,0,0),
+	  ARR16(x,0,0,0,1,1,1,1,2,0,1,1,0,0,0,0,0),
+	  ARR16(x,0,0,2,1,1,1,1,2,1,1,1,2,0,1,0,0),
+	  ARR16(x,0,0,2,1,1,1,2,2,2,0,2,1,0,0,0,1),
+	  ARR16(x,2,1,0,2,2,2,0,2,0,0,0,0,0,0,0,0),
+	  0,
+	  0
+	);
 }
 
 // Draws all sprites and tiles.
