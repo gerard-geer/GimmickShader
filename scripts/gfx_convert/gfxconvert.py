@@ -1,5 +1,6 @@
 from PIL import Image
 from sys import exit
+import pyperclip as pc
 
 
 def homogeneous(l):
@@ -262,8 +263,12 @@ if __name__ == "__main__":
 		rowSets = divvy(rows)
 		
 		# Print for current functionality.
-		print "\n".join(generateBody(rowSets))
-			
+		output = "\n".join(generateBody(rowSets))
+		print output
+		
+		# Copy to clipboard.
+		pc.copy(output)
+		
 		# Do we want to do another?
 		try:
 			again = raw_input('\nAgain? (y/n) ') != 'n' 
