@@ -31,6 +31,7 @@ const vec4 D_GREEN = vec4(.000, .235, .078, 1.00);
 const vec4 L_GREEN = vec4(.298, .863, .282, 1.00);
 const vec4 D_GOLD  = vec4(.486, .031, .000, 1.00);
 const vec4 L_GOLD  = vec4(.988, .596, .219, 1.00);
+const vec4 BROWN   = vec4(.486, .031, .000, 1.00);
 const vec4 TRANS   = vec4(.000, .000, .000, .000);
 
 // Define out stuff so we don't have to pass the values as parameters.
@@ -1314,6 +1315,25 @@ vec4 drawSmallCloud(in int x, in int y)
 	result += smallCloudPalette(smallCloudB(x,y));
 	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_C_X,S_CLOUD_C_Y));
 	return result;
+}
+
+/*
+*	The boat draw function.
+*
+*	Draws the boat in the corner. Unlike all the other art,
+*	this doesn't use the LUT approach.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The color of the cloud from under the current fragment.
+*/
+vec4 drawBoat(in int x, in int y)
+{
+	if(y < -2*x + 24) return BROWN;
+	if (y < -x + 40 && y < -2*x + 71) return BLACK;
+	return TRANS;
+	
 }
 
 /*
