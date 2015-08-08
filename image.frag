@@ -1330,6 +1330,7 @@ vec4 drawSmallCloud(in int x, in int y)
 */
 vec4 drawBoat(in int x, in int y)
 {
+	// Oh look the boat looks just like elementary inequality graphs...
 	if(y < -2*x + 24) return BROWN;
 	if (y < -x + 40 && y < -2*x + 71) return BLACK;
 	return TRANS;
@@ -1353,6 +1354,7 @@ vec4 drawElements(in int x, in int y)
 	vec4 nearClouds = drawNearClouds(x,y);
     vec4 smallCloud = drawSmallCloud(x,y);
     vec4 birds = drawBirds(x,y);
+	vec4 boat = drawBoat(x,y);
     vec4 shore = drawShore(x,y);
     vec4 yumetarou = drawYumetarou(x,y);
     vec4 waves = drawWaves(x,y);
@@ -1361,6 +1363,7 @@ vec4 drawElements(in int x, in int y)
     vec4 result = mix(farClouds, nearClouds, nearClouds.a);
     result = mix(result,smallCloud,smallCloud.a);
     result = mix(result,birds,birds.a);
+    result = mix(result,boat,boat.a);
     result = mix(result,shore,shore.a);
     result = mix(result,waves,waves.a);
     result = mix(result,yumetarou, yumetarou.a);
