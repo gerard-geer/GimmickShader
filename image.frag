@@ -38,7 +38,7 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 #define YUMETAROU_Y 117
 #define SHORE_Y 136
 #define SHORE_END 79
-#define CLOUD_Y 128
+#define FAR_CLOUD_Y 128
 #define WAVES_Y 168
 #define BIRD_A_Y 20
 #define BIRD_B_Y 32
@@ -587,11 +587,11 @@ int farClouds(in int x, in int y)
 vec4 drawFarClouds(in int x, in int y)
 {
     // Above? Nada.
-    if(y < SHORE_Y) return TRANS;
+    if(y < FAR_CLOUD_Y) return TRANS;
     // Below? Fill'er'in.
-    if(y > SHORE_Y + 4) return L_BLUE;
+    if(y > FAR_CLOUD_Y+5) return L_BLUE;
     // Within the narrow band designated for the clouds?
-    return farCloudsPalette(farClouds(x,y-SHORE_Y));
+    return farCloudsPalette(farClouds(x,y-FAR_CLOUD_Y));
 }
 
 /*
