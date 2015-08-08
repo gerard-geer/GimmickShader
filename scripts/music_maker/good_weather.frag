@@ -574,14 +574,14 @@ float lead_1(float t0)
 vec2 mainSound(float t0)
 {
 	t0 = t0 * 1.000000;
-	float result = 0.0;
+	vec2 result = vec2(0.0,0.0);
 	float t1 = mod(t0,57.599998);
-	result += bass_line(t1);
-	result += lead_1(t1);
-	result += lead_2(t1);
-	result += drums(t1);
-	result += subdrums(t1);
+	result += vec2(1.000000,0.600000) * vec2((bass_line(t1)));
+	result += vec2(0.550000,1.000000) * vec2((lead_1(t1)));
+	result += vec2(1.000000,0.550000) * vec2((lead_2(t1)));
+	result += vec2(0.800000,1.000000) * vec2((drums(t1)));
+	result += vec2(1.000000,0.800000) * vec2((subdrums(t1)));
 
-	return vec2(result);
+	return result;
 }
 

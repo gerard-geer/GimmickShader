@@ -17,6 +17,8 @@ float decay_len;
 float note_len;
 float tmod;
 float overclock;
+float left_a;
+float right_a;
 int tmod_cnt;
 
 
@@ -184,12 +186,28 @@ void handle_line(char *line)
 		return;	
 	}
 
+	check = get_arg_to("#left ",line);
+	if (check)
+	{
+		left_a = (float)strtof(check,0);	
+		free(check);
+		return;
+	}
+
+	check = get_arg_to("#right ",line);
+	if (check)
+	{
+		right_a = (float)strtof(check,0);	
+		free(check);
+		return;
+	}
+
 	check = get_arg_to("#main",line);
 	if (check)
 	{	
 		printf("vec2 mainSound(float t0)\n{\n");
 		printf("\tt0 = t0 * %f;\n",overclock);
-		printf("\tfloat result = 0.0;\n");
+		printf("\tvec2 result = vec2(0.0,0.0);\n");
 		free(check);
 		return;
 	}
@@ -197,7 +215,7 @@ void handle_line(char *line)
 	check = get_arg_to("#endmain",line);
 	if (check)
 	{
-		printf("\n\treturn vec2(result);\n}\n\n");
+		printf("\n\treturn result;\n}\n\n");
 		free(check);
 		return;
 	}
@@ -222,7 +240,7 @@ void handle_line(char *line)
 	check = get_arg_to("#call ",line);
 	if (check)
 	{
-		printf("\tresult += %s(t%d);\n",check,tmod_cnt);
+		printf("\tresult += vec2(%f,%f) * vec2((%s(t%d)));\n",left_a,right_a,check,tmod_cnt);
 		free(check);
 		return;
 	}
@@ -408,6 +426,8 @@ void print_head(void)
 void read_loop(void)
 {
 	overclock = 1.0;
+	left_a = 1.0;
+	right_a = 1.0;
 	if (!track_file)
 	{
 		fprintf(stderr,"Error: File is not open, nothing to read!\n");

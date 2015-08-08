@@ -253,7 +253,6 @@ G2
 -
 -
 -
-
 // 00 Part B!
 #decay 0.4
 #len 0.4
@@ -981,6 +980,7 @@ D5
 -
 -
 
+
 // 00 Part B
 #duty 0.5
 #len 0.15
@@ -1283,9 +1283,25 @@ G5
 #main
 // Make entire song loop
 #tmod 57.60
+
+#left 1.0
+#right 0.6
+
 #call bass_line
+
+#left 0.55
+#right 1.0
 #call lead_1
+
+#left 1.0
+#right 0.55
 #call lead_2
+
+#left 0.8
+#right 1.0
 #call drums
+
+#left 1.0
+#right 0.8
 #call subdrums
 #endmain
