@@ -13,13 +13,14 @@ that were in no way necessary for the game to make it out the door, but the team
 This shoreline scene is one of those extra details. It's not even an area the gameplay takes
 you through.
 
-Some liberties have been taken. The corner of the boat is not there, the HUD is gone, and the scene 
+Some liberties have been taken. the HUD is gone, and the scene 
 is expanded rightward to fill aspect ratios wider than the original game's play area.
 
 System Requirements
 -------------------
-Since WebGL's GLSL doesn't support arrays *at all*, every sprite is represented by macros that use binary
+Since WebGL's GLSL doesn't support arrays *at all*, every sprite and tile is represented by macros that use binary
 searching to emulate arrays of power-of-two sizes. The GLSL compiler doesn't really enjoy all the
-conditionality this requires, and will crap out on hardware not up to snuff. Right now it works on a
-GTX 660 on Win7 on Chrome.
+conditionality this requires, and will crap out on hardware not up to snuff.
+
+Also, it works better on Firefox. It will take a while to compile, but your chances of success are far higher.
 
