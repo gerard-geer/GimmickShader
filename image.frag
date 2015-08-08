@@ -1331,9 +1331,11 @@ vec4 drawSmallCloud(in int x, in int y)
 vec4 drawBoat(in int x, in int y)
 {
 	// Oh look the boat looks just like elementary inequality graphs...
-	if(y < -2*x + 24) return BROWN;
-	if (y < -x + 40 && y < -2*x + 71) return BLACK;
-	return TRANS;
+    x = -x; // save time, negate x.
+    // Most common case is the first checked.
+	if (y > 2*x + 71 || y > x + 40) return TRANS;
+	if(y > 2*x + 24) return BLACK;
+    return BROWN;
 	
 }
 
