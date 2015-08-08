@@ -16,7 +16,9 @@ float step_size;
 float decay_len;
 float note_len;
 float tmod;
+float overclock;
 int tmod_cnt;
+
 
 wavetype wave_sel;
 
@@ -164,6 +166,14 @@ void handle_line(char *line)
 		return;
 	}
 
+	check = get_arg_to("#overclock ",line);
+	if (check)
+	{
+		overclock = (float)strtof(check,0);
+		free(check);
+		return;
+	}
+
 	check = get_arg_to("#tmod ",line);
 	if (check)
 	{
@@ -178,6 +188,7 @@ void handle_line(char *line)
 	if (check)
 	{	
 		printf("vec2 mainSound(float t0)\n{\n");
+		printf("\tt0 = t0 * %f;\n",overclock);
 		printf("\tfloat result = 0.0;\n");
 		free(check);
 		return;
@@ -396,6 +407,7 @@ void print_head(void)
 
 void read_loop(void)
 {
+	overclock = 1.0;
 	if (!track_file)
 	{
 		fprintf(stderr,"Error: File is not open, nothing to read!\n");

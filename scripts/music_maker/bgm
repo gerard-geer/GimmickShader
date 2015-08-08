@@ -1,7 +1,28 @@
 // Global settings
+#overclock 1.0
 #amp 0.25
 #step 0.15
 
+#func subdrums
+// ---------------------- Extra hi-hat stuff -----------------------
+#reset
+#amp 0.08
+#decay 0.2
+#len 0.2
+#wave 4
+#tmod 0.6
+#step 0.15
+
+#len 0.04
+#decay 2
+E1
+F1
+#len 0.3
+#decay 0.3
+C1
+-
+
+#endfunc
 
 #func drums
 // ---------------------------- Drums ------------------------------
@@ -10,7 +31,11 @@
 #decay 0.1
 #len 0.1
 #wave 4
-#tmod 2.4
+#step 0.15
+#tmod 4.8
+
+// Main backing
+#amp 0.25
 C4
 -
 #amp 0.1
@@ -20,10 +45,39 @@ D1
 #amp 0.25
 C3
 -
-#decay 0.3
-#len 0.3
+#amp 0.15
 C1
 -
+// Main backing
+#amp 0.25
+C4
+-
+#amp 0.1
+C1
+#amp 0.15
+D1
+#amp 0.25
+C3
+-
+#amp 0.15
+C1
+-
+// Main backing
+#amp 0.25
+C4
+-
+#amp 0.1
+C1
+#amp 0.15
+D1
+#amp 0.25
+C3
+-
+#amp 0.15
+C1
+-
+
+// Fourth-run fill
 #decay 0.1
 #len 0.1
 C4
@@ -499,6 +553,279 @@ G1
 // Song loops at this point. No more bass.
 #endfunc
 
+#func lead_2
+// ------------------------------- Lead 2 ----------------------------
+#reset
+#amp 0.25
+#decay 0.25
+#len 0.15
+#duty 0.5
+#wave 0
+// 00 Part A
+-
+E4
+G4
+C5
+E5
+E5
+-
+E5
+D5
+-
+D5
+-
+C5
+-
+B4
+-
+// 01
+-
+D4
+G4
+B4
+D5
+D5
+-
+D5
+C5
+-
+E5
+B4
+-
+C5
+-
+A4
+// 02
+-
+-
+-
+E4
+A4
+B4
+C5
+C5
+-
+-
+A4
+-
+E4
+-
+A4
+-
+// 03
+#decay 0.8
+#len 0.5
+A4
+-
+-
+-
+G4
+-
+-
+-
+A4
+-
+-
+-
+B4
+-
+-
+-
+#decay 0.25
+#len 0.15
+// 00 Part A Again
+-
+E4
+G4
+C5
+E5
+E5
+-
+E5
+D5
+-
+D5
+-
+C5
+-
+B4
+-
+// 01
+-
+D4
+G4
+B4
+D5
+D5
+-
+D5
+C5
+-
+E5
+B4
+-
+C5
+-
+A4
+// 02
+-
+-
+-
+E4
+A4
+B4
+C5
+C5
+-
+-
+A4
+-
+E4
+-
+A4
+-
+// 03
+#decay 0.8
+#len 0.5
+A4
+-
+-
+-
+G4
+-
+-
+-
+A4
+-
+-
+-
+B4
+-
+-
+-
+// 00 Part B
+#duty 0.25
+#len 0.6
+#decay 0.8
+F4
+-
+-
+-
+G4
+-
+-
+#len 0.15
+#decay 0.2
+C4
+-
+-
+-
+-
+-
+-
+-
+-
+// 01
+#step 2.4
+-
+// 02
+#step 0.15
+#len 0.6
+#decay 0.8
+F4
+-
+-
+-
+G4
+-
+-
+#len 0.15
+#decay 0.2
+C4
+-
+-
+-
+-
+-
+-
+-
+-
+// 03
+#step 2.4
+-
+// 00 Part 2
+#step 0.15
+#len 0.6
+#decay 0.8
+F4
+-
+-
+-
+G4
+-
+-
+#len 0.3
+#decay 0.2
+C4
+-
+-
+-
+-
+-
+-
+-
+-
+// 01
+#step 2.4
+-
+// 02
+#step 0.15
+#len 0.6
+#decay 0.8
+F5
+-
+-
+-
+G5
+-
+-
+#len 0.3
+#decay 0.2
+C5
+-
+-
+-
+-
+-
+-
+-
+-
+// 03
+#len 0.6
+#decay 0.8
+C5
+-
+-
+-
+C5
+-
+-
+-
+F4
+-
+-
+-
+#len 0.45
+G5
+-
+-
+#len 0.15
+E5
+-
+
+
+
+#endfunc
 
 #func lead_1
 // ------------------------------- Lead 1 ----------------------------
@@ -856,6 +1183,8 @@ D6
 F6
 // 03
 E6
+#len 0.3
+#decay 0.4
 F6
 -
 G6
@@ -865,6 +1194,8 @@ A6
 A#6
 -
 C7
+#len 0.15
+#decay 0.2
 A6
 A#6
 G6
@@ -950,8 +1281,11 @@ G5
 #endfunc
 
 #main
+// Make entire song loop
 #tmod 57.60
 #call bass_line
 #call lead_1
+#call lead_2
 #call drums
+#call subdrums
 #endmain

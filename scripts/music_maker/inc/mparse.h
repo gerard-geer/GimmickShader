@@ -38,6 +38,7 @@ extern float decay_len;
 extern float note_len;
 extern float step_prog;
 extern float tmod;
+extern float overclock;
 
 int parse_init(const char *fname);
 char *get_arg_to(const char *comp, char *line);
