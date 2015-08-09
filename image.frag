@@ -1,17 +1,17 @@
-// Nah we don't need precision
-precision lowp int;
-precision lowp float;
-
 // A recreation of the extra little shoreline scene from stage 2 of 
 // Gimmick! (Or in PAL regions, Mr. Gimmick).
 //     
 // Original game by Sunsoft: https://en.wikipedia.org/wiki/Gimmick!
 // 
 // Original graphics design: Hiroyuki Kagoya
-// Shader image: Gerard Geer (https://github.com/gerard-geer)
-// Music composition: Masashi Kageyama
-// Shader sound: Michael Moffitt (https://github.com/mikejmoffitt)
+// Shader graphics: Gerard Geer (https://github.com/gerard-geer)
+// Original music composition: Masashi Kageyama
+// Shader sound and ShaderTracker sound engine: Michael Moffitt (https://github.com/mikejmoffitt)
 // This shader on github: https://github.com/gerard-geer/GimmickShader/
+
+// Nah we don't need precision
+precision lowp int;
+precision lowp float;
 
 // A 2,4,8,16, or 32 element array implemented as a binary search, #defined for type agnosticity.
 #define ARR2(x, a,b) (x<1) ? a : b
@@ -38,7 +38,7 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 #define YUMETAROU_Y 117
 #define SHORE_Y 136
 #define SHORE_END 79
-#define CLOUD_Y 128
+#define FAR_CLOUD_Y 128
 #define WAVES_Y 168
 #define BIRD_A_Y 20
 #define BIRD_B_Y 32
@@ -310,8 +310,11 @@ int birdWingsDown(in int x,in int y)
 */
 vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
 {
+    // Bounds checking.
     if(x < atx || x > atx + 7) return vec4(0.0);
     if(y < aty || y > aty + 4) return vec4(0.0);
+    
+    // Transform coordinates to bird space.
     x -= atx;
     y -= aty;
     
@@ -421,6 +424,7 @@ vec4 shorePalette(in int x)
 */
 int shoreInterior(in int x, in int y)
 {
+    // This element repeats in the X direction.
     x = int(mod(float(x),32.0));
     return ARR32(y, 
              3,
@@ -516,12 +520,16 @@ int shoreExterior(in int x, in int y)
 */
 vec4 drawShore(in int x, in int y)
 {
+    // Bounds checking.
     if(x > SHORE_END) return vec4(0.0);
     if(y < SHORE_Y || y > SHORE_Y + 31) return vec4(0.0);
     
+    // Transform to be relative to the shore tiles.
     y -= SHORE_Y;
     
+    // Draw the interior of the shore.
     if(x < 64) return shorePalette(shoreInterior(x,y));
+    // Draw the endcap exterior.
     x -= 64;
     return shorePalette(shoreExterior(x,y));
 }
@@ -553,6 +561,7 @@ vec4 farCloudsPalette(in int x)
 */
 int farClouds(in int x, in int y)
 {
+    // The clouds repeat along the X axis across the entire screen.
     x = int(mod(float(x),32.0));
     if(y < 4)
     {
@@ -566,21 +575,23 @@ int farClouds(in int x, in int y)
 }
 
 /*
-*	The non-repeated exterior portion of the shore.
+*	The distant cloud draw function.
 *   
-*	Returns a palette index given a position.
+*	Draws the dark, distant clouds to the screen.
 *
 *	x: The x position of the current fragment.
 *	y: The y position of the current fragment.
 *
-*	Returns: The corresponding palette index.
+*	Returns: The color of the far clouds at the given position.
 */
 vec4 drawFarClouds(in int x, in int y)
 {
-    if(y < SHORE_Y) return TRANS;
-    if(y > SHORE_Y + 4) return L_BLUE;
-    return farCloudsPalette(farClouds(x,y-SHORE_Y));
-    return vec4(0.0);
+    // Above? Nada.
+    if(y < FAR_CLOUD_Y) return TRANS;
+    // Below? Fill'er'in.
+    if(y > FAR_CLOUD_Y+5) return L_BLUE;
+    // Within the narrow band designated for the clouds?
+    return farCloudsPalette(farClouds(x,y-FAR_CLOUD_Y));
 }
 
 /*
@@ -803,15 +814,23 @@ int wavesD(in int x, in int y)
 */
 vec4 drawWaves(in int x, in int y)
 {
+    // Bounds checking.
     if(y < WAVES_Y) return TRANS;
     if(y > WAVES_Y+7) return L_BLUE;
     
+    // Modulo the time and cast it to an int so the value returned
+    // can be used as an index for which frame of animation to use.
     int t = int(mod(iGlobalTime*4.,4.));
     
+    // We need to do the usual transform here as well.
     y -= WAVES_Y;
     
+    // If we are under the shoreline, we need to use the palette
+    // that reflects the shore.
     if(x > SHORE_END)
-    {            
+    {
+        // The prior comparison required x to be prestine, so
+        // we have to perform this modulo in here.
         x = int(mod(float(x),32.0));
         return ARR4(t,
                     wavesSunnyPalette(wavesA(x,y)),
@@ -819,6 +838,7 @@ vec4 drawWaves(in int x, in int y)
                     wavesSunnyPalette(wavesC(x,y)),
                     wavesSunnyPalette(wavesD(x,y)));
     }
+    // otherwise we use the palette that reflects the clouds.
     else
     {
         x = int(mod(float(x),32.0));
@@ -1105,7 +1125,7 @@ int cloudK(in int x, in int y)
 	  1
 	);
 }
-// Cloud tile L.
+// Cloud tile L. This one is repeated twice along X.
 int cloudL(in int x, in int y)
 {
 	if(x < CLOUD_L_X || x >= CLOUD_M_X) return 0;
@@ -1116,7 +1136,6 @@ int cloudL(in int x, in int y)
     y -= CLOUD_L_Y;
 	
 	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),4.0));
 	
 	return
 	ARR4(y,
@@ -1148,7 +1167,7 @@ int cloudM(in int x, in int y)
 	  1
 	);
 }
-// Cloud tile N.
+// Cloud tile N. This is repeated to coda.
 int cloudN(in int x, in int y)
 {
 	if(x < CLOUD_N_X) return 0;
@@ -1159,7 +1178,6 @@ int cloudN(in int x, in int y)
     y -= CLOUD_N_Y;
 	
 	x = int(mod(float(x),32.0));
-	y = int(mod(float(y),4.0));
 	
 	return
 	ARR4(y,
@@ -1170,8 +1188,20 @@ int cloudN(in int x, in int y)
 	);
 }
 
+/*
+*	The large cloud draw function.
+*
+*	Composites all the large cloud tiles together and
+*	draws them to the screen.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The color of the cloud from under the current fragment.
+*/
 vec4 drawNearClouds(in int x, in int y)
 {
+    // The usual broken-apart additive blending.
 	vec4 result = vec4(0.0);
 	result += nearCloudsPalette(cloudA(x,y));
 	result += nearCloudsPalette(cloudB(x,y));
@@ -1226,9 +1256,6 @@ int smallCloudA(in int x, in int y, in int atx, in int aty)
 	x -= atx;
 	y -= aty;
 	
-	x = int(mod(float(x),8.0));
-	y = int(mod(float(y),4.0));
-	
 	return
 	ARR4(y,
 	  ARR8(x,0,0,0,0,2,2,0,0),
@@ -1256,10 +1283,6 @@ int smallCloudB(in int x, in int y)
 	x -= S_CLOUD_B_X;
 	y -= S_CLOUD_B_Y;
 	
-	x = int(mod(float(x),16.0));
-	y = int(mod(float(y),8.0));
-	
-	
 	return
 	ARR8(y,
 	  ARR16(x,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
@@ -1281,10 +1304,11 @@ int smallCloudB(in int x, in int y)
 *	x: The x position of the current fragment.
 *	y: The y position of the current fragment.
 *
-*	Returns: The color of the cloud from under the current texel.
+*	Returns: The color of the cloud from under the current fragment.
 */
 vec4 drawSmallCloud(in int x, in int y)
 {
+    // smallCloudA actually appears twice.
 	vec4 result = vec4(0.0);
 	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_A_X,S_CLOUD_A_Y));
 	result += smallCloudPalette(smallCloudB(x,y));
@@ -1292,7 +1316,17 @@ vec4 drawSmallCloud(in int x, in int y)
 	return result;
 }
 
-// Draws all sprites and tiles.
+/*
+*	The global draw function.
+*
+*	Calculates the contribution of all scene elements to 
+*	the current fragment.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The color of the entire scene under the current fragment.
+*/
 vec4 drawElements(in int x, in int y)
 {
     vec4 farClouds = drawFarClouds(x,y);
@@ -1313,6 +1347,14 @@ vec4 drawElements(in int x, in int y)
     return result;
 }
 
+/*
+*	The main draw function.
+*
+*	Computes the color of the current fragment.
+*
+*	fragColor: The computed fragment color.
+*	fragCoord: The coordinate of this fragment.
+*/
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     // Normalize coordinates.
@@ -1330,7 +1372,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     
     // Default the outgoing fragColor to the background color.
     fragColor = D_BLUE;
-    ivec2(fragCoord);
+    
     // Determine and store the texel of the scene elements this pixel occupies.
     vec4 imageElements = drawElements(int(fragCoord.x), int(fragCoord.y));
     

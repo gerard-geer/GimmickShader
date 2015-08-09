@@ -16,7 +16,12 @@ float step_size;
 float decay_len;
 float note_len;
 float tmod;
+float overclock;
+float left_a;
+float right_a;
+float tune;
 int tmod_cnt;
+
 
 wavetype wave_sel;
 
@@ -164,6 +169,14 @@ void handle_line(char *line)
 		return;
 	}
 
+	check = get_arg_to("#overclock ",line);
+	if (check)
+	{
+		overclock = (float)strtof(check,0);
+		free(check);
+		return;
+	}
+
 	check = get_arg_to("#tmod ",line);
 	if (check)
 	{
@@ -174,11 +187,36 @@ void handle_line(char *line)
 		return;	
 	}
 
+	check = get_arg_to("#tune ",line);
+	if (check)
+	{
+		tune = (float)strtof(check,0);
+		free(check);
+		return;
+	}
+
+	check = get_arg_to("#left ",line);
+	if (check)
+	{
+		left_a = (float)strtof(check,0);	
+		free(check);
+		return;
+	}
+
+	check = get_arg_to("#right ",line);
+	if (check)
+	{
+		right_a = (float)strtof(check,0);	
+		free(check);
+		return;
+	}
+
 	check = get_arg_to("#main",line);
 	if (check)
 	{	
 		printf("vec2 mainSound(float t0)\n{\n");
-		printf("\tfloat result = 0.0;\n");
+		printf("\tt0 = t0 * %f;\n",overclock);
+		printf("\tvec2 result = vec2(0.0,0.0);\n");
 		free(check);
 		return;
 	}
@@ -186,7 +224,7 @@ void handle_line(char *line)
 	check = get_arg_to("#endmain",line);
 	if (check)
 	{
-		printf("\n\treturn vec2(result);\n}\n\n");
+		printf("\n\treturn result;\n}\n\n");
 		free(check);
 		return;
 	}
@@ -211,7 +249,7 @@ void handle_line(char *line)
 	check = get_arg_to("#call ",line);
 	if (check)
 	{
-		printf("\tresult += %s(t%d);\n",check,tmod_cnt);
+		printf("\tresult += vec2(%f,%f) * (%s(t%d));\n",left_a,right_a,check,tmod_cnt);
 		free(check);
 		return;
 	}
@@ -345,19 +383,19 @@ void print_line(float freq, int octave)
 	{
 		default:
 		case pulse:
-			sprintf(func_str,SQR_FUNC,tmod_cnt,freq,duty,amp);
+			sprintf(func_str,SQR_FUNC,tmod_cnt,freq * tune,duty,amp);
 			break;
 		case saw:
-			sprintf(func_str,SAW_FUNC,tmod_cnt,freq,amp);
+			sprintf(func_str,SAW_FUNC,tmod_cnt,freq * tune,amp);
 			break;
 		case tri:
-			sprintf(func_str,TRI_FUNC,tmod_cnt,freq,amp);
+			sprintf(func_str,TRI_FUNC,tmod_cnt,freq * tune,amp);
 			break;
 		case sine:
-			sprintf(func_str,SIN_FUNC,tmod_cnt,freq,amp);
+			sprintf(func_str,SIN_FUNC,tmod_cnt,freq * tune,amp);
 			break;
 		case noise:
-			sprintf(func_str,NOI_FUNC,tmod_cnt,freq,amp);
+			sprintf(func_str,NOI_FUNC,tmod_cnt,freq * tune,amp);
 			break;
 	}
 	printf("\tresult += ( (t%d>=%f) ? ( (t%d<%f) ? (%s * (%s)) : 0.0) : 0.0);\n",tmod_cnt,start,tmod_cnt,end,decay_str,func_str);
@@ -396,6 +434,10 @@ void print_head(void)
 
 void read_loop(void)
 {
+	overclock = 1.0;
+	left_a = 1.0;
+	right_a = 1.0;
+	tune = 1.0;
 	if (!track_file)
 	{
 		fprintf(stderr,"Error: File is not open, nothing to read!\n");
