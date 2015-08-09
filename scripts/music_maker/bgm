@@ -3,9 +3,239 @@
 #amp 0.25
 #step 0.15
 
+#func extbchords
+// ----------------- Added chords for Part B ---------------------
+#reset
+#tune 1.0
+#wave 1
+#step 19.2
+-
+#step 0.15
+#decay 0.45
+#len 0.3
+// 00
+A3
+-
+-
+-
+B3
+-
+-
+#len 0.15
+C4
+#step 3.6
+// 01
+-
+#step 0.15
+#decay 0.45
+#len 0.3
+// 00
+A3
+-
+-
+-
+B3
+-
+-
+#len 0.15
+C4
+#step 3.6
+// 01
+-
+#step 0.15
+#decay 0.45
+#len 0.3
+// 00
+A3
+-
+-
+-
+B3
+-
+-
+#len 0.15
+C4
+#step 3.6
+// 01
+-
+#step 0.15
+#decay 0.45
+#len 0.3
+// 00
+A3
+-
+-
+-
+B3
+-
+-
+#len 0.15
+C4
+#step 3.6
+// 01
+-
+
+
+#endfunc
+
+#func echo1b
+// ---------------------- Echo for part B ------------------------
+#reset
+#tune 1.0
+#wave 0
+#step 19.2
+-
+// 00 Part B with tiny delay
+#step 0.15
+-
+-
+-
+#duty 0.5
+#len 0.15
+// Basically no decay
+#decay 0.4
+#amp 0.1
+-
+G5
+A5
+B5
+C6
+C6
+-
+C6
+#step 0.2
+C6
+B5
+A5
+#step 0.15
+G5
+-
+-
+C5
+// 01
+G5
+-
+A5
+F5
+-
+G5
+-
+F5
+-
+F5
+D5
+E5
+F5
+G5
+A5
+B5
+// 02
+C6
+-
+-
+-
+-
+G5
+A5
+C6
+E6
+C6
+F6
+C6
+G6
+C6
+-
+C6
+// 03
+A6
+-
+A6
+A6
+G6
+-
+F6
+E6
+-
+C6
+D6
+B5
+C6
+-
+-
+-
+// 00 B2
+-
+-
+-
+-
+C6
+G5
+-
+G5
+-
+G5
+-
+G5
+C6
+G5
+D6
+G5
+// 01
+E6
+G5
+-
+G5
+-
+G5
+-
+G5
+F5
+G5
+A5
+A5
+-
+B5
+-
+G5
+// 02
+-
+-
+-
+-
+-
+-
+-
+-
+C6
+D6
+E6
+E6
+-
+// 03 As long as we're here, add more harmony
+#duty 0.4
+#decay 0.7
+#len 0.45
+#amp 0.25
+A4
+-
+-
+-
+G4
+-
+-
+-
+A4
+-
+-
+-
+B4
+-
+-
+#endfunc
 #func subdrums
 // ---------------------- Extra hi-hat stuff -----------------------
 #reset
+#tune 1.0
 #amp 0.08
 #decay 0.2
 #len 0.2
@@ -27,6 +257,7 @@ C1
 #func drums
 // ---------------------------- Drums ------------------------------
 #reset
+#tune 1.0
 #amp 0.25
 #decay 0.1
 #len 0.1
@@ -96,6 +327,7 @@ C3
 #func bass_line
 // -------------------------- Bassline  -------------------------------
 #reset
+#tune 1.0
 #decay 0.3
 #len 0.2
 #wave 1
@@ -555,6 +787,7 @@ G1
 #func lead_2
 // ------------------------------- Lead 2 ----------------------------
 #reset
+#tune 1.0
 #amp 0.25
 #decay 0.25
 #len 0.15
@@ -781,16 +1014,16 @@ C4
 #step 0.15
 #len 0.6
 #decay 0.8
-F5
+F4
 -
 -
 -
-G5
+G4
 -
 -
 #len 0.3
 #decay 0.2
-C5
+C4
 -
 -
 -
@@ -820,7 +1053,157 @@ G5
 -
 #len 0.15
 E5
+
+// 00 Part C
+#amp 0.25
+#duty 0.2
+#decay 0.25
+#len 0.15
+#tune .503
 -
+-
+-
+-
+G6
+E6
+C6
+G5
+A#5
+-
+-
+-
+A#5
+C6
+D6
+C6
+// 01
+-
+-
+-
+-
+G6
+E6
+C6
+G5
+A#5
+A#5
+A5
+A#5
+-
+A#5
+-
+C6
+// 02
+--
+E6
+-
+-
+G6
+E6
+C6
+G5
+A#5
+-
+-
+-
+A#5
+C6
+D6
+F6
+// 03
+E6
+#len 0.3
+#decay 0.4
+F6
+-
+G6
+-
+A6
+-
+A#6
+-
+C7
+#len 0.15
+#decay 0.2
+A6
+A#6
+G6
+F6
+-
+G6
+// 04
+-
+-
+-
+-
+G6
+E6
+C6
+G5
+A#5
+-
+-
+-
+A#5
+C6
+D6
+C6
+// 05
+-
+-
+-
+C6
+G6
+E6
+C6
+G5
+#duty 0.75
+F6
+F6
+E6
+F6
+-
+F6
+-
+E6
+// 06
+-
+G6
+-
+-
+#duty 0.125
+G6
+E6
+C6
+G5
+A#5
+-
+-
+-
+A#5
+C6
+D6
+A#5
+#duty 0.5
+#decay 0.4
+#len 0.26
+C6
+C6
+-
+G5
+C6
+C6
+-
+G5
+C6
+-
+G5
+G5
+G#5
+-
+G5
+-
+
 
 
 
@@ -829,6 +1212,7 @@ E5
 #func lead_1
 // ------------------------------- Lead 1 ----------------------------
 #reset
+#tune 1.0
 #decay 0.25
 #len 0.3
 #duty 0.25
@@ -1289,12 +1673,20 @@ G5
 
 #call bass_line
 
-#left 0.55
+#left 0.7
 #right 1.0
 #call lead_1
 
 #left 1.0
-#right 0.55
+#right 1.0
+#call echo1b
+
+#left 1.0
+#right 0.7
+#call extbchords
+
+#left 1.0
+#right 0.7
 #call lead_2
 
 #left 0.8

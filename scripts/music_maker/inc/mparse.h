@@ -41,6 +41,7 @@ extern float tmod;
 extern float overclock;
 extern float left_a;
 extern float right_a;
+extern float tune;
 
 int parse_init(const char *fname);
 char *get_arg_to(const char *comp, char *line);

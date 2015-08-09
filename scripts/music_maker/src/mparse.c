@@ -19,6 +19,7 @@ float tmod;
 float overclock;
 float left_a;
 float right_a;
+float tune;
 int tmod_cnt;
 
 
@@ -184,6 +185,14 @@ void handle_line(char *line)
 		printf("\tfloat t%d = mod(t0,%f);\n",tmod_cnt,tmod);
 		free(check);
 		return;	
+	}
+
+	check = get_arg_to("#tune ",line);
+	if (check)
+	{
+		tune = (float)strtof(check,0);
+		free(check);
+		return;
 	}
 
 	check = get_arg_to("#left ",line);
@@ -374,19 +383,19 @@ void print_line(float freq, int octave)
 	{
 		default:
 		case pulse:
-			sprintf(func_str,SQR_FUNC,tmod_cnt,freq,duty,amp);
+			sprintf(func_str,SQR_FUNC,tmod_cnt,freq * tune,duty,amp);
 			break;
 		case saw:
-			sprintf(func_str,SAW_FUNC,tmod_cnt,freq,amp);
+			sprintf(func_str,SAW_FUNC,tmod_cnt,freq * tune,amp);
 			break;
 		case tri:
-			sprintf(func_str,TRI_FUNC,tmod_cnt,freq,amp);
+			sprintf(func_str,TRI_FUNC,tmod_cnt,freq * tune,amp);
 			break;
 		case sine:
-			sprintf(func_str,SIN_FUNC,tmod_cnt,freq,amp);
+			sprintf(func_str,SIN_FUNC,tmod_cnt,freq * tune,amp);
 			break;
 		case noise:
-			sprintf(func_str,NOI_FUNC,tmod_cnt,freq,amp);
+			sprintf(func_str,NOI_FUNC,tmod_cnt,freq * tune,amp);
 			break;
 	}
 	printf("\tresult += ( (t%d>=%f) ? ( (t%d<%f) ? (%s * (%s)) : 0.0) : 0.0);\n",tmod_cnt,start,tmod_cnt,end,decay_str,func_str);
@@ -428,6 +437,7 @@ void read_loop(void)
 	overclock = 1.0;
 	left_a = 1.0;
 	right_a = 1.0;
+	tune = 1.0;
 	if (!track_file)
 	{
 		fprintf(stderr,"Error: File is not open, nothing to read!\n");
