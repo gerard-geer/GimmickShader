@@ -376,10 +376,10 @@ vec4 drawBirds(in int x, in int y)
 {
     // Since birds never cross we can use additive blending.
     // And as we've learned from the sound let's divvy up addition.
-    vec4 result = vec4(0.0);
-    bool f;
+    
+    bool f; // For directional awareness.
     int a = anim(120,iGlobalTime+16.0,0.2,50.0,f);
-    result += drawBird(x,y,a,BIRD_A_Y,f);
+    vec4 result = drawBird(x,y,a,BIRD_A_Y,f);
     a = anim(152,iGlobalTime+14.0,0.2,30.0,f);
     result += drawBird(x,y,a,BIRD_B_Y,f);
     a = anim(110,iGlobalTime+12.0,0.2,40.0,f);
