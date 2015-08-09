@@ -74,7 +74,7 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 #define CLOUD_J_X 185
 #define CLOUD_J_Y 144
 #define CLOUD_K_X 193
-#define CLOUD_K_Y 152
+#define CLOUD_K_Y 153
 #define CLOUD_L_X 201
 #define CLOUD_L_Y 152
 #define CLOUD_M_X 217
@@ -1113,17 +1113,15 @@ int cloudK(in int x, in int y)
 {
 	if(x < CLOUD_K_X || x >= CLOUD_L_X) return 0;
 	if(y < CLOUD_K_Y) return 0;
-	if(y > CLOUD_K_Y+3) return 1;
+	if(y > CLOUD_K_Y+1) return 1;
 	
     x -= CLOUD_K_X;
     y -= CLOUD_K_Y;
 	
 	return
-	ARR4(y,
-	  0,
+	ARR2(y,
 	  ARR8(x,0,0,1,0,0,0,1,1),
-	  ARR8(x,1,1,1,1,0,1,1,1),
-	  1
+	  ARR8(x,1,1,1,1,0,1,1,1)
 	);
 }
 // Cloud tile L. This one is repeated twice along X.
