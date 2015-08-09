@@ -376,21 +376,42 @@ vec4 drawBirds(in int x, in int y)
 {
     // Since birds never cross we can use additive blending.
     // And as we've learned from the sound let's divvy up addition.
+	
+	// Getting the positioning and timing accurate to the actual game
+	// was not fun. Frame-counting and screen-shooting dominated an
+	// evening of mine. Should have bit the bullet and looked at a
+	// disassembly.
+	// Each bird's flight path lasts 128 frames each way. However
+	// those path start times differ, as well as the length of the path.
     
     bool f; // For directional awareness.
-    int a = anim(120,iGlobalTime+16.0,50.0,f);
+	
+	// Bird 1.
+    int a = anim(110, iGlobalTime, 32.0, f);
     vec4 result = drawBird(x,y,a,BIRD_A_Y,f);
-    a = anim(152,iGlobalTime+14.0,30.0,f);
+	
+	// Bird 2.
+    a = anim(140, iGlobalTime+3.267, 24.0, f);
     result += drawBird(x,y,a,BIRD_B_Y,f);
-    a = anim(110,iGlobalTime+12.0,40.0,f);
+	
+	// Bird 3.
+    a = anim(77, iGlobalTime+1.533, 40.0, f);
     result += drawBird(x,y,a,BIRD_C_Y,f);
-    a = anim(208,iGlobalTime+10.0,20.0,f);
+	
+	// Bird 4.
+    a = anim(198, iGlobalTime+.1667, 32.0, f);
     result += drawBird(x,y,a,BIRD_D_Y,f);
-    a = anim(164,iGlobalTime+8.0, 50.0,f);
+	
+	// Bird 5.
+    a = anim(141, iGlobalTime+.5667, 32.0, f);
     result += drawBird(x,y,a,BIRD_E_Y,f);
-    a = anim(100,iGlobalTime+6.0, 60.0,f);
+	
+	// Bird 6.
+    a = anim(85, iGlobalTime+1.067, 24.0, f);
     result += drawBird(x,y,a,BIRD_F_Y,f);
-    a = anim(185,iGlobalTime+4.0, 50.0,f);
+	
+	// Bird 7.
+    a = anim(165, iGlobalTime+1.167, 24.0, f);
     result += drawBird(x,y,a,BIRD_G_Y,f);
     return result;
     
