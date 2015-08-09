@@ -208,10 +208,10 @@ vec4 drawYumetarou(in int x, in int y)
     
     // Yummy yummy frame counting.
     float t = mod(iGlobalTime, 3.67);
-    if( t < .066 || (t > .533 && t <.600) )
-        return yumetarouPalette(yumetarouEyesClosed(x,y));
-    else
+    if( t > .066 && (t < .533 || t >.600) )
         return yumetarouPalette(yumetarouEyesOpen(x,y));
+    else
+        return yumetarouPalette(yumetarouEyesClosed(x,y));
 }
 
 /*
