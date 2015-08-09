@@ -31,6 +31,7 @@ const vec4 D_GREEN = vec4(.000, .235, .078, 1.00);
 const vec4 L_GREEN = vec4(.298, .863, .282, 1.00);
 const vec4 D_GOLD  = vec4(.486, .031, .000, 1.00);
 const vec4 L_GOLD  = vec4(.988, .596, .219, 1.00);
+const vec4 BROWN   = vec4(.486, .031, .000, 1.00);
 const vec4 TRANS   = vec4(.000, .000, .000, .000);
 
 // Define out stuff so we don't have to pass the values as parameters.
@@ -57,7 +58,7 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 #define CLOUD_B_X 105
 #define CLOUD_B_Y 152
 #define CLOUD_C_X 113
-#define CLOUD_C_Y 152
+#define CLOUD_C_Y 153
 #define CLOUD_D_X 129
 #define CLOUD_D_Y 144
 #define CLOUD_E_X 137
@@ -73,11 +74,11 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 #define CLOUD_J_X 185
 #define CLOUD_J_Y 144
 #define CLOUD_K_X 193
-#define CLOUD_K_Y 152
+#define CLOUD_K_Y 153
 #define CLOUD_L_X 201
-#define CLOUD_L_Y 152
+#define CLOUD_L_Y 153
 #define CLOUD_M_X 217
-#define CLOUD_M_Y 152
+#define CLOUD_M_Y 154
 #define CLOUD_N_X 225
 #define CLOUD_N_Y 152
 
@@ -207,10 +208,10 @@ vec4 drawYumetarou(in int x, in int y)
     
     // Yummy yummy frame counting.
     float t = mod(iGlobalTime, 3.67);
-    if( t < .066 || (t > .533 && t <.600) )
-        return yumetarouPalette(yumetarouEyesClosed(x,y));
-    else
+    if( t > .066 && (t < .533 || t >.600) )
         return yumetarouPalette(yumetarouEyesOpen(x,y));
+    else
+        return yumetarouPalette(yumetarouEyesClosed(x,y));
 }
 
 /*
@@ -375,10 +376,10 @@ vec4 drawBirds(in int x, in int y)
 {
     // Since birds never cross we can use additive blending.
     // And as we've learned from the sound let's divvy up addition.
-    vec4 result = vec4(0.0);
-    bool f;
+    
+    bool f; // For directional awareness.
     int a = anim(120,iGlobalTime+16.0,0.2,50.0,f);
-    result += drawBird(x,y,a,BIRD_A_Y,f);
+    vec4 result = drawBird(x,y,a,BIRD_A_Y,f);
     a = anim(152,iGlobalTime+14.0,0.2,30.0,f);
     result += drawBird(x,y,a,BIRD_B_Y,f);
     a = anim(110,iGlobalTime+12.0,0.2,40.0,f);
@@ -932,17 +933,15 @@ int cloudC(in int x, in int y)
 {
 	if(x < CLOUD_C_X || x >= CLOUD_D_X) return 0;
 	if(y < CLOUD_C_Y) return 0;
-	if(y > CLOUD_C_Y+3) return 1;
+	if(y > CLOUD_C_Y+1) return 1;
 	
     x -= CLOUD_C_X;
     y -= CLOUD_C_Y;
 	
 	return
-	ARR4(y,
-	  0,
+	ARR2(y,
 	  ARR16(x,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0),
-	  ARR16(x,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0),
-	  1
+	  ARR16(x,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0)
 	);
 }
 // Cloud tile D.
@@ -1112,17 +1111,15 @@ int cloudK(in int x, in int y)
 {
 	if(x < CLOUD_K_X || x >= CLOUD_L_X) return 0;
 	if(y < CLOUD_K_Y) return 0;
-	if(y > CLOUD_K_Y+3) return 1;
+	if(y > CLOUD_K_Y+1) return 1;
 	
     x -= CLOUD_K_X;
     y -= CLOUD_K_Y;
 	
 	return
-	ARR4(y,
-	  0,
+	ARR2(y,
 	  ARR8(x,0,0,1,0,0,0,1,1),
-	  ARR8(x,1,1,1,1,0,1,1,1),
-	  1
+	  ARR8(x,1,1,1,1,0,1,1,1)
 	);
 }
 // Cloud tile L. This one is repeated twice along X.
@@ -1130,7 +1127,7 @@ int cloudL(in int x, in int y)
 {
 	if(x < CLOUD_L_X || x >= CLOUD_M_X) return 0;
 	if(y < CLOUD_L_Y) return 0;
-	if(y > CLOUD_L_Y+3) return 1;
+	if(y > CLOUD_L_Y+1) return 1;
 	
     x -= CLOUD_L_X;
     y -= CLOUD_L_Y;
@@ -1138,11 +1135,9 @@ int cloudL(in int x, in int y)
 	x = int(mod(float(x),8.0));
 	
 	return
-	ARR4(y,
-	  0,
+	ARR2(y,
 	  ARR8(x,1,1,0,0,0,0,0,0),
-	  ARR8(x,1,1,1,0,0,1,1,0),
-	  1
+	  ARR8(x,1,1,1,0,0,1,1,0)
 	);
 }
 // CLoud tile M.
@@ -1150,21 +1145,17 @@ int cloudM(in int x, in int y)
 {
 	if(x < CLOUD_M_X || x >= CLOUD_N_X) return 0;
 	if(y < CLOUD_M_Y) return 0;
-	if(y > CLOUD_M_Y+7) return 1;
+	if(y > CLOUD_M_Y+3) return 1;
 	
     x -= CLOUD_M_X;
     y -= CLOUD_M_Y;
 	
 	return
-	ARR8(y,
-	  0,
-	  0,
+	ARR4(y,
 	  ARR8(x,0,0,0,1,1,0,0,0),
 	  ARR8(x,0,1,0,1,1,0,0,0),
 	  ARR8(x,0,0,0,0,0,0,0,1),
-	  ARR8(x,1,1,1,1,0,0,1,1),
-	  1,
-	  1
+	  ARR8(x,1,1,1,1,0,0,1,1)
 	);
 }
 // Cloud tile N. This is repeated to coda.
@@ -1172,7 +1163,7 @@ int cloudN(in int x, in int y)
 {
 	if(x < CLOUD_N_X) return 0;
 	if(y < CLOUD_N_Y) return 0;
-	if(y > CLOUD_N_Y+3) return 1;
+	if(y > CLOUD_N_Y+1) return 1;
 	
     x -= CLOUD_N_X;
     y -= CLOUD_N_Y;
@@ -1180,11 +1171,9 @@ int cloudN(in int x, in int y)
 	x = int(mod(float(x),32.0));
 	
 	return
-	ARR4(y,
+	ARR2(y,
 	  ARR32(x,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0),
-	  ARR32(x,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0),
-	  1,
-	  1
+	  ARR32(x,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0)
 	);
 }
 
@@ -1317,6 +1306,28 @@ vec4 drawSmallCloud(in int x, in int y)
 }
 
 /*
+*	The boat draw function.
+*
+*	Draws the boat in the corner. Unlike all the other art,
+*	this doesn't use the LUT approach.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The color of the cloud from under the current fragment.
+*/
+vec4 drawBoat(in int x, in int y)
+{
+	// Oh look the boat looks just like elementary inequality graphs...
+    x = -x; // save time, negate x.
+    // Most common case is the first checked.
+	if (y > 2*x + 71 || y > x + 40) return TRANS;
+	if(y > 2*x + 24) return BLACK;
+    return BROWN;
+	
+}
+
+/*
 *	The global draw function.
 *
 *	Calculates the contribution of all scene elements to 
@@ -1329,21 +1340,26 @@ vec4 drawSmallCloud(in int x, in int y)
 */
 vec4 drawElements(in int x, in int y)
 {
-    vec4 farClouds = drawFarClouds(x,y);
-	vec4 nearClouds = drawNearClouds(x,y);
-    vec4 smallCloud = drawSmallCloud(x,y);
-    vec4 birds = drawBirds(x,y);
-    vec4 shore = drawShore(x,y);
-    vec4 yumetarou = drawYumetarou(x,y);
-    vec4 waves = drawWaves(x,y);
     
-    // Overriting blending using alpha, since every sprite returns a value for every pixel.
-    vec4 result = mix(farClouds, nearClouds, nearClouds.a);
-    result = mix(result,smallCloud,smallCloud.a);
-    result = mix(result,birds,birds.a);
-    result = mix(result,shore,shore.a);
-    result = mix(result,waves,waves.a);
-    result = mix(result,yumetarou, yumetarou.a);
+    // Reuse some variables.
+    vec4 result = drawFarClouds(x,y);
+    vec4 element = drawNearClouds(x,y);
+    
+    result = mix(result, element, element.a);
+    element = drawSmallCloud(x,y);
+    result = mix(result, element, element.a);
+    element = drawBirds(x,y);
+    result = mix(result, element, element.a);
+    element = drawBoat(x,y);
+    result = mix(result, element, element.a);
+    element = drawShore(x,y);
+    result = mix(result, element, element.a);
+    element = drawYumetarou(x,y);
+    result = mix(result, element, element.a);
+    element = drawShore(x,y);
+    result = mix(result, element, element.a);
+    element = drawWaves(x,y);
+    result = mix(result, element, element.a);
     return result;
 }
 
