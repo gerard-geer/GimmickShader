@@ -31,6 +31,7 @@ const vec4 D_GREEN = vec4(.000, .235, .078, 1.00);
 const vec4 L_GREEN = vec4(.298, .863, .282, 1.00);
 const vec4 D_GOLD  = vec4(.486, .031, .000, 1.00);
 const vec4 L_GOLD  = vec4(.988, .596, .219, 1.00);
+const vec4 BROWN   = vec4(.486, .031, .000, 1.00);
 const vec4 TRANS   = vec4(.000, .000, .000, .000);
 
 // Define out stuff so we don't have to pass the values as parameters.
@@ -1317,6 +1318,28 @@ vec4 drawSmallCloud(in int x, in int y)
 }
 
 /*
+*	The boat draw function.
+*
+*	Draws the boat in the corner. Unlike all the other art,
+*	this doesn't use the LUT approach.
+*
+*	x: The x position of the current fragment.
+*	y: The y position of the current fragment.
+*
+*	Returns: The color of the cloud from under the current fragment.
+*/
+vec4 drawBoat(in int x, in int y)
+{
+	// Oh look the boat looks just like elementary inequality graphs...
+    x = -x; // save time, negate x.
+    // Most common case is the first checked.
+	if (y > 2*x + 71 || y > x + 40) return TRANS;
+	if(y > 2*x + 24) return BLACK;
+    return BROWN;
+	
+}
+
+/*
 *	The global draw function.
 *
 *	Calculates the contribution of all scene elements to 
@@ -1329,21 +1352,26 @@ vec4 drawSmallCloud(in int x, in int y)
 */
 vec4 drawElements(in int x, in int y)
 {
-    vec4 farClouds = drawFarClouds(x,y);
-	vec4 nearClouds = drawNearClouds(x,y);
-    vec4 smallCloud = drawSmallCloud(x,y);
-    vec4 birds = drawBirds(x,y);
-    vec4 shore = drawShore(x,y);
-    vec4 yumetarou = drawYumetarou(x,y);
-    vec4 waves = drawWaves(x,y);
     
-    // Overriting blending using alpha, since every sprite returns a value for every pixel.
-    vec4 result = mix(farClouds, nearClouds, nearClouds.a);
-    result = mix(result,smallCloud,smallCloud.a);
-    result = mix(result,birds,birds.a);
-    result = mix(result,shore,shore.a);
-    result = mix(result,waves,waves.a);
-    result = mix(result,yumetarou, yumetarou.a);
+    // Reuse some variables.
+    vec4 result = drawFarClouds(x,y);
+    vec4 element = drawNearClouds(x,y);
+    
+    result = mix(result, element, element.a);
+    element = drawSmallCloud(x,y);
+    result = mix(result, element, element.a);
+    element = drawBirds(x,y);
+    result = mix(result, element, element.a);
+    element = drawBoat(x,y);
+    result = mix(result, element, element.a);
+    element = drawShore(x,y);
+    result = mix(result, element, element.a);
+    element = drawYumetarou(x,y);
+    result = mix(result, element, element.a);
+    element = drawShore(x,y);
+    result = mix(result, element, element.a);
+    element = drawWaves(x,y);
+    result = mix(result, element, element.a);
     return result;
 }
 
