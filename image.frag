@@ -1173,7 +1173,7 @@ int cloudN(in int x, in int y)
 {
 	if(x < CLOUD_N_X) return 0;
 	if(y < CLOUD_N_Y) return 0;
-	if(y > CLOUD_N_Y+3) return 1;
+	if(y > CLOUD_N_Y+1) return 1;
 	
     x -= CLOUD_N_X;
     y -= CLOUD_N_Y;
@@ -1181,11 +1181,9 @@ int cloudN(in int x, in int y)
 	x = int(mod(float(x),32.0));
 	
 	return
-	ARR4(y,
+	ARR2(y,
 	  ARR32(x,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0),
-	  ARR32(x,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0),
-	  1,
-	  1
+	  ARR32(x,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0,1,1,1,1,0,1,1,1,1,1,1,0,0,1,1,0)
 	);
 }
 
