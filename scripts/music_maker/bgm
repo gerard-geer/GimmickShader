@@ -1,7 +1,321 @@
 // Global settings
-#overclock 1.0
 #amp 0.25
 #step 0.15
+
+#func cextras
+// ------------------ Extras for Part C ----------------------
+#reset
+#tune 1.0
+#wave 0
+#duty 0.4
+#step 38.4
+#amp 0.15
+-
+#step 0.15
+
+#decay 0.3
+#len 0.3
+#tune 2.0
+// 00
+E5
+-
+-
+E5
+-
+C5
+G4
+G3
+D5
+-
+-
+D5
+-
+B#4
+F4
+D4
+// 01
+E5
+-
+-
+E5
+-
+C5
+G4
+G3
+D5
+B5
+B#5
+F5
+-
+G5
+-
+E5
+// 02
+E5
+-
+-
+E5
+-
+C5
+G4
+G3
+D5
+-
+-
+D5
+-
+B#4
+F4
+D4
+// 03
+E5
+-
+-
+E5
+-
+C5
+G4
+G3
+D5
+B5
+B#5
+F5
+-
+G5
+-
+E5
+// 00
+E5
+-
+-
+E5
+-
+C5
+G4
+G3
+D5
+-
+-
+D5
+-
+B#4
+F4
+D4
+// 01
+E5
+-
+-
+E5
+-
+C5
+G4
+G3
+D5
+B5
+B#5
+F5
+-
+G5
+-
+E5
+// 02
+E5
+-
+-
+E5
+-
+C5
+G4
+G3
+D5
+-
+-
+D5
+-
+B#4
+F4
+D4
+// 03
+#decay 0.5
+#len 0.15
+G4
+G4
+-
+D4
+G4
+G4
+-
+D4
+G5
+-
+D5
+D5
+#decay 0.5
+#len 0.3
+D#5
+-
+D5
+-
+
+
+
+
+
+
+#endfunc
+
+#func abacking
+#reset
+#tune 1.0
+#wave 1
+#step 0.15
+#decay 0.15
+#len 0.3
+#amp 0.20
+
+// 00
+E4
+-
+-
+E4
+-
+G3
+C4
+G3
+F4
+-
+F4
+-
+F#4
+-
+F#4
+-
+// 01
+G4
+-
+-
+D4
+-
+D4
+F4
+D4
+E4
+-
+E4
+-
+C4
+-
+D4
+-
+// 02
+E4
+-
+-
+C4
+-
+C4
+E4
+C4
+F#3
+-
+F#3
+-
+D3
+-
+F#3
+-
+// 03
+#decay 0.6
+#len 0.55
+A4
+-
+-
+-
+G4
+-
+-
+-
+A4
+-
+-
+-
+B4
+-
+-
+-
+
+// 00
+E4
+-
+-
+E4
+-
+G3
+C4
+G3
+F4
+-
+F4
+-
+F#4
+-
+F#4
+-
+// 01
+G4
+-
+-
+D4
+-
+D4
+F4
+D4
+E4
+-
+E4
+-
+C4
+-
+D4
+-
+// 02
+E4
+-
+-
+C4
+-
+C4
+E4
+C4
+F#3
+-
+F#3
+-
+D3
+-
+F#3
+-
+// 03
+#decay 0.6
+#len 0.55
+A4
+-
+-
+-
+G4
+-
+-
+-
+A4
+-
+-
+-
+B4
+-
+-
+-
+
+#endfunc
 
 #func extbchords
 // ----------------- Added chords for Part B ---------------------
@@ -1673,9 +1987,17 @@ G5
 
 #call bass_line
 
+#left 1.0
+#right 0.6
+#call abacking
+
 #left 0.7
 #right 1.0
 #call lead_1
+
+#left 1.0
+#right 1.0
+#call cextras
 
 #left 1.0
 #right 1.0

@@ -249,7 +249,7 @@ void handle_line(char *line)
 	check = get_arg_to("#call ",line);
 	if (check)
 	{
-		printf("\tresult += vec2(%f,%f) * vec2((%s(t%d)));\n",left_a,right_a,check,tmod_cnt);
+		printf("\tresult += vec2(%f,%f) * (%s(t%d));\n",left_a,right_a,check,tmod_cnt);
 		free(check);
 		return;
 	}
