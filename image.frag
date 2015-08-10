@@ -9,7 +9,7 @@
 // Shader sound and ShaderTracker sound engine: Michael Moffitt (https://github.com/mikejmoffitt)
 // This shader on github: https://github.com/gerard-geer/GimmickShader/
 
-// Nah we don't need precision
+// Nah we don't need precision.
 precision lowp int;
 precision lowp float;
 
@@ -48,6 +48,7 @@ const vec4 TRANS   = vec4(.000, .000, .000, .000);
 #define BIRD_E_Y 62
 #define BIRD_F_Y 69
 #define BIRD_G_Y 72
+#define BIRD_FLIP_FREQUENCY .46875
 
 // The big cloud takes a lot of orchestration. These are the coordinates
 // of the individual tiles.
@@ -341,19 +342,18 @@ vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
 *		
 *	s: The starting position.
 *	t: The current time within the function.
-*	f: The frequency of the triangle wave.	
 *	a: The amplitude of the triangle wave.
 *	d: The boolean first derivative of the triangle function.
 *
 *	Returns: The modulated position.
 */
-int anim(in int s, in float t, in float f, in float a, out bool d)
+int anim(in int s, in float t, in float a, out bool d)
 {
     // Triangle wave = |saw wave|
-    float tri = abs( (mod(t*f, 1.0)*2.0)-1.0 );
+    float tri = abs( (mod(t*BIRD_FLIP_FREQUENCY*.5, 1.0)*2.0)-1.0 );
     // Oh hey triangle waves are kind of sinosodal, let's rotate
     // it by PI/2 for d1
-    float d1 = abs( (mod((t+1.0)*f, 1.0)*2.0)-1.0 );
+    float d1 = abs( (mod((t+1.0)*BIRD_FLIP_FREQUENCY*.5, 1.0)*2.0)-1.0 );
     // Let's go ahead and transform this to (-1..1)
     d1 = (d1*2.0)-1.0;
     // Set the direction to the sign of the derivative.
@@ -376,21 +376,42 @@ vec4 drawBirds(in int x, in int y)
 {
     // Since birds never cross we can use additive blending.
     // And as we've learned from the sound let's divvy up addition.
+	
+	// Getting the positioning and timing accurate to the actual game
+	// was not fun. Frame-counting and screen-shooting dominated an
+	// evening of mine. Should have bit the bullet and looked at a
+	// disassembly.
+	// Each bird's flight path lasts 128 frames each way. However
+	// those path start times differ, as well as the length of the path.
     
     bool f; // For directional awareness.
-    int a = anim(120,iGlobalTime+16.0,0.2,50.0,f);
+	
+	// Bird 1.
+    int a = anim(110, iGlobalTime, 32.0, f);
     vec4 result = drawBird(x,y,a,BIRD_A_Y,f);
-    a = anim(152,iGlobalTime+14.0,0.2,30.0,f);
+	
+	// Bird 2.
+    a = anim(140, iGlobalTime+3.267, 24.0, f);
     result += drawBird(x,y,a,BIRD_B_Y,f);
-    a = anim(110,iGlobalTime+12.0,0.2,40.0,f);
+	
+	// Bird 3.
+    a = anim(77, iGlobalTime+1.533, 40.0, f);
     result += drawBird(x,y,a,BIRD_C_Y,f);
-    a = anim(208,iGlobalTime+10.0,0.2,20.0,f);
+	
+	// Bird 4.
+    a = anim(198, iGlobalTime+.1667, 32.0, f);
     result += drawBird(x,y,a,BIRD_D_Y,f);
-    a = anim(164,iGlobalTime+8.0, 0.2,50.0,f);
+	
+	// Bird 5.
+    a = anim(141, iGlobalTime+.5667, 32.0, f);
     result += drawBird(x,y,a,BIRD_E_Y,f);
-    a = anim(100,iGlobalTime+6.0, 0.2,60.0,f);
+	
+	// Bird 6.
+    a = anim(85, iGlobalTime+1.067, 24.0, f);
     result += drawBird(x,y,a,BIRD_F_Y,f);
-    a = anim(185,iGlobalTime+4.0, 0.2,50.0,f);
+	
+	// Bird 7.
+    a = anim(165, iGlobalTime+1.167, 24.0, f);
     result += drawBird(x,y,a,BIRD_G_Y,f);
     return result;
     
