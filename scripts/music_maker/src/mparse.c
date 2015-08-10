@@ -20,6 +20,7 @@ float overclock;
 float left_a;
 float right_a;
 float tune;
+int first_if;
 int tmod_cnt;
 
 
@@ -232,6 +233,7 @@ void handle_line(char *line)
 	check = get_arg_to("#func ",line);
 	if (check)
 	{
+		first_if = 1;
 		tmod_cnt = 0;
 		printf("float %s(float t%d)\n{\n\tfloat result = 0.0;\n",check,tmod_cnt);
 		free(check);
@@ -398,8 +400,16 @@ void print_line(float freq, int octave)
 			sprintf(func_str,NOI_FUNC,tmod_cnt,freq * tune,amp);
 			break;
 	}
-	printf("\tresult += ( (t%d>=%f) ? ( (t%d<%f) ? (%s * (%s)) : 0.0) : 0.0);\n",tmod_cnt,start,tmod_cnt,end,decay_str,func_str);
-	
+	//if (!first_if)
+//	{
+//		printf("\telse ");
+//	}
+//	else
+//	{
+		printf("\t");
+//	}
+	printf("if (t%d >= %f && t%d < %f) \n\t{ \n\t\tresult += %s * %s;\n\t}\n",tmod_cnt,start,tmod_cnt,end,decay_str,func_str);
+	first_if = 0;
 }
 
 void print_head(void)

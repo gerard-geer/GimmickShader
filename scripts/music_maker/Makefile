@@ -1,5 +1,5 @@
-CC := clang
-CFLAGS := -O2 -G -Wall -Iinc
+CC := gcc
+CFLAGS := -std=c99 -O2 -g -Wall -Iinc
 
 LDFLAGS :=
 LIBRARIES :=
