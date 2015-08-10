@@ -754,22 +754,6 @@ int wavesB(in int x, in int y)
 */
 int wavesC(in int x, in int y)
 {
-
-if(y<8)
-{
-	y-=0;
-	return
-	ARR8(y,
-	  ARR64(x,,),
-	  ARR64(x,,),
-	  ARR64(x,,),
-	  ARR64(x,,),
-	  ARR64(x,,),
-	  ARR64(x,,),
-	  ARR64(x,,),
-	  2
-	);
-}
     if(x < 32) // ARR64 would be a really long line.
     {
         return ARR8(y,
@@ -812,22 +796,6 @@ if(y<8)
 */
 int wavesD(in int x, in int y)
 {
-
-if(y<8)
-{
-	y-=0;
-	return
-	ARR8(y,
-		ARR64(x,,),
-		ARR64(x,,),
-		ARR64(x,,),
-		ARR64(x,,),
-		ARR64(x,,),
-		ARR64(x,,),
-		ARR64(x,,),
-	  1
-	);
-}
     if(x < 32) // ARR64 would be a really long line.
     {
         return ARR8(y,
