@@ -140,7 +140,7 @@ float glissando_l(float t0)
 
 float abacking(float t0)
 {
-    result = 0.0;
+    float result = 0.0;
 	if (t0 >= 0.000000 && t0 < 0.150000) 
 	{ 
 		result += l_decay(t0, 0.000000, 0.100000) * sqr(t0, 8284.435547, 0.500000, 0.250000);
