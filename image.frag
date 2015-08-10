@@ -1326,8 +1326,7 @@ vec4 drawNearClouds(in int x, in int y)
     if(y < WAVES_Y)
     {
         // The usual broken-apart additive blending.
-        vec4 result = vec4(0.0);
-        result += nearCloudsPalette(cloudA(x,y));
+        vec4 result = nearCloudsPalette(cloudA(x,y));
         result += nearCloudsPalette(cloudB(x,y));
         result += nearCloudsPalette(cloudC(x,y));
         result += nearCloudsPalette(cloudD(x,y));
@@ -1439,8 +1438,7 @@ int smallCloudB(in int x, in int y)
 vec4 drawSmallCloud(in int x, in int y)
 {
     // smallCloudA actually appears twice.
-	vec4 result = vec4(0.0);
-	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_A_X,S_CLOUD_A_Y));
+	vec4 result = smallCloudPalette(smallCloudA(x,y,S_CLOUD_A_X,S_CLOUD_A_Y));
 	result += smallCloudPalette(smallCloudB(x,y));
 	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_C_X,S_CLOUD_C_Y));
 	return result;
