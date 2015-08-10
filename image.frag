@@ -842,7 +842,7 @@ vec4 drawWaves(in int x, in int y)
     
     // Modulo the time and cast it to an int so the value returned
     // can be used as an index for which frame of animation to use.
-    int t = int(mod(iGlobalTime*4.,4.));
+    int t = int(mod(iGlobalTime*6.0,4.0));
     
     // We need to do the usual transform here as well.
     y -= WAVES_Y;
@@ -855,9 +855,9 @@ vec4 drawWaves(in int x, in int y)
         // we have to perform this modulo in here.
         x = int(mod(float(x),64.0));
         return ARR4(t,
+                    wavesSunnyPalette(wavesC(x,y)),
                     wavesSunnyPalette(wavesA(x,y)),
                     wavesSunnyPalette(wavesB(x,y)),
-                    wavesSunnyPalette(wavesC(x,y)),
                     wavesSunnyPalette(wavesD(x,y)));
     }
     // otherwise we use the palette that reflects the clouds.
@@ -865,9 +865,9 @@ vec4 drawWaves(in int x, in int y)
     {
         x = int(mod(float(x),64.0));
         return ARR4(t,
+                    wavesShadowPalette(wavesC(x,y)),
                     wavesShadowPalette(wavesA(x,y)),
                     wavesShadowPalette(wavesB(x,y)),
-                    wavesShadowPalette(wavesC(x,y)),
                     wavesShadowPalette(wavesD(x,y)));
     }
 }
@@ -1366,19 +1366,19 @@ vec4 drawElements(in int x, in int y)
     vec4 result = drawFarClouds(x,y);
     vec4 element = drawNearClouds(x,y);
     
-    result = mix(result, element, element.a);
-    element = drawSmallCloud(x,y);
-    result = mix(result, element, element.a);
-    element = drawBirds(x,y);
-    result = mix(result, element, element.a);
-    element = drawBoat(x,y);
-    result = mix(result, element, element.a);
-    element = drawShore(x,y);
-    result = mix(result, element, element.a);
-    element = drawYumetarou(x,y);
-    result = mix(result, element, element.a);
-    element = drawShore(x,y);
-    result = mix(result, element, element.a);
+    //result = mix(result, element, element.a);
+    //element = drawSmallCloud(x,y);
+    //result = mix(result, element, element.a);
+    //element = drawBirds(x,y);
+    //result = mix(result, element, element.a);
+    //element = drawBoat(x,y);
+    //result = mix(result, element, element.a);
+    //element = drawShore(x,y);
+    //result = mix(result, element, element.a);
+    //element = drawYumetarou(x,y);
+    //result = mix(result, element, element.a);
+    //element = drawShore(x,y);
+    //result = mix(result, element, element.a);
     element = drawWaves(x,y);
     result = mix(result, element, element.a);
     return result;
