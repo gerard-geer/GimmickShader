@@ -275,8 +275,8 @@ int yumetarouEyesClosed(in int x, in int y)
 */
 vec4 drawYumetarou(in int x, in int y)
 {
-    if(x < YUMETAROU_X || x > YUMETAROU_X + 15) return vec4(0.0);
-    else if(y < YUMETAROU_Y || y > YUMETAROU_Y + 18) return vec4(0.0);
+    if(x < YUMETAROU_X || x > YUMETAROU_X + 15) return TRANS;
+    else if(y < YUMETAROU_Y || y > YUMETAROU_Y + 18) return TRANS;
     else
     {
         x -= YUMETAROU_X;
@@ -387,8 +387,8 @@ int birdWingsDown(in int x,in int y)
 vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
 {
     // Bounds checking.
-    if(x < atx || x > atx + 7) return vec4(0.0);
-    if(y < aty || y > aty + 4) return vec4(0.0);
+    if(x < atx || x > atx + 7) return TRANS;
+    if(y < aty || y > aty + 4) return TRANS;
     
     // Transform coordinates to bird space.
     x -= atx;
@@ -619,8 +619,8 @@ int shoreExterior(in int x, in int y)
 vec4 drawShore(in int x, in int y)
 {
     // Bounds checking.
-    if(x > SHORE_END) return vec4(0.0);
-    else if(y < SHORE_Y || y > SHORE_Y + 31) return vec4(0.0);
+    if(x > SHORE_END) return TRANS;
+    else if(y < SHORE_Y || y > SHORE_Y + 31) return TRANS;
     else
     {
         // Transform to be relative to the shore tiles.
