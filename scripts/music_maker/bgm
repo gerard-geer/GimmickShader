@@ -714,13 +714,14 @@ C3
 -
 #endfunc
 
-#func bass_line
+#func bass_a
 // -------------------------- Bassline  -------------------------------
 #reset
 #tune 1.0
 #decay 0.3
 #len 0.2
 #wave 1
+#step 0.15
 
 // 00 Part A
 #decay 0.3
@@ -875,6 +876,20 @@ G2
 -
 -
 -
+
+#endfunc
+
+#func bass_b
+// ----------------------------------- Bass for Part B ----------------------
+#reset
+#tune 1.0
+#decay 0.3
+#len 0.2
+#wave 1
+#step 19.2
+-
+#step 0.15
+
 // 00 Part B!
 #decay 0.4
 #len 0.4
@@ -1029,6 +1044,19 @@ D2
 -
 -
 
+#endfunc
+
+#func bass_c
+// --------------------------------- Bass for Part C -------------------------
+#reset
+#tune 1.0
+#decay 0.3
+#len 0.2
+#wave 1
+#step 19.2
+-
+-
+#step 0.15
 // 00 Part C
 #decay 0.3
 #len 0.3
@@ -1174,7 +1202,7 @@ G1
 // Song loops at this point. No more bass.
 #endfunc
 
-#func lead_2
+#func lead_2a
 // ------------------------------- Lead 2 ----------------------------
 #reset
 #tune 1.0
@@ -1183,6 +1211,7 @@ G1
 #len 0.15
 #duty 0.5
 #wave 0
+#step 0.15
 // 00 Part A
 -
 E4
@@ -1325,6 +1354,22 @@ B4
 -
 -
 -
+
+#endfunc
+
+#func lead_2b
+// ------------------------------- Lead 2 B -----------------------
+#reset
+#tune 1.0
+#amp 0.25
+#decay 0.25
+#len 0.15
+#duty 0.5
+#wave 0
+#step 19.2
+-
+#step 0.15
+
 // 00 Part B
 #duty 0.25
 #len 0.6
@@ -1443,7 +1488,21 @@ G5
 -
 #len 0.15
 E5
+#endfunc
 
+#func lead_2c
+// ------------------- Lead 2 Part C -------------------
+#reset
+#tune 1.0
+#amp 0.25
+#decay 0.25
+#len 0.15
+#duty 0.5
+#wave 0
+#step 19.2
+-
+-
+#step 0.15
 // 00 Part C
 #amp 0.25
 #duty 0.2
@@ -1603,7 +1662,7 @@ G5
 
 #endfunc
 
-#func lead_1
+#func lead_1a
 // ------------------------------- Lead 1 ----------------------------
 #reset
 #tune 1.0
@@ -1611,6 +1670,7 @@ G5
 #len 0.3
 #duty 0.25
 #wave 0
+#step 0.15
 
 // 00 Part A
 #decay 0.3
@@ -1758,7 +1818,18 @@ D5
 -
 -
 
+#endfunc
 
+#func lead_1b
+// --------------------------- Lead 1 B ----------------------
+#reset
+#tune 1.0
+#decay 0.25
+#len 0.3
+#wave 0
+#step 19.2
+-
+#step 0.15
 // 00 Part B
 #duty 0.5
 #len 0.15
@@ -1905,6 +1976,18 @@ D5
 #len 0.15
 C5
 
+#endfunc
+#func lead_1c
+// ---------------------------------------- Lead 1 C ---------------
+#reset
+#tune 1.0
+#decay 0.25
+#len 0.3
+#wave 0
+#step 19.2
+-
+-
+#step 0.15
 // 00 Part C
 #duty 0.125
 #decay 0.25
@@ -2061,7 +2144,9 @@ G5
 #left 1.0
 #right 0.6
 
-#call bass_line
+#call bass_a
+#call bass_b
+#call bass_c
 
 #left 1.0
 #right 0.6
@@ -2077,7 +2162,9 @@ G5
 
 #left 0.7
 #right 1.0
-#call lead_1
+#call lead_1a
+#call lead_1b
+#call lead_1c
 
 #left 1.0
 #right 1.0
@@ -2089,7 +2176,9 @@ G5
 
 #left 1.0
 #right 0.7
-#call lead_2
+#call lead_2a
+#call lead_2b
+#call lead_2c
 
 #left 0.8
 #right 1.0
