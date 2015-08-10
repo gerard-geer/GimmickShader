@@ -2,13 +2,14 @@
 #amp 0.25
 #step 0.15
 
+#func glissando
 // -------------------- Part C opening glissando -------------
 #reset
 #tune 1.0
 #wave 0
 #duty 0.5
 #step 38.4
-#amp 0.3
+#amp 0.2
 -
 #step 0.05
 #decay 0.08
@@ -249,6 +250,7 @@ F#3
 // 03
 #decay 0.6
 #len 0.55
+#tune 2.0
 A4
 -
 -
@@ -268,6 +270,7 @@ B4
 
 #decay 0.1
 #len 0.15
+#tune 4.0
 // 00
 E4
 -
@@ -322,6 +325,7 @@ F#3
 // 03
 #decay 0.6
 #len 0.55
+#tune 2.0
 A4
 -
 -
@@ -2000,10 +2004,6 @@ G#5
 -
 G5
 -
-
-
-
-
 #endfunc
 
 #main
@@ -2029,13 +2029,6 @@ G5
 
 #left 1.0
 #right 1.0
-<<<<<<< HEAD
-#call glissando
-
-#left 1.0
-#right 1.0
-=======
->>>>>>> a41f3d4a7ec763db38ba78838b739afed0d86280
 #call echo1b
 
 #left 1.0
