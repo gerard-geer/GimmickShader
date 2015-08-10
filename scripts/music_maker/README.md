@@ -22,7 +22,7 @@ How do I use it?
 
 The commands are as follows:
 
-	Command      Description
+	Command       Description
 	#reset        set the track progress counter to zero (start a new channel)
 	#step         set the duration in seconds for each note line
 	#amp	      set the output amplitude (make sure it isn't too high!)
@@ -30,6 +30,14 @@ The commands are as follows:
 	#duty         set the duty cycle in floating point for the pulse wave
 	#decay        set the amplitude decay speed
 	#tmod         set the track length for looping, or -1 for no looping
+	#left_a       set left channel amplitude (before calling a function)
+	#right_a      set right channel amplitude (before calling a function)
+	#tune         set frequency multiplier for detuning
+	#func         define a block of music
+	#endfunc      stop defining a block of music
+	#main         create main (do this last)
+	#endmain      end main
+	#call         additively include a previously defined block of music
 
 Notes are entered like this:
 

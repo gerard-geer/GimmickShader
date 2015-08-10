@@ -2,6 +2,33 @@
 #amp 0.25
 #step 0.15
 
+#func glissando
+// -------------------- Part C opening glissando -------------
+#reset
+#tune 1.0
+#wave 0
+#duty 0.5
+#step 38.4
+#amp 0.3
+-
+#step 0.05
+#decay 0.08
+#len 0.1
+G6
+F6
+E6
+D6
+C6
+B5
+A5
+G5
+F5
+E5
+D5
+C5
+
+#endfunc
+
 #func cextras
 // ------------------ Extras for Part C ----------------------
 #reset
@@ -1994,13 +2021,13 @@ G5
 #right 0.6
 #call abacking
 
+#left 1.0
+#right 0.5
+#call glissando
+
 #left 0.7
 #right 1.0
 #call lead_1
-
-#left 1.0
-#right 1.0
-#call cextras
 
 #left 1.0
 #right 1.0
