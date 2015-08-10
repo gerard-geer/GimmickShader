@@ -2,7 +2,44 @@
 #amp 0.25
 #step 0.15
 
-#func glissando
+#func glissando_r
+// -------------------- Part C opening glissando -------------
+#reset
+#tune 1.0
+#wave 0
+#duty 0.5
+#step 38.4
+#amp 0.2
+-
+#step 0.05
+#decay 0.08
+#len 0.011
+G6
+#amp 0.033
+F6
+#amp 0.055
+E6
+#amp 0.077
+D6
+#amp 0.092
+C6
+#amp 0.108
+B5
+#amp 0.123
+A5
+#amp 0.139
+G5
+#amp 0.154
+F5
+#amp 0.16
+E5
+#amp 0.18
+D5
+#amp 0.2
+C5
+#endfunc
+
+#func glissando_l
 // -------------------- Part C opening glissando -------------
 #reset
 #tune 1.0
@@ -15,16 +52,27 @@
 #decay 0.08
 #len 0.1
 G6
+#amp 0.18
 F6
+#amp 0.16
 E6
+#amp 0.154
 D6
+#amp 0.139
 C6
+#amp 0.123
 B5
+#amp 0.108
 A5
+#amp 0.092
 G5
+#amp 0.077
 F5
+#amp 0.055
 E5
+#amp 0.033
 D5
+#amp 0.011
 C5
 #endfunc
 
@@ -2020,8 +2068,12 @@ G5
 #call abacking
 
 #left 1.0
-#right 0.5
-#call glissando
+#right 0.0
+#call glissando_l
+
+#left 0.0
+#right 1.0
+#call glissando_r
 
 #left 0.7
 #right 1.0
