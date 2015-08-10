@@ -1323,7 +1323,10 @@ int cloudN(in int x, in int y)
 */
 vec4 drawNearClouds(in int x, in int y)
 {
-    if(y < WAVES_Y)
+    if(y > WAVES_Y) return TRANS;
+    else if(y < FAR_CLOUD_Y) return TRANS;
+    else if(x < CLOUD_A_X) return TRANS;
+    else
     {
         // The usual broken-apart additive blending.
         vec4 result = nearCloudsPalette(cloudA(x,y));
@@ -1342,7 +1345,6 @@ vec4 drawNearClouds(in int x, in int y)
         result += nearCloudsPalette(cloudN(x,y));
 		return result;
     }
-    else return TRANS;
 }
 
 /*
