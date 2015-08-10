@@ -913,7 +913,6 @@ vec2 mainSound(float t0)
 	result += vec2(1.000000,0.600000) * (bass_line(t1));
 	result += vec2(1.000000,0.600000) * (abacking(t1));
 	result += vec2(0.700000,1.000000) * (lead_1(t1));
-	result += vec2(1.000000,1.000000) * (cextras(t1));
 	result += vec2(1.000000,1.000000) * (echo1b(t1));
 	result += vec2(1.000000,0.700000) * (extbchords(t1));
 	result += vec2(1.000000,0.700000) * (lead_2(t1));
