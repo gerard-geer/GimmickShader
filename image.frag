@@ -223,8 +223,7 @@ int yumetarouEyesOpen(in int x, in int y)
     } 
     else if(y==16) return 	 ARR16(x,5,2,1,1,1,1,1,1,1,1,1,1,1,1,2,5);
     else if(y==17) return 	 ARR16(x,5,5,2,2,1,1,1,1,1,1,1,1,1,2,2,5);
-    else if(y==18) return 	 ARR16(x,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0);
-   	else return 5;
+    else		   return 	 ARR16(x,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0);
 }
 
 /*
@@ -259,8 +258,7 @@ int yumetarouEyesClosed(in int x, in int y)
     } 
     else if(y==16) return 	 ARR16(x,5,2,1,1,1,1,1,1,1,1,1,1,1,1,2,5);
     else if(y==17) return 	 ARR16(x,5,5,2,2,1,1,1,1,1,1,1,1,1,2,2,5);
-    else if(y==18) return 	 ARR16(x,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0);
-   	else return 5; // Transparency.
+    else		   return 	 ARR16(x,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0);
 }
 
 /*
