@@ -3,33 +3,103 @@
 // Sound Generation Functions by Gerard Geer (https://github.com/gerard-geer)
 // Waveform definitions
 
+/*
+* 	Saw wave
+* 	
+* 	Produces a sawtooth waveform.
+*	
+* 	t: The current time.
+* 	f: Desired frequency.
+*	a: Amplitude.
+*
+*	Returns: The value of the waveform of the given frequency at the given time.
+*/
 float saw(float t, float f, float a)
 {
 	return ((mod(t*0.5*f*0.31830989, 1.0)*2.0)-1.0)*a;
 }
 
+/*
+* 	Square wave
+* 	
+* 	Produces a square function
+*	
+* 	t: The current time.
+* 	f: Desired frequency.
+*	duty: The duty cycle of the square wave.
+*	a: Amplitude.
+*
+*	Returns: The value of the waveform of the given frequency at the given time.
+*/
 float sqr(float t, float f, float duty, float a)
 {
 	return step(duty, abs(saw(t,f * 0.5,1.0)))*a;
 }
 
+/*
+* 	Triangle wave
+* 	
+* 	Produces a triangle waveform. This approximates the 4-bit aliasing
+*	of the NES by multiplying by 16, flooring, and then dividing by 16.
+*	
+* 	t: The current time.
+* 	f: Desired frequency.
+*	a: Amplitude.
+*
+*	Returns: The value of the waveform of the given frequency at the given time.
+*/
 float tri(float t, float f, float a)
 {
 	return (((floor(abs(saw(t,f * 0.5,a))*16.0)*0.0625)*2.0)-1.0)*a;
 }
 
+/*
+* 	Sine wave
+* 	
+* 	Produces a sinusodal waveform, just because.
+*	
+* 	t: The current time.
+* 	f: Desired frequency.
+*	a: Amplitude.
+*
+*	Returns: The value of the waveform of the given frequency at the given time.
+*/
 float sine(float t, float f, float a)
 {
 	return sin(t*f)*a;
 }
 
+/*
+* 	Noise wave
+* 	
+* 	This isn't really true to the 2A03, but hey, it's quick and stateless
+*	and can easily be worked around. It's got great frequency response.
+*
+* 	t: The current time.
+* 	f: Desired frequency.
+*	a: Amplitude.
+*
+*	Returns: The value of the waveform of the given frequency at the given time.
+*/
 float noise(float t, float f, float a)
 {
 	return ((fract(sin(dot(vec2(t,f),vec2(12.9898,78.233)))*43758.5453)*2.0)-1.0)*a;
 }
 
+/*
+* 	Linear decay.
+* 	
+* 	Returns a linear decay coefficient for a very basic envelope.
+*	
+* 	t: The current time.
+* 	s: The start time of the decay.
+*	l: The length of the decay.
+*
+*	Returns: The value of the waveform of the given frequency at the given time.
+*/
 float l_decay(float t, float s, float l)
 {
+    // Thank goodness we didn't have to implement the 5B envelope.
 	return clamp(1.0-((t-s)/l), 0.0, 1.0);
 }
 
@@ -961,4 +1031,3 @@ vec2 mainSound(float t0)
 
 	return result;
 }
-
