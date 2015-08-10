@@ -4,21 +4,91 @@
 // Original game by Sunsoft: https://en.wikipedia.org/wiki/Gimmick!
 // 
 // Original graphics design: Hiroyuki Kagoya
-// Shader graphics: Gerard Geer (https://github.com/gerard-geer)
 // Original music composition: Masashi Kageyama
-// Shader sound and ShaderTracker sound engine: Michael Moffitt (https://github.com/mikejmoffitt)
+//
+// Shader graphics: 
+//		Gerard Geer
+//		(https://github.com/gerard-geer)
+//		(https://www.shadertoy.com/user/hamneggs)
+//
+// Shader sound and ShaderTracker sound engine: 
+//		Michael Moffitt 
+//		(https://github.com/mikejmoffitt) 
+//		(https://www.shadertoy.com/user/mikejmoffitt)
+//
 // This shader on github: https://github.com/gerard-geer/GimmickShader/
+// ShaderTracker on github: https://github.com/Mikejmoffitt/ShaderTracker/
+//
+// In our experience this works best (maybe only) in Firefox.
 
 // Nah we don't need precision.
 precision lowp int;
 precision lowp float;
 
+// Quality definitions. Uncomment if you're feeling lucky, or are using a
+// browser that doesn't impose a timeout on compilation times.
+// #define DRAW_CLOUDS
+// #define DRAW_WAVES
+// #define DRAW_ALL_BIRDS
+
 // A 2,4,8,16, or 32 element array implemented as a binary search, #defined for type agnosticity.
-#define ARR2(x, a,b) (x<1) ? a : b
-#define ARR4(x, a,b,c,d) (x<2) ? ARR2(x,a,b) : ARR2(x-2,c,d)
-#define ARR8(x, a,b,c,d, e,f,g,h) (x<4) ? ARR4(x, a,b,c,d) : ARR4(x-4, e,f,g,h)
-#define ARR16(x, a,b,c,d, e,f,g,h, i,j,k,l, m,n,o,p) (x<8) ? ARR8(x, a,b,c,d, e,f,g,h) : ARR8(x-8, i,j,k,l, m,n,o,p)
 #define ARR32(x_, a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p, q,r,s,t,u,v,w,x,y,z,aa,ab,ac,ad,ae,af) (x_<16) ? ARR16(x_, a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) : ARR16(x_-16,q,r,s,t,u,v,w,x,y,z,aa,ab,ac,ad,ae,af)
+
+int ARR2(in int x, in int a, in int b)
+{
+    if(x<1) return a;
+    return b;
+}
+
+vec4 ARR2(in int x, in vec4 a, in vec4 b)
+{
+    if(x<1) return a;
+    return b;
+}
+
+int ARR4(in int x, in int a, in int b, in int c, in int d)
+{
+    if(x<2) return ARR2(x,a,b);
+    return ARR2(x-2,c,d);
+}
+
+vec4 ARR4(in int x, in vec4 a, in vec4 b, in vec4 c, in vec4 d)
+{
+    if(x<2) return ARR2(x,a,b);
+    return ARR2(x-2,c,d);
+}
+
+int ARR8(in int x, in int a, in int b, in int c, in int d,
+			       in int e, in int f, in int g, in int h)
+{
+    if(x<4) return ARR4(x, a,b,c,d);
+    return ARR4(x-4, e,f,g,h);
+}
+
+vec4 ARR8(in int x, in vec4 a, in vec4 b, in vec4 c, in vec4 d,
+			   	    in vec4 e, in vec4 f, in vec4 g, in vec4 h)
+{
+    if(x<4) return ARR4(x, a,b,c,d);
+    return ARR4(x-4, e,f,g,h);
+}
+
+int ARR16(in int x, in int a, in int b, in int c, in int d,
+			        in int e, in int f, in int g, in int h,
+         			in int i, in int j, in int k, in int l,
+         			in int m, in int n, in int o, in int p)
+{
+    if(x<8) return ARR8(x, a,b,c,d, e,f,g,h);
+    return ARR8(x-8, i,j,k,l, m,n,o,p);
+}
+
+vec4 ARR16(in int x, in vec4 a, in vec4 b, in vec4 c, in vec4 d,
+			   	     in vec4 e, in vec4 f, in vec4 g, in vec4 h,
+         			 in vec4 i, in vec4 j, in vec4 k, in vec4 l,
+         			 in vec4 m, in vec4 n, in vec4 o, in vec4 p)
+{
+    if(x<8) return ARR8(x, a,b,c,d, e,f,g,h);
+    return ARR8(x-8, i,j,k,l, m,n,o,p);
+}
 
 // Constant color vectors so palette functions don't continually have to initialize new stuff.
 const vec4 D_BLUE  = vec4(.235, .737, .988, 1.00);
@@ -35,61 +105,61 @@ const vec4 BROWN   = vec4(.486, .031, .000, 1.00);
 const vec4 TRANS   = vec4(.000, .000, .000, .000);
 
 // Define out stuff so we don't have to pass the values as parameters.
-#define YUMETAROU_X 52
-#define YUMETAROU_Y 117
-#define SHORE_Y 136
-#define SHORE_END 79
-#define FAR_CLOUD_Y 128
-#define WAVES_Y 168
-#define BIRD_A_Y 20
-#define BIRD_B_Y 32
-#define BIRD_C_Y 45
-#define BIRD_D_Y 53
-#define BIRD_E_Y 62
-#define BIRD_F_Y 69
-#define BIRD_G_Y 72
-#define BIRD_FLIP_FREQUENCY .46875
+const int YUMETAROU_X = 52;
+const int YUMETAROU_Y = 117;
+const int SHORE_Y = 136;
+const int SHORE_END = 79;
+const int FAR_CLOUD_Y = 128;
+const int WAVES_Y = 168;
+const int BIRD_A_Y = 20;
+const int BIRD_B_Y = 32;
+const int BIRD_C_Y = 45;
+const int BIRD_D_Y = 53;
+const int BIRD_E_Y = 62;
+const int BIRD_F_Y = 69;
+const int BIRD_G_Y = 72;
+const float BIRD_FLIP_FREQUENCY = .23438;
 
 // The big cloud takes a lot of orchestration. These are the coordinates
 // of the individual tiles.
 // The cloud tiles represent only the detailed upper portions of it.
 // Anything below them is drawn in as white.
-#define CLOUD_A_X 97
-#define CLOUD_A_Y 160
-#define CLOUD_B_X 105
-#define CLOUD_B_Y 152
-#define CLOUD_C_X 113
-#define CLOUD_C_Y 153
-#define CLOUD_D_X 129
-#define CLOUD_D_Y 144
-#define CLOUD_E_X 137
-#define CLOUD_E_Y 136
-#define CLOUD_F_X 145
-#define CLOUD_F_Y 128
-#define CLOUD_G_X 161
-#define CLOUD_G_Y 128
-#define CLOUD_H_X 169
-#define CLOUD_H_Y 128
-#define CLOUD_I_X 177
-#define CLOUD_I_Y 136
-#define CLOUD_J_X 185
-#define CLOUD_J_Y 144
-#define CLOUD_K_X 193
-#define CLOUD_K_Y 153
-#define CLOUD_L_X 201
-#define CLOUD_L_Y 153
-#define CLOUD_M_X 217
-#define CLOUD_M_Y 154
-#define CLOUD_N_X 225
-#define CLOUD_N_Y 152
+const int CLOUD_A_X = 97;
+const int CLOUD_A_Y = 160;
+const int CLOUD_B_X = 105;
+const int CLOUD_B_Y = 152;
+const int CLOUD_C_X = 113;
+const int CLOUD_C_Y = 153;
+const int CLOUD_D_X = 129;
+const int CLOUD_D_Y = 144;
+const int CLOUD_E_X = 137;
+const int CLOUD_E_Y = 136;
+const int CLOUD_F_X = 145;
+const int CLOUD_F_Y = 128;
+const int CLOUD_G_X = 161;
+const int CLOUD_G_Y = 128;
+const int CLOUD_H_X = 169;
+const int CLOUD_H_Y = 128;
+const int CLOUD_I_X = 177;
+const int CLOUD_I_Y = 136;
+const int CLOUD_J_X = 185;
+const int CLOUD_J_Y = 144;
+const int CLOUD_K_X = 193;
+const int CLOUD_K_Y = 153;
+const int CLOUD_L_X = 201;
+const int CLOUD_L_Y = 153;
+const int CLOUD_M_X = 217;
+const int CLOUD_M_Y = 154;
+const int CLOUD_N_X = 225;
+const int CLOUD_N_Y = 152;
 
 // The positioning of the smaller cloud.
-#define S_CLOUD_A_X 184
-#define S_CLOUD_A_Y 115
-#define S_CLOUD_B_X 192
-#define S_CLOUD_B_Y 112
-#define S_CLOUD_C_X 216
-#define S_CLOUD_C_Y 115
+const int S_CLOUD_A_X = 184;
+const int S_CLOUD_A_Y = 115;
+const int S_CLOUD_B_X = 192;
+const int S_CLOUD_B_Y = 112;
+const int S_CLOUD_C_X = 216;
+const int S_CLOUD_C_Y = 115;
     
 /*
 *	Yumetarou's palette.
@@ -109,12 +179,9 @@ vec4 yumetarouPalette(in int c)
                         D_GREEN,	// Dark green.
                         L_GOLD); 	// Light gold.
     }
-    else
-    {
-        c-=4;
-        return ARR2(c, 	D_GOLD, 	// Dark gold.
-                		TRANS);  	// Transparency.
-    }
+    c-=4;
+    return ARR2(c, 	D_GOLD, 	// Dark gold.
+                	TRANS);  	// Transparency.
 }
 
 /*
@@ -150,8 +217,7 @@ int yumetarouEyesOpen(in int x, in int y)
     } 
     if(y==16) return 	 ARR16(x,5,2,1,1,1,1,1,1,1,1,1,1,1,1,2,5);
     if(y==17) return 	 ARR16(x,5,5,2,2,1,1,1,1,1,1,1,1,1,2,2,5);
-    if(y==18) return 	 ARR16(x,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0);
-   	return 5;
+              return 	 ARR16(x,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0);
 }
 
 /*
@@ -186,8 +252,7 @@ int yumetarouEyesClosed(in int x, in int y)
     } 
     if(y==16) return 	 ARR16(x,5,2,1,1,1,1,1,1,1,1,1,1,1,1,2,5);
     if(y==17) return 	 ARR16(x,5,5,2,2,1,1,1,1,1,1,1,1,1,2,2,5);
-    if(y==18) return 	 ARR16(x,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0);
-   	return 5; // Transparency.
+        	  return 	 ARR16(x,1,0,0,0,2,2,2,2,2,2,2,2,2,0,0,0);
 }
 
 /*
@@ -209,10 +274,15 @@ vec4 drawYumetarou(in int x, in int y)
     
     // Yummy yummy frame counting.
     float t = mod(iGlobalTime, 3.67);
-    if( t > .066 && (t < .533 || t >.600) )
-        return yumetarouPalette(yumetarouEyesOpen(x,y));
-    else
-        return yumetarouPalette(yumetarouEyesClosed(x,y));
+    
+    // Get the palette index.
+    int n;
+    if( t < .066 ) n = yumetarouEyesClosed(x,y);
+    else if( t > .533 && t < .600 ) n = yumetarouEyesClosed(x,y);
+    else n = yumetarouEyesOpen(x,y);
+        
+    // Return the color.
+    return yumetarouPalette(n);
 }
 
 /*
@@ -250,7 +320,7 @@ int birdWingsLevel(in int x,in int y)
 						 ARR8(x,2,3,3,0,0,3,3,2),
 						 ARR8(x,3,3,3,1,0,3,3,3));
     }
-    else return 3;
+    return 3;
 }
 
 /*
@@ -271,8 +341,7 @@ int birdWingsUp(in int x,in int y)
 						 ARR8(x,3,3,1,0,1,0,3,3),
 						 ARR8(x,3,3,3,0,0,3,3,3));
     }
-    if(y==4) return		 ARR8(x,3,3,3,1,0,3,3,3);
-    else return 3;
+    return		 ARR8(x,3,3,3,1,0,3,3,3);
 }
 
 /*
@@ -293,8 +362,7 @@ int birdWingsDown(in int x,in int y)
 						 ARR8(x,3,3,0,1,0,1,3,3),
 						 ARR8(x,3,3,0,3,3,3,0,3));
     }
-    if(y==4) return		 ARR8(x,3,3,2,3,3,3,2,3);
-    else return 3;
+    return		 ARR8(x,3,3,2,3,3,3,2,3);
 }
 
 /*
@@ -325,11 +393,13 @@ vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
     
     // This animation is less framecounting and more dividing an amount
     // of time by four.
-    float t = mod(iGlobalTime, .533);
-    if(t < .133)	return birdPalette(birdWingsLevel(x,y));
-    if(t < .266)	return birdPalette(birdWingsUp(x,y));
-    if(t < .400)	return birdPalette(birdWingsLevel(x,y));
-    return birdPalette(birdWingsDown(x,y));
+    int t = int(mod(iGlobalTime*7.5, 4.0));
+    int n = ARR4(t,
+                birdWingsLevel(x,y),
+                birdWingsUp(x,y),
+                birdWingsLevel(x,y),
+                birdWingsDown(x,y));
+    return birdPalette(n);
 }
 
 
@@ -350,16 +420,16 @@ vec4 drawBird(in int x, in int y, in int atx, in int aty, bool flip)
 int anim(in int s, in float t, in float a, out bool d)
 {
     // Triangle wave = |saw wave|
-    float tri = abs( (mod(t*BIRD_FLIP_FREQUENCY*.5, 1.0)*2.0)-1.0 );
-    // Oh hey triangle waves are kind of sinosodal, let's rotate
-    // it by PI/2 for d1
-    float d1 = abs( (mod((t+1.0)*BIRD_FLIP_FREQUENCY*.5, 1.0)*2.0)-1.0 );
-    // Let's go ahead and transform this to (-1..1)
-    d1 = (d1*2.0)-1.0;
-    // Set the direction to the sign of the derivative.
-    d = d1<0.0;
-    // Finally we return the animated position.
-	return s + int(tri*a);
+    
+    // Let's get the derivative first.
+    d = 2.0*(mod((t+1.0)*BIRD_FLIP_FREQUENCY, 1.0))-1.0 < 0.0;
+    
+    // Now that we've stored the direction let's go back and 
+    // calculate the position.
+    float val = abs( (mod((t)*BIRD_FLIP_FREQUENCY, 1.0)*2.0)-1.0 )*a;
+    
+    // Return the animated position.
+	return s + int(val);
 }
 
 /*
@@ -391,13 +461,17 @@ vec4 drawBirds(in int x, in int y)
     vec4 result = drawBird(x,y,a,BIRD_A_Y,f);
 	
 	// Bird 2.
+    #ifdef DRAW_ALL_BIRDS
     a = anim(140, iGlobalTime+3.267, 24.0, f);
     result += drawBird(x,y,a,BIRD_B_Y,f);
-	
+	#endif
+    
 	// Bird 3.
+    #ifdef DRAW_ALL_BIRDS
     a = anim(77, iGlobalTime+1.533, 40.0, f);
     result += drawBird(x,y,a,BIRD_C_Y,f);
-	
+	#endif
+    
 	// Bird 4.
     a = anim(198, iGlobalTime+.1667, 32.0, f);
     result += drawBird(x,y,a,BIRD_D_Y,f);
@@ -411,8 +485,11 @@ vec4 drawBirds(in int x, in int y)
     result += drawBird(x,y,a,BIRD_F_Y,f);
 	
 	// Bird 7.
+	#ifdef DRAW_ALL_BIRDS
     a = anim(165, iGlobalTime+1.167, 24.0, f);
     result += drawBird(x,y,a,BIRD_G_Y,f);
+	#endif
+    
     return result;
     
 }
@@ -457,7 +534,7 @@ int shoreInterior(in int x, in int y)
 			 1,
 			 1,
 			 1,
-			 ARR32(x,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
+			 ARR2 (x/4,ARR8(x, 1,1,1,1,1,1,2,2),                                   1),
 			 ARR32(x,1,1,1,1,1,2,2,2,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,2,2,2,1,1,1,1,1),
 			 ARR32(x,1,1,1,1,1,2,2,3,2,1,2,3,3,2,2,1,1,1,1,1,1,1,2,2,3,3,3,2,1,1,1,1),
 			 ARR32(x,1,1,1,1,2,2,3,3,3,3,3,3,3,3,2,1,1,1,1,1,1,2,2,3,2,2,2,2,2,1,1,1),
@@ -496,14 +573,14 @@ int shoreInterior(in int x, in int y)
 int shoreExterior(in int x, in int y)
 {
     return ARR32(y,
-            ARR16(x,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2),
-            ARR16(x,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3),
-            ARR16(x,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3),
-            ARR16(x,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3),
-            ARR16(x,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3),
-            ARR16(x,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3),
-            ARR16(x,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,3),
-            ARR16(x,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,3),
+            ARR2 (x/14,3,                         2),
+            ARR2 (x/12,0, 		  ARR4(x-12,0,1,2,3)),
+            ARR2 (x/12,1, 		  ARR4(x-12,1,1,2,3)),
+            ARR2 (x/12,1, 		  ARR4(x-12,1,1,2,3)),
+            ARR2 (x/12,1, 		  ARR4(x-12,1,1,2,3)),
+            ARR2 (x/12,1, 		  ARR4(x-12,1,1,2,3)),
+            ARR2 (x/12,1, 		  ARR4(x-12,1,1,2,3)),
+            ARR2 (x/12,1, 		  ARR4(x-12,1,2,2,3)),
             ARR16(x,1,1,1,1,1,1,2,2,1,1,1,1,2,2,2,3),
             ARR16(x,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,2),
             ARR16(x,1,1,1,1,1,2,2,3,2,2,2,2,3,3,3,2),
@@ -544,16 +621,18 @@ vec4 drawShore(in int x, in int y)
 {
     // Bounds checking.
     if(x > SHORE_END) return vec4(0.0);
-    if(y < SHORE_Y || y > SHORE_Y + 31) return vec4(0.0);
+    if(y < SHORE_Y) return vec4(0.0);
     
     // Transform to be relative to the shore tiles.
     y -= SHORE_Y;
     
-    // Draw the interior of the shore.
-    if(x < 64) return shorePalette(shoreInterior(x,y));
-    // Draw the endcap exterior.
-    x -= 64;
-    return shorePalette(shoreExterior(x,y));
+    // Get the palette index.
+    int n;
+    if(x < 64) n = shoreInterior(x,y);
+    else n = shoreExterior(x-64,y);
+    
+    // Finally return the correct color.
+    return shorePalette(n);
 }
 
 /*
@@ -588,12 +667,12 @@ int farClouds(in int x, in int y)
     if(y < 4)
     {
         return ARR4(y, 
-        ARR32(x,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0),
-        ARR32(x,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0),
+        ARR2 (x/16,0,                ARR16(x-16,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0)),
+        ARR2 (x/16,0,                ARR16(x-16,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0)),
         ARR32(x,0,0,0,1,1,0,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0),
         ARR32(x,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0));
     }
-    return ARR32(x,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+    return ARR2 (x/16,1, ARR16(x-16,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1));
 }
 
 /*
@@ -613,7 +692,8 @@ vec4 drawFarClouds(in int x, in int y)
     // Below? Fill'er'in.
     if(y > FAR_CLOUD_Y+5) return L_BLUE;
     // Within the narrow band designated for the clouds?
-    return farCloudsPalette(farClouds(x,y-FAR_CLOUD_Y));
+    int n = farClouds(x,y-FAR_CLOUD_Y);
+    return farCloudsPalette(n);
 }
 
 /*
@@ -680,23 +760,20 @@ int wavesA(in int x, in int y)
 		ARR32(x,3,2,0,0,0,0,0,0,0,0,0,0,2,3,3,3,3,2,0,0,0,0,5,5,5,5,5,5,2,2,2,2),
 		ARR32(x,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,5,5,5,5),
 		ARR32(x,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5),
-		ARR32(x,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0),
+		ARR2(x/16,2,			     ARR16(x-16,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0)),
 		2,
         2);
     }
-    else
-    {
-        x -= 32;
-        return ARR8(y,
-		ARR32(x,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,3,3,3,0,0,0,0,0,0,0,0,0,3,3,3),
-        ARR32(x,0,0,0,0,2,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3),
-        ARR32(x,2,2,1,3,3,3,2,2,2,5,0,0,0,0,0,0,0,0,5,5,3,3,3,3,3,3,3,3,2,3,3,3),
-        ARR32(x,3,3,3,2,0,0,0,0,0,0,0,0,0,0,5,5,5,3,3,3,3,3,3,2,2,2,3,3,3,3,2,0),
-        ARR32(x,5,5,5,5,5,5,2,0,0,0,0,5,5,3,3,3,3,3,3,3,2,2,2,3,3,3,3,2,0,0,0,2),
-        ARR32(x,0,0,0,0,0,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2),
-        2,
-        2);
-    }
+    x -= 32;
+    return ARR8(y,
+    ARR32(x,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,3,3,3,0,0,0,0,0,0,0,0,0,3,3,3),
+    ARR32(x,0,0,0,0,2,5,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3),
+    ARR32(x,2,2,1,3,3,3,2,2,2,5,0,0,0,0,0,0,0,0,5,5,3,3,3,3,3,3,3,3,2,3,3,3),
+    ARR32(x,3,3,3,2,0,0,0,0,0,0,0,0,0,0,5,5,5,3,3,3,3,3,3,2,2,2,3,3,3,3,2,0),
+    ARR32(x,5,5,5,5,5,5,2,0,0,0,0,5,5,3,3,3,3,3,3,3,2,2,2,3,3,3,3,2,0,0,0,2),
+    ARR32(x,0,0,0,0,0,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2),
+    2,
+    2);
 }
 
 /*
@@ -725,19 +802,16 @@ int wavesB(in int x, in int y)
 		2,
         2);
 	}
-    else
-    {
-        x -= 32;
-        return ARR8(y,
-        ARR32(x,0,0,2,2,2,3,3,3,3,3,3,3,5,5,5,5,5,5,5,2,2,2,2,0,0,0,0,0,0,0,0,0),
-        ARR32(x,0,0,0,0,0,0,0,2,2,3,3,5,5,5,5,2,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2),
-        ARR32(x,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,3,3,3,3,2,3,2,0,0,0,0),
-        ARR32(x,4,4,4,4,4,2,2,2,2,2,2,0,0,0,0,0,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,2),
-        ARR32(x,0,0,0,4,4,4,4,4,5,5,5,5,5,5,2,2,0,0,0,0,0,0,0,0,0,0,0,2,3,3,3,3),
-        ARR32(x,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,5,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3),
-        ARR32(x,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,2),
-        2);
-    }
+    x -= 32;
+    return ARR8(y,
+    ARR32(x,0,0,2,2,2,3,3,3,3,3,3,3,5,5,5,5,5,5,5,2,2,2,2,0,0,0,0,0,0,0,0,0),
+    ARR32(x,0,0,0,0,0,0,0,2,2,3,3,5,5,5,5,2,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2),
+    ARR32(x,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,3,3,3,3,2,3,2,0,0,0,0),
+    ARR32(x,4,4,4,4,4,2,2,2,2,2,2,0,0,0,0,0,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,2),
+    ARR32(x,0,0,0,4,4,4,4,4,5,5,5,5,5,5,2,2,0,0,0,0,0,0,0,0,0,0,0,2,3,3,3,3),
+    ARR32(x,0,0,0,0,0,0,0,0,0,0,0,0,0,5,5,5,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3),
+    ARR32(x,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,3,3,3,2),
+    2);
 }
 
 /*
@@ -763,23 +837,20 @@ int wavesC(in int x, in int y)
         ARR32(x,0,0,0,0,0,0,0,0,0,4,4,4,5,5,5,5,5,5,0,0,0,0,0,5,5,5,3,3,3,1,3,4),
         ARR32(x,2,2,2,2,2,0,0,0,0,0,0,0,4,4,5,5,5,5,5,5,5,5,5,5,3,3,1,1,3,3,4,0),
         ARR32(x,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,2,3,3,3,3,3,3,3,3,3,3,4,0,0,0,0),
-        ARR32(x,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,2,2,2),
+        ARR2 (x/16,2,                ARR16(x-16,2,2,2,2,2,2,2,2,0,0,0,0,0,2,2,2)),
         2);
 
     }
-    else
-    {
-        x -= 32;
-        return ARR8(y,
-		ARR32(x,0,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,5,5,5,3,3,3,3,3),
-		ARR32(x,3,3,3,3,5,2,2,2,0,0,0,0,0,0,4,4,4,4,4,4,5,5,5,5,5,3,3,3,3,3,3,3),
-		ARR32(x,3,4,4,4,4,5,5,5,5,5,5,5,4,4,4,4,5,5,5,5,5,5,5,1,1,1,3,3,3,2,0,0),
-		ARR32(x,4,4,0,0,0,0,0,0,0,0,2,5,5,5,5,5,3,1,2,2,2,1,3,3,3,3,4,0,0,0,2,2),
-		ARR32(x,0,2,2,2,2,0,0,0,0,0,0,0,0,0,2,2,2,2,1,3,3,5,5,0,0,0,2,2,2,2,2,2),
-		ARR32(x,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2),
-		2,
-		2);
-    }
+    x -= 32;
+    return ARR8(y,
+	ARR32(x,0,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,5,5,5,3,3,3,3,3),
+	ARR32(x,3,3,3,3,5,2,2,2,0,0,0,0,0,0,4,4,4,4,4,4,5,5,5,5,5,3,3,3,3,3,3,3),
+	ARR32(x,3,4,4,4,4,5,5,5,5,5,5,5,4,4,4,4,5,5,5,5,5,5,5,1,1,1,3,3,3,2,0,0),
+	ARR32(x,4,4,0,0,0,0,0,0,0,0,2,5,5,5,5,5,3,1,2,2,2,1,3,3,3,3,4,0,0,0,2,2),
+	ARR32(x,0,2,2,2,2,0,0,0,0,0,0,0,0,0,2,2,2,2,1,3,3,5,5,0,0,0,2,2,2,2,2,2),
+	ARR32(x,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2),
+	2,
+	2);
 }
 
 /*
@@ -805,22 +876,19 @@ int wavesD(in int x, in int y)
 		ARR32(x,5,5,5,2,0,0,0,0,0,0,0,0,0,0,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3,3,5,0),
 		ARR32(x,0,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3,3,5,0,0,0,0,0),
 		ARR32(x,0,0,0,0,0,0,0,0,0,0,0,4,3,3,3,3,3,3,3,3,0,0,0,0,0,0,2,2,2,2,2,2),
-		ARR32(x,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2),
+		ARR2 (x/16,ARR16(x,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2),                  2),
 		2);
     }
-    else
-    {
-        x -= 32;
-        return ARR8(y,
-		ARR32(x,5,5,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,0,0,0,0,0),
-		ARR32(x,3,3,3,5,0,0,0,0,0,0,0,4,4,4,4,5,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2),
-		ARR32(x,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5),
-		ARR32(x,0,0,0,0,0,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,4,4,4,4,5),
-		ARR32(x,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-		ARR32(x,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0),
-		2,
-		2);
-    }
+    x -= 32;
+    return ARR8(y,
+	ARR32(x,5,5,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,0,0,0,0,0),
+	ARR32(x,3,3,3,5,0,0,0,0,0,0,0,4,4,4,4,5,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2),
+	ARR32(x,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5),
+	ARR32(x,0,0,0,0,0,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,4,4,4,4,5),
+	ARR2 (x/16,2,               ARR16(x-16,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0)),
+	ARR2 (x/16,2,               ARR16(x-16,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0)),
+	2,
+	2);
 }
 
 /*
@@ -838,7 +906,13 @@ vec4 drawWaves(in int x, in int y)
 {
     // Bounds checking.
     if(y < WAVES_Y) return TRANS;
+  	
+    #ifndef DRAW_WAVES
+    return D_BLUE;
+    #endif
+    
     if(y > WAVES_Y+7) return L_BLUE;
+    
     
     // Modulo the time and cast it to an int so the value returned
     // can be used as an index for which frame of animation to use.
@@ -847,29 +921,31 @@ vec4 drawWaves(in int x, in int y)
     // We need to do the usual transform here as well.
     y -= WAVES_Y;
     
+    // Create a repeating x.
+    int mx = int(mod(float(x),64.0));
+            
+    // Get the palette indices ahead of time.
+    int a = wavesA(mx,y);
+    int b = wavesB(mx,y);
+    int c = wavesC(mx,y);
+    int d = wavesD(mx,y);
+    
     // If we are under the shoreline, we need to use the palette
     // that reflects the shore.
     if(x > SHORE_END)
     {
-        // The prior comparison required x to be pristine, so
-        // we have to perform this modulo in here.
-        x = int(mod(float(x),64.0));
         return ARR4(t,
-                    wavesSunnyPalette(wavesC(x,y)),
-                    wavesSunnyPalette(wavesA(x,y)),
-                    wavesSunnyPalette(wavesB(x,y)),
-                    wavesSunnyPalette(wavesD(x,y)));
+        wavesSunnyPalette(c),
+        wavesSunnyPalette(a),
+        wavesSunnyPalette(b),
+        wavesSunnyPalette(d));
     }
     // otherwise we use the palette that reflects the clouds.
-    else
-    {
-        x = int(mod(float(x),64.0));
-        return ARR4(t,
-                    wavesShadowPalette(wavesC(x,y)),
-                    wavesShadowPalette(wavesA(x,y)),
-                    wavesShadowPalette(wavesB(x,y)),
-                    wavesShadowPalette(wavesD(x,y)));
-    }
+    return ARR4(t,
+    wavesShadowPalette(c),
+    wavesShadowPalette(a),
+    wavesShadowPalette(b),
+    wavesShadowPalette(d));
 }
 
 /*
@@ -1211,22 +1287,39 @@ int cloudN(in int x, in int y)
 */
 vec4 drawNearClouds(in int x, in int y)
 {
+    #ifndef DRAW_CLOUDS
+    return TRANS;
+    #endif
+    
     // The usual broken-apart additive blending.
-	vec4 result = vec4(0.0);
-	result += nearCloudsPalette(cloudA(x,y));
-	result += nearCloudsPalette(cloudB(x,y));
-	result += nearCloudsPalette(cloudC(x,y));
-	result += nearCloudsPalette(cloudD(x,y));
-	result += nearCloudsPalette(cloudE(x,y));
-	result += nearCloudsPalette(cloudF(x,y));
-	result += nearCloudsPalette(cloudG(x,y));
-	result += nearCloudsPalette(cloudH(x,y));
-	result += nearCloudsPalette(cloudI(x,y));
-	result += nearCloudsPalette(cloudJ(x,y));
-	result += nearCloudsPalette(cloudK(x,y));
-	result += nearCloudsPalette(cloudL(x,y));
-	result += nearCloudsPalette(cloudM(x,y));
-	result += nearCloudsPalette(cloudN(x,y));
+    int n = cloudA(x,y);
+	vec4 result = nearCloudsPalette(n);
+    n = cloudB(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudC(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudD(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudE(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudF(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudG(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudH(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudI(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudJ(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudK(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudL(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudM(x,y);
+	result += nearCloudsPalette(n);
+    n = cloudN(x,y);
+	result += nearCloudsPalette(n);
 	return result;
 }
 
@@ -1295,7 +1388,7 @@ int smallCloudB(in int x, in int y)
 	
 	return
 	ARR8(y,
-	  ARR16(x,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+	  ARR2 (x/2,1,                          0),
 	  ARR16(x,1,2,0,0,1,1,1,0,0,0,0,0,0,0,0,0),
 	  ARR16(x,0,0,0,1,1,1,1,2,0,1,1,0,0,0,0,0),
 	  ARR16(x,0,0,2,1,1,1,1,2,1,1,1,2,0,1,0,0),
@@ -1317,12 +1410,21 @@ int smallCloudB(in int x, in int y)
 *	Returns: The color of the cloud from under the current fragment.
 */
 vec4 drawSmallCloud(in int x, in int y)
-{
-    // smallCloudA actually appears twice.
-	vec4 result = vec4(0.0);
-	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_A_X,S_CLOUD_A_Y));
-	result += smallCloudPalette(smallCloudB(x,y));
-	result += smallCloudPalette(smallCloudA(x,y,S_CLOUD_C_X,S_CLOUD_C_Y));
+{   
+    #ifndef DRAW_CLOUDS
+    return TRANS;
+    #endif
+    
+    // First small cloud A.
+    int n = smallCloudA(x,y,S_CLOUD_A_X,S_CLOUD_A_Y);
+	vec4 result = smallCloudPalette(n);
+    // Small cloud B.
+    n = smallCloudB(x,y);
+	result += smallCloudPalette(n);
+    // And A again in a different position.
+    n = smallCloudA(x,y,S_CLOUD_C_X,S_CLOUD_C_Y);
+	result += smallCloudPalette(n);
+
 	return result;
 }
 
@@ -1364,23 +1466,27 @@ vec4 drawElements(in int x, in int y)
     
     // Reuse some variables.
     vec4 result = drawFarClouds(x,y);
+    #ifdef DRAW_CLOUDS
     vec4 element = drawNearClouds(x,y);
+    #endif
+    #ifndef DRAW_CLOUDS
+    vec4 element = vec4(0.0);
+    #endif
     
-    //result = mix(result, element, element.a);
-    //element = drawSmallCloud(x,y);
-    //result = mix(result, element, element.a);
-    //element = drawBirds(x,y);
-    //result = mix(result, element, element.a);
-    //element = drawBoat(x,y);
-    //result = mix(result, element, element.a);
-    //element = drawShore(x,y);
-    //result = mix(result, element, element.a);
-    //element = drawYumetarou(x,y);
-    //result = mix(result, element, element.a);
-    //element = drawShore(x,y);
-    //result = mix(result, element, element.a);
+    result = mix(result, element, element.a);
+    element = drawSmallCloud(x,y);
+    result = mix(result, element, element.a);
+    element = drawBirds(x,y);
+    result = mix(result, element, element.a);
+    element = drawBoat(x,y);
+    result = mix(result, element, element.a);
+    element = drawShore(x,y);
+    result = mix(result, element, element.a);
+    element = drawYumetarou(x,y);
+    result = mix(result, element, element.a);
     element = drawWaves(x,y);
     result = mix(result, element, element.a);
+    
     return result;
 }
 
