@@ -2,6 +2,29 @@
 #amp 0.25
 #step 0.15
 
+#func glissando
+// ------------------ Part C glissando -----------------
+#reset
+#tune 2.0
+#wave 0
+#duty 0.5
+#step 38.4
+#decay 0.08
+#len 0.1
+#amp 0.25
+-
+#step 0.1
+G5
+F5
+E5
+D5
+C5
+A#4
+A4
+G4
+#endfunc
+
+
 #func cextras
 // ------------------ Extras for Part C ----------------------
 #reset
@@ -2000,7 +2023,7 @@ G5
 
 #left 1.0
 #right 1.0
-#call cextras
+#call glissando
 
 #left 1.0
 #right 1.0
